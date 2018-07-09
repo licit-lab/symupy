@@ -1,9 +1,10 @@
 """
-    Input/Output file 
+    Input/Output module 
 """
 
 import os 
 from ctypes import cdll
+
 
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy import Table, Column, String, Integer, Float 
@@ -116,6 +117,8 @@ class SymuViaExporter(SymuViaImporter):
         finally: 
             print(ltbstr, engine)
 
+
 if __name__ == "__main__":
     objIo = SymuViaImporter()
     objIo.load_SymuViaLib()
+    x = Simulator()
