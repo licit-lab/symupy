@@ -121,4 +121,3 @@ class SymuViaExporter(SymuViaImporter):
 if __name__ == "__main__":
     objIo = SymuViaImporter()
     objIo.load_SymuViaLib()
-    x = Simulator()
