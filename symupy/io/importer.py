@@ -6,6 +6,8 @@ import os
 import platform 
 from ctypes import cdll
 
+from ..func.simulator import Simulator
+
 # Directory path where simuvia can be found
 _MACPTH = ('simupy', 'symuvia', 'Contents', 'Frameworks')
 _LINPTH = () # TODO: Assign default path in Linux
@@ -16,7 +18,7 @@ _WINLIB = () # TODO: Assign default library in Windows
 
 def get_default_lyb_path():
     """
-        Determine the platform in use and import defa
+        Determine the platform in use and import default path 
     """
     os_type = platform.system()
     dlibPathOS = {'Darwin': _MACPTH,
@@ -55,13 +57,13 @@ class SymuViaImporter():
         self.fileName = sdirFile
         self.fullSymPath = sdirSim
 
-    def load_SymuViaLib(self):
+    def create_Simulator(self):
         """
-            Load SymuVia library 
+            Creates a Simulator object 
         """
         if self.fullSymPath:
             try:                 
-                self.olibSymuVia = cdll.LoadLibrary(self.fullSymPath)
+                self.olibSymuVia = Simulator(self.fullSymPath)
             except:                 
                 self.olibSymuVia = None
             finally: 
@@ -78,7 +80,7 @@ class SymuViaImporter():
         """
         if self.fileName:
             try:                 
-                self.olibSymuVia = cdll.LoadLibrary(self.fullSymPath)
+                self.olibSymuVia = symuvialib.SymLoadNetworkEx(file_name.encode('UTF8'))
                 print('File successfully loaded') 
                 print('File directory:\n')
                 print('{}'.format(self.fileName)) 

@@ -6,4 +6,5 @@ file_name = []
 
 x = SymuViaImporter()
 x.load_SymuViaLib()
+print(type(x))
 #print(locals())
