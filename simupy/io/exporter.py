@@ -1,68 +1,14 @@
 """
-    Input/Output module 
+    Output parser 
 """
-
-import os 
-from ctypes import cdll
 
 
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy import Table, Column, String, Integer, Float 
 from sqlalchemy import insert, delete, select, case, and_
 
-class SymuViaImporter():
-    """
-        Class to parse input files to SymuVia
-    """
 
-    def __init__(self, sdirFile = None, sdirSim = None):
-        """
-            Initialize a class with 
-
-            :param string sdirFile: Absolute path XML input file 
-
-            :param string sdirSim: Absolute path for libraries symuvia libraries  
-        """
-        self.fileName = sdirFile
-        self.fullSymPath = sdirSim
-
-    def load_SymuViaLib(self):
-        """
-            Load SymuVia library 
-        """
-        if self.fullSymPath:
-            try:                 
-                self.olibSymuVia = cdll.LoadLibrary(self.fullSymPath)
-                print('Library successfully loaded') 
-            except: 
-                print('Library could not loaded')
-                self.olibSymuVia = None
-        else:
-            scurrDir = os.getcwd()
-            # MacDefault
-            slibPathName = ('symupy',
-                            'symuvia',
-                            'Contents',
-                            'Frameworks',
-                            'libSymuVia.dylib') 
-            self.fullSymPath = os.path.join(scurrDir, *slibPathName)
-            self.load_SymuViaLib()
-
-    def load_xml_file(self, fileName):
-        """
-            Load xml input file for SymuVia
-        """
-        if self.fileName:
-            try:                 
-                self.olibSymuVia = cdll.LoadLibrary(self.fullSymPath)
-                print('File successfully loaded') 
-                print('File directory:\n')
-                print('{}'.format(self.fileName)) 
-            except: 
-                print('File could not be loaded')
-                self.olibSymuVia = None
-            
-class SymuViaExporter(SymuViaImporter):
+class SymuViaExporter():
     """
         Class to export results from a simulation in SymuVia
     """
@@ -116,8 +62,3 @@ class SymuViaExporter(SymuViaImporter):
             connection = engine.connect()
         finally: 
             print(ltbstr, engine)
-
-
-if __name__ == "__main__":
-    objIo = SymuViaImporter()
-    objIo.load_SymuViaLib()
