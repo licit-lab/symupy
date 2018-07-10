@@ -1,5 +1,5 @@
 """
-    Control the imports within the io
+    Imports from the io (Input/Output) submodule
 """
 
 from simupy.io.importer import SymuViaImporter as SymuViaImporter
