@@ -1,6 +1,5 @@
 # Folders
-symuvia/
+symupy/symuvia/Contents/
 # Ignore 
 *.pyc
 # Exceptions
-!symuvia/*.py
