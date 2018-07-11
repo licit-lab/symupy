@@ -32,9 +32,9 @@ class Simulator():
         
         return oSimulator
 
-class Scenario(Simulator):
+class Simulation(Simulator):
     """
-        Scenario parses an XML data for a paricular case. When created a simulator is asociated
+        Simulation parses an XML data for a paricular case. When created a simulator is asociated
     """
 
     def __init__(self, fileName, fullSymPath):
@@ -49,7 +49,7 @@ class Scenario(Simulator):
         super().__init__(fullSymPath)
         print(f'Simulator created at: {fileName}')
         self.sfileName = fileName
-        self.oScenario = self.load_SymuviaXML()
+        self.oSimulation = self.load_SymuviaXML()
 
     def load_SymuviaXML(self):
         """
@@ -60,15 +60,15 @@ class Scenario(Simulator):
         try: 
             oSimulator = self.olibSymuVia
             sfileNameEnc = self.sfileName.encode('UTF8')
-            oScenario = oSimulator.SymLoadNetworkEx(sfileNameEnc)
+            oSimulation = oSimulator.SymLoadNetworkEx(sfileNameEnc)
             print('Symuvia Library succesfully loaded')            
         except:
             print('Symuvia Library could not be loaded')
-        return oScenario
+        return oSimulation
 
     
-    def run_SimulationScenario(self):
-        """ Launches a scenario of simulation """        
+    def run_Simulation(self):
+        """ Launches a full-time simulation """        
         return self.olibSymuVia.SymRunEx(self.encoded_FileName())
 
 

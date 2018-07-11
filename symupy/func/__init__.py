@@ -3,6 +3,6 @@
 """
 
 from .simulator import Simulator as Simulator
-from .simulator import Scenario as Scenario
+from .simulator import Simulation as Simulation
 
-__all__ = ['Simulator','Scenario']
+__all__ = ['Simulator','Simulation']

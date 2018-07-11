@@ -2,7 +2,7 @@
     Imports from the io (Input/Output) submodule
 """
 
-from .importer import SymuViaImporter as SymuViaImporter
+from .importer import Scenario as Scenario
 from .exporter import SymuViaExporter as SymuViaExporter
 
-__all__ = ['SymuViaImporter','SymuViaExporter']
+__all__ = ['Scenario','SymuViaExporter']

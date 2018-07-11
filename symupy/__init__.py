@@ -30,6 +30,6 @@ __all__ = ['io',
 print('Importing the Simupy package')
 
 from .io import *
-# from func import *
+from .func import *
 # from control import *
 # from util import *
