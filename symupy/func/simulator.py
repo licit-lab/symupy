@@ -47,17 +47,31 @@ class Scenario(Simulator):
         """
 
         super().__init__(fullSymPath)
+        print(f'Simulator created at: {fileName}')
         self.sfileName = fileName
         self.oScenario = self.load_SymuviaXML()
 
     def load_SymuviaXML(self):
         """
             XML loader
+
+            Load XML Simulation file in order to perform simulation 
         """
         try: 
             oSimulator = self.olibSymuVia
             sfileNameEnc = self.sfileName.encode('UTF8')
             oScenario = oSimulator.SymLoadNetworkEx(sfileNameEnc)
+            print('Symuvia Library succesfully loaded')            
         except:
             print('Symuvia Library could not be loaded')
         return oScenario
+
+    
+    def run_SimulationScenario(self):
+        """ Launches a scenario of simulation """        
+        return self.olibSymuVia.SymRunEx(self.encoded_FileName())
+
+
+    def encoded_FileName(self):
+        """ Returns the file name encoded for the simulator """
+        return self.sfileName.encode('UTF8')
