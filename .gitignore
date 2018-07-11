@@ -1,6 +1,6 @@
 # Folders
 symuvia/
-#not ignore 
-!symuvia/point_library.py
-# Files 
+# Ignore 
 *.pyc
+# Exceptions
+!symuvia/*.py
