@@ -12,7 +12,7 @@
 """
 
 __author__ = "Andres Ladino"
-__copyright__ = "Copyright 2018, SymuPy Project"
+__copyright__ = "SymuPy Project"
 __credits__ = ["Cecile Becarie"]
 __license__ = "MIT"
 __version__ = "0.0.1"
