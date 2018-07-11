@@ -6,7 +6,7 @@ import os
 import platform 
 from ctypes import cdll
 
-from ..func.simulator import Simulator
+from ..func.simulator import Simulator, Simulation
 
 # Directory path where simuvia can be found
 _MACPTH = ('simupy', 'symuvia', 'Contents', 'Frameworks')
@@ -32,16 +32,15 @@ def get_default_lyb_path():
 
 def build_full_path(tlibPathName):
     """
+        Builds a 
         :param tuple tlibPathName: Relative path for the library
-
     """
     scurrDir = os.getcwd()            
     slibPathName = os.path.join(scurrDir, *tlibPathName)
 
     return slibPathName
 
-
-class SymuViaImporter():
+class Scenario():
     """
         Class to parse input files to SymuVia
     """
@@ -57,7 +56,7 @@ class SymuViaImporter():
         self.fileName = sdirFile
         self.fullSymPath = sdirSim
 
-    def create_Simulator(self):
+    def create_Simulators(self):
         """
             Creates a Simulator object 
         """
@@ -74,7 +73,7 @@ class SymuViaImporter():
             print(f'Defining a default path for the library at: {self.fullSymPath}')
             self.load_SymuViaLib()
 
-    def load_xml_file(self, fileName):
+    def create_Scenarios(self, fileName):
         """
             Load xml input file for SymuVia
         """
