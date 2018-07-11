@@ -39,7 +39,7 @@
 
 __author__ = "Andres Ladino"
 __copyright__ = "SymuPy Project"
-__credits__ = ["Cecile Becarie"]
+__credits__ = ["Cecile Becarie","Angelo Furno"]
 __license__ = "MIT"
 __version__ = "0.0.1"
 __maintainer__ = "Andres Ladino"
