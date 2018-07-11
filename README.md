@@ -9,7 +9,7 @@ A Python API to control and manipulate SymuVia
 Clone this repository or download the files [here](https://github.com/symuvia/symupy/archive/master.zip)
 
 ```sh 
-https://github.com/research-licit/Hierarchical-Platooning.git
+git clone https://github.com/research-licit/Hierarchical-Platooning.git
 ```
 
 Be sure to place one copy of the simulator within the folder `symuvia`. Be sure to respect the following structure
