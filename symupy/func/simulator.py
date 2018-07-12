@@ -58,8 +58,7 @@ class Simulation(Simulator):
         """ Load XML Simulation file in order to perform simulation """
         try: 
             oSimulator = self.olibSymuVia
-            sfileNameEnc = self.sfileName.encode('UTF8')
-            oSimulation = oSimulator.SymLoadNetworkEx(sfileNameEnc)
+            oSimulation = oSimulator.SymLoadNetworkEx(self.encoded_FileName())
             print('Symuvia Library succesfully loaded')            
         except:
             print('Symuvia Library could not be loaded')
@@ -80,9 +79,13 @@ class Simulation(Simulator):
         self.bEnd = c_int()
         self.bSecond = c_bool(True)
         self.bForce = c_int(1)
+        self.bSuccess = 1
 
-    def set_NumberIterations(self, numIt):
-        """ Find the number of iterations within for a Simulation"""
+    def set_NumberIterations(self, numIt = 86399):
+        """ Find the number of iterations within for a Simulation
+
+            :param int numIt: Integer indicating the maximum number of iterations
+        """
         self.load_XML()
         sPathTime = 'SIMULATIONS/SIMULATION'
         oElement = self.oXMLTree.xpath(sPathTime)[0].attrib
@@ -97,8 +100,8 @@ class Simulation(Simulator):
         oTimeEd = datetime.strptime(sDateEd, sDateFormat)
         fDeltaT = oTimeEd - oTimeSt
         fDeltaT = fDeltaT.total_seconds()
-        nIterations = fDeltaT/float(sTimeStep)
-        return nIterations
+        nIterations = int(fDeltaT/float(sTimeStep))
+        return min(nIterations, numIt)
 
     def load_XML(self):
         """ Creates XML object within Python"""
@@ -106,11 +109,41 @@ class Simulation(Simulator):
         root = oTree.getroot()
         self.oXMLTree = root
 
-    def run_SimulatonbyStep(self):
+    def run_SimulationbyStep(self):
         """ Run a full simulation step by step"""
-        while self.bSuccess>0:
-            self.run_Step()
+        self.load_Simulation()
+        self.init_Simulation()
+
+        iIterations = self.set_NumberIterations(2)
+        for i in range(iIterations):
+            print(i)
+            x = self.run_Step()        
+            print(self.query_DataStep())
+            print(f'{x}')
+        # print(iIterations)
+        # step = iter(range(iIterations)) 
+        # while self.bSuccess>0:
+        #     try:
+        #         print('try')
+        #         iIt = next(step)
+        #         print(f'Iteration: {iIt}')
+        #         self.bSuccess = self.run_Step()
+        #         print(f'Value success: {self.bSuccess}')
+        #         s = self.query_DataStep()
+        #         print(s)
+        #     except StopIteration:
+        #         print('Stop by iteration')                
+        #         self.bSuccess = 0
+        #     except:        
+        #         self.bSuccess =  self.run_Step()
+        #         sRequest = self.query_DataStep()
+        #         print('Return from Symuvia Empty: {}'.format(sRequest))
+        #         self.bSuccess = 0
 
     def run_Step(self):
         """ Launches a single step fo simulation """
         self.bSuccess =  self.olibSymuVia.SymRunNextStepEx(self.sRequest, True, byref(self.bEnd))
+
+    def query_DataStep(self):
+        """ Query data from a step"""
+        return self.sRequest.value.decode('UTF8')
