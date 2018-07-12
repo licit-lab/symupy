@@ -7,6 +7,8 @@
     - Launching a simulation for the corresponding XML file
 """
 
+MAXSTEPS = 86400
+
 from datetime import datetime
 from lxml import etree
 from ctypes import cdll, create_string_buffer, c_int, byref, c_bool, c_double 
@@ -81,7 +83,7 @@ class Simulation(Simulator):
         self.bForce = c_int(1)
         self.bSuccess = 1
 
-    def set_NumberIterations(self, numIt = 86399):
+    def set_NumberIterations(self, numIt = MAXSTEPS):
         """ Find the number of iterations within for a Simulation
 
             :param int numIt: Integer indicating the maximum number of iterations
@@ -109,36 +111,27 @@ class Simulation(Simulator):
         root = oTree.getroot()
         self.oXMLTree = root
 
-    def run_SimulationbyStep(self):
+    def run_SimulationByStep(self, numIt = MAXSTEPS):
         """ Run a full simulation step by step"""
         self.load_Simulation()
         self.init_Simulation()
 
-        iIterations = self.set_NumberIterations(2)
-        for i in range(iIterations):
-            print(i)
-            x = self.run_Step()        
-            print(self.query_DataStep())
-            print(f'{x}')
-        # print(iIterations)
-        # step = iter(range(iIterations)) 
-        # while self.bSuccess>0:
-        #     try:
-        #         print('try')
-        #         iIt = next(step)
-        #         print(f'Iteration: {iIt}')
-        #         self.bSuccess = self.run_Step()
-        #         print(f'Value success: {self.bSuccess}')
-        #         s = self.query_DataStep()
-        #         print(s)
-        #     except StopIteration:
-        #         print('Stop by iteration')                
-        #         self.bSuccess = 0
-        #     except:        
-        #         self.bSuccess =  self.run_Step()
-        #         sRequest = self.query_DataStep()
-        #         print('Return from Symuvia Empty: {}'.format(sRequest))
-        #         self.bSuccess = 0
+        iIterations = self.set_NumberIterations(numIt)
+        step = iter(range(iIterations)) 
+        while self.bSuccess>0:
+            try:
+                iIt = next(step)
+                print(f'Iteration: {iIt+1}')
+                self.run_Step()            
+                s = self.query_DataStep()                
+            except StopIteration:
+                print('Stop by iteration')                
+                self.bSuccess = 0
+            except:        
+                self.bSuccess =  self.run_Step()
+                sRequest = self.query_DataStep()
+                print('Return from Symuvia Empty: {}'.format(sRequest))
+                self.bSuccess = 0
 
     def run_Step(self):
         """ Launches a single step fo simulation """
