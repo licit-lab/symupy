@@ -13,6 +13,8 @@ from datetime import datetime
 from lxml import etree
 from ctypes import cdll, create_string_buffer, c_int, byref, c_bool, c_double 
 
+from ..func.container import Container
+
 class Simulator():
     """
         Simulator class can launch a simulation. 
@@ -82,6 +84,7 @@ class Simulation(Simulator):
         self.bSecond = c_bool(True)
         self.bForce = c_int(1)
         self.bSuccess = 1
+        self.oContainer = Container()
 
     def set_NumberIterations(self, numIt = MAXSTEPS):
         """ Find the number of iterations within for a Simulation
@@ -123,7 +126,7 @@ class Simulation(Simulator):
                 iIt = next(step)
                 print(f'Iteration: {iIt+1}')
                 self.run_Step()            
-                s = self.query_DataStep()                
+                self.oContainer.fill_Container(self.query_DataStep())     
             except StopIteration:
                 print('Stop by iteration')                
                 self.bSuccess = 0
