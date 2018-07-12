@@ -11,5 +11,7 @@ x = Simulation(fildir,symdir)
 print('About to Run')
 b = x.run_Simulation()
 print('Finished with success!')
+nI = x.set_NumberIterations(0)
+print(nI)
 
 #print(locals())
