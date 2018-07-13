@@ -5,8 +5,7 @@ file_path = []
 file_name = []
 
 fildir = '/Users/ladino/Documents/03-Code/02-Python/ISTTT2019/Network/Merge_Demand_CAV.xml'
-symdir = '/Users/ladino/Documents/03-Code/02-Python/symupy/symupy/symupy/symuvia/Contents/Frameworks/libSymuVia.dylib'
-#symdir = '/Users/ladino/Documents/03-Code/02-Python/ISTTT2019/Symuvia/Contents/Frameworks/libSymuVia.dylib'
+symdir = os.getcwd() + '/symupy/symuvia/Contents/Frameworks/libSymuVia.dylib'
 
 x = Simulation(fildir,symdir)
 print('Load Simulation')
