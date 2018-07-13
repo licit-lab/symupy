@@ -142,4 +142,4 @@ class Simulation(Simulator):
 
     def query_DataStep(self):
         """ Query data from a step"""
-        return self.sRequest.value.decode('UTF8')
+        return self.sRequest.value.decode('UTF8') 
