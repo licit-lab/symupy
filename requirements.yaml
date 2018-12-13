@@ -1,0 +1,33 @@
+name: symupy
+channels:
+  - anaconda
+  - conda-forge
+  - defaults
+dependencies:
+  - autopep8=1.4.3=py37_0
+  - icu=58.2=h4b95b61_1
+  - libiconv=1.15=hdd342a3_7
+  - libxml2=2.9.8=hab757c2_1
+  - libxslt=1.1.32=hb819dd2_0
+  - lxml=4.2.5=py37hef8c89e_0
+  - pycodestyle=2.4.0=py37_0
+  - ca-certificates=2018.11.29=ha4d7672_0
+  - certifi=2018.11.29=py37_1000
+  - openssl=1.0.2p=h470a237_1
+  - python=3.7.1=h46c1a51_0
+  - sqlalchemy=1.2.15=py37h470a237_0
+  - xmltodict=0.11.0=py_1
+  - libcxx=4.0.1=hcfea43d_1
+  - libcxxabi=4.0.1=hcfea43d_1
+  - libedit=3.1.20170329=hb402a30_2
+  - libffi=3.2.1=h475c297_4
+  - ncurses=6.1=h0a44026_1
+  - pip=18.1=py37_0
+  - readline=7.0=h1de35cc_5
+  - setuptools=40.6.2=py37_0
+  - sqlite=3.25.3=ha441bb4_0
+  - tk=8.6.8=ha441bb4_0
+  - wheel=0.32.3=py37_0
+  - xz=5.2.4=h1de35cc_4
+  - zlib=1.2.11=h1de35cc_3
+prefix: /Users/ladino/anaconda3/envs/symupy
