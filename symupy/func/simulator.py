@@ -1,3 +1,7 @@
+from ctypes import cdll, create_string_buffer, c_int, byref, c_bool, c_double
+from ..func.container import Container
+from lxml import etree
+from datetime import datetime
 """
    This module contains information related to a Simulation.
    It is capable of:
@@ -9,16 +13,12 @@
 
 MAXSTEPS = 86400
 
-from datetime import datetime
-from lxml import etree
-from ctypes import cdll, create_string_buffer, c_int, byref, c_bool, c_double 
-
-from ..func.container import Container
 
 class Simulator():
     """
         Simulator class can launch a simulation. 
     """
+
     def __init__(self, fullSymPath):
         """
             Class constructor
@@ -36,8 +36,9 @@ class Simulator():
             oSimulator = cdll.LoadLibrary(self.sfullSymPath)
         except:
             print('Symuvia Library could not be loaded')
-        
+
         return oSimulator
+
 
 class Simulation(Simulator):
     """
@@ -47,7 +48,7 @@ class Simulation(Simulator):
     def __init__(self, fileName, fullSymPath):
         """
             Class constructor
-            
+
             :param string fileName: string containing the library path to a Simulation 
 
             :param string fullSymPath: string containing the library path to Simuvia 
@@ -60,10 +61,10 @@ class Simulation(Simulator):
 
     def load_Simulation(self):
         """ Load XML Simulation file in order to perform simulation """
-        try: 
+        try:
             oSimulator = self.olibSymuVia
             oSimulation = oSimulator.SymLoadNetworkEx(self.encoded_FileName())
-            print('Symuvia Library succesfully loaded')            
+            print('Symuvia Library succesfully loaded')
         except:
             print('Symuvia Library could not be loaded')
         return oSimulation
@@ -71,9 +72,9 @@ class Simulation(Simulator):
     def encoded_FileName(self):
         """ Returns the file name encoded for the simulator """
         return self.sfileName.encode('UTF8')
-    
+
     def run_Simulation(self):
-        """ Launches a full-time simulation """        
+        """ Launches a full-time simulation """
         return self.olibSymuVia.SymRunEx(self.encoded_FileName())
 
     def init_Simulation(self):
@@ -86,7 +87,7 @@ class Simulation(Simulator):
         self.bSuccess = 1
         self.oContainer = Container()
 
-    def set_NumberIterations(self, numIt = MAXSTEPS):
+    def set_NumberIterations(self, numIt=MAXSTEPS):
         """ Find the number of iterations within for a Simulation
 
             :param int numIt: Integer indicating the maximum number of iterations
@@ -114,31 +115,32 @@ class Simulation(Simulator):
         root = oTree.getroot()
         self.oXMLTree = root
 
-    def run_SimulationByStep(self, numIt = MAXSTEPS):
+    def run_SimulationByStep(self, numIt=MAXSTEPS):
         """ Run a full simulation step by step"""
         self.load_Simulation()
         self.init_Simulation()
 
         iIterations = self.set_NumberIterations(numIt)
-        step = iter(range(iIterations)) 
-        while self.bSuccess>0:
+        step = iter(range(iIterations))
+        while self.bSuccess > 0:
             try:
                 iIt = next(step)
                 print(f'Iteration: {iIt+1}')
-                self.run_Step()            
-                self.oContainer.fill_Container(self.query_DataStep())     
+                self.run_Step()
+                self.oContainer.fill_Container(self.query_DataStep())
             except StopIteration:
-                print('Stop by iteration')                
+                print('Stop by iteration')
                 self.bSuccess = 0
-            except:        
-                self.bSuccess =  self.run_Step()
+            except:
+                self.bSuccess = self.run_Step()
                 sRequest = self.query_DataStep()
                 print('Return from Symuvia Empty: {}'.format(sRequest))
                 self.bSuccess = 0
 
     def run_Step(self):
         """ Launches a single step fo simulation """
-        self.bSuccess =  self.olibSymuVia.SymRunNextStepEx(self.sRequest, True, byref(self.bEnd))
+        self.bSuccess = self.olibSymuVia.SymRunNextStepEx(
+            self.sRequest, True, byref(self.bEnd))
 
     def query_DataStep(self):
         """ Query data from a step"""

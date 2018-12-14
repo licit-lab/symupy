@@ -1,13 +1,16 @@
-import os 
-from symupy.func import Simulation 
+import os
+from symupy.func import Simulation
 
 file_path = []
 file_name = []
 
 fildir = '/Users/ladino/Documents/03-Code/02-Python/ISTTT2019/Network/Merge_Demand_CAV.xml'
+fildir = '/Users/ladino/Documents/03-Code/02-Python/Hierarchical-Platooning/Network/Merge_Demand_CAV.xml'
 symdir = os.getcwd() + '/symupy/symuvia/Contents/Frameworks/libSymuVia.dylib'
 
-x = Simulation(fildir,symdir)
+print(symdir)
+
+x = Simulation(fildir, symdir)
 print('Load Simulation')
 r = x.load_Simulation()
 print(f'Load sim {r}')
@@ -33,7 +36,7 @@ x.run_Step()
 s = x.query_DataStep()
 print(s)
 print(x.bSuccess)
-#print(locals())
+# print(locals())
 
 
 print('Runing iterative Simulation')
