@@ -2,7 +2,7 @@
 
  # symupy
 
-[![Join the chat at https://gitter.im/symupy/Lobby](https://badges.gitter.im/symupy/Lobby.svg)](https://gitter.im/symupy/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Join the chat at https://gitter.im/symupy/Lobby](https://badges.gitter.im/symupy/Lobby.svg)](https://gitter.im/symupy/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) ![Packagist](https://img.shields.io/packagist/l/doctrine/orm.svg)
 
 A Python API to control and manipulate SymuVia
 
