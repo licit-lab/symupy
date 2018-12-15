@@ -7,7 +7,7 @@
 import os
 import sys
 import unittest
-import symupy.symupy.io
+import symupy.symupy.io as io
 
 print(os.getcwd())
 stestDir = os.getcwd()
