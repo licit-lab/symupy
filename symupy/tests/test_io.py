@@ -7,12 +7,14 @@
 import os
 import sys
 import unittest
+import symupy.symupy.io
 
 print(os.getcwd())
 stestDir = os.getcwd()
 smodulePathDir = ('symupy')
-smodulePathName = os.path.join(stestDir, smodulePathDir) 
+smodulePathName = os.path.join(stestDir, smodulePathDir)
 print(smodulePathName)
+
 
 class Testio(unittest.TestCase):
     """
@@ -22,10 +24,8 @@ class Testio(unittest.TestCase):
     # Submodule directory
     stestDir = os.getcwd()
     smodulePathDir = ('symupy')
-    smodulePathName = os.path.join(stestDir, smodulePathDir)                
+    smodulePathName = os.path.join(stestDir, smodulePathDir)
     sys.path.append(smodulePathName)
-
-    import symupy.io
 
     def test_load_SymuViaLib(self):
         """
@@ -37,4 +37,3 @@ class Testio(unittest.TestCase):
 
 if __name__ == "__main__":
     pass
- 
