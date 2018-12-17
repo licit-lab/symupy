@@ -1,7 +1,3 @@
-from ctypes import cdll, create_string_buffer, c_int, byref, c_bool, c_double
-from ..func.container import Container
-from lxml import etree
-from datetime import datetime
 """
    This module contains information related to a Simulation.
    It is capable of:
@@ -11,26 +7,42 @@ from datetime import datetime
     - Launching a simulation for the corresponding XML file
 """
 
+# C imports
+from ctypes import cdll, create_string_buffer, c_int, byref, c_bool, c_double
+
+# Internals
+from .container import Container
+
+# Supplementary tools
+from lxml import etree
+from datetime import datetime
+
 MAXSTEPS = 86400
 
 
-class Simulator():
+class Simulator(object):
     """
-        Simulator class can launch a simulation. 
+    Loader: 'libSymuvia.dylib'
+
+    Provide the absolute path:
+    /Users/myuser/myproject/libSymuVia.dylib
+
+    Default relative path: 
+    symupy/symuvia/Contents/Frameworks/libSymuVia.dylib
+
     """
 
-    def __init__(self, fullSymPath):
+    def __init__(self, fullSymPath: str)-> None:
         """
-            Class constructor
-            :param string fullSymPath: string containing the library path to Simuvia 
+        Class constructor
         """
         self.sfullSymPath = fullSymPath
         self.olibSymuVia = self.load_SymuViaLib()
         self.iBufferString = 10000
 
-    def load_SymuViaLib(self):
+    def load_SymuViaLib(self)->cdll:
         """
-            Library loader 
+        Library loader 
         """
         try:
             oSimulator = cdll.LoadLibrary(self.sfullSymPath)

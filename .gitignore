@@ -1,6 +1,8 @@
 # Folders
-symupy/symuvia/Contents/
+*symuvia*
+
 # Ignore 
 *.pyc
 *.ipynb*
+*cache*
 # Exceptions

@@ -2,19 +2,20 @@
     Input parser 
 """
 
-import os 
-import platform 
+import os
+import platform
 from ctypes import cdll
 
 from ..func.simulator import Simulator, Simulation
 
 # Directory path where simuvia can be found
 _MACPTH = ('simupy', 'symuvia', 'Contents', 'Frameworks')
-_LINPTH = () # TODO: Assign default path in Linux
-_WINPTH = () # TODO: Assign default path in Windows
+_LINPTH = ()  # TODO: Assign default path in Linux
+_WINPTH = ()  # TODO: Assign default path in Windows
 _MACLYB = ('libSymuVia.dylib',)
-_LINLYB = () # TODO: Assign default library in Linux
-_WINLIB = () # TODO: Assign default library in Windows
+_LINLYB = ()  # TODO: Assign default library in Linux
+_WINLIB = ()  # TODO: Assign default library in Windows
+
 
 def get_default_lyb_path():
     """
@@ -23,29 +24,31 @@ def get_default_lyb_path():
     os_type = platform.system()
     dlibPathOS = {'Darwin': _MACPTH,
                   'Linux': _LINPTH,
-                  'Windows': _WINPTH,}
+                  'Windows': _WINPTH, }
     dlibNameOS = {'Darwin': _MACLYB,
                   'Linux': _LINLYB,
                   'Windows': _WINLIB}
     slibPathName = dlibPathOS[os_type]+dlibNameOS[os_type]
     return slibPathName
 
+
 def build_full_path(tlibPathName):
     """
         Builds a 
         :param tuple tlibPathName: Relative path for the library
     """
-    scurrDir = os.getcwd()            
+    scurrDir = os.getcwd()
     slibPathName = os.path.join(scurrDir, *tlibPathName)
 
     return slibPathName
+
 
 class Scenario():
     """
         Class to parse input files to SymuVia
     """
 
-    def __init__(self, sdirFile = None, sdirSim = None):
+    def __init__(self, sdirFile=None, sdirSim=None):
         """
             Initialize a class with 
 
@@ -61,16 +64,17 @@ class Scenario():
             Creates a Simulator object 
         """
         if self.fullSymPath:
-            try:                 
+            try:
                 self.olibSymuVia = Simulator(self.fullSymPath)
-            except:                 
+            except:
                 self.olibSymuVia = None
-            finally: 
+            finally:
                 self.print_LoadStatus()
         else:
             tlibPathName = get_default_lyb_path()
             self.fullSymPath = build_full_path(tlibPathName)
-            print(f'Defining a default path for the library at: {self.fullSymPath}')
+            print(
+                f'Defining a default path for the library at: {self.fullSymPath}')
             self.load_SymuViaLib()
 
     def create_Scenarios(self, fileName):
@@ -78,15 +82,16 @@ class Scenario():
             Load xml input file for SymuVia
         """
         if self.fileName:
-            try:                 
-                self.olibSymuVia = symuvialib.SymLoadNetworkEx(file_name.encode('UTF8'))
-                print('File successfully loaded') 
+            try:
+                self.olibSymuVia = symuvialib.SymLoadNetworkEx(
+                    file_name.encode('UTF8'))
+                print('File successfully loaded')
                 print('File directory:\n')
-                print('{}'.format(self.fileName)) 
-            except: 
+                print('{}'.format(self.fileName))
+            except:
                 print('File could not be loaded')
                 self.olibSymuVia = None
-            
+
     def print_LoadStatus(self):
         """
             Status printer
@@ -97,10 +102,10 @@ class Scenario():
         try:
             if self.olibSymuVia:
                 if sdefPathLib == self.fullSymPath:
-                    print('Default path library loaded.')    
+                    print('Default path library loaded.')
                 else:
                     print('External path library loaded.')
         except AttributeError:
-            print(f'Library could not loaded. Try providing defining a new path') 
-        finally: 
+            print(f'Library could not loaded. Try providing defining a new path')
+        finally:
             print(f'The path: {self.fullSymPath} was used')
