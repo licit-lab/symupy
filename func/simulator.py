@@ -28,17 +28,17 @@ from datetime import datetime
 MAXSTEPS = 86400  # Max simulation steps
 
 
-def find_simulator_lib():
+def find_path_file(target_file: str = 'libSymuVia.dylib')->str:
     "Returns absolute path libSymuVia.dylib"
     for root, dirs, files in os.walk(os.getcwd()):
         for name in files:
-            if name == 'libSymuVia.dylib':
+            if name == target_file:
                 return os.path.join(root, name)
 
 
-DEFAULT_LBR = find_simulator_lib()
+DEFAULT_LBR = find_path_file()
 
-# ---------------------------CLASSES-------------------------------------------
+# ---------------------------CLASSES---------------------------------------------
 
 
 class Simulator(object):
@@ -75,24 +75,24 @@ class Simulator(object):
 
 class Simulation(Simulator):
     """
-        Simulation parses an XML data for a paricular case. When created a simulator is asociated
+    Simulation parses an XML data for a paricular case. When created a simulator is asociated
     """
 
     def __init__(self, fileName, fullSymPath: str = DEFAULT_LBR):
         """
             Class constructor
 
-            :param string fileName: string containing the library path to a Simulation 
+            :param string fileName: simulation absolute path
 
-            :param string fullSymPath: string containing the library path to Simuvia 
+            :param string fullSymPath: simulator absolute path
         """
 
         super().__init__(fullSymPath)
         print(f'Simulator created at: {fileName}')
         self.sfileName = fileName
-        self.oSimulation = self.load_Simulation()
+        self.load_Simulation()
 
-    def load_Simulation(self):
+    def load_Simulation(self)->None:
         """ Load XML Simulation file in order to perform simulation """
         try:
             oSimulator = self.olibSymuVia
@@ -100,7 +100,7 @@ class Simulation(Simulator):
             print('Symuvia Library succesfully loaded')
         except:
             print('Symuvia Library could not be loaded')
-        return oSimulation
+        self.oSimulation = oSimulation
 
     def encoded_FileName(self):
         """ Returns the file name encoded for the simulator """
