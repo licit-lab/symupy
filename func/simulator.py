@@ -11,7 +11,7 @@
 from ctypes import cdll, create_string_buffer, c_int, byref, c_bool, c_double
 
 # Internals
-from .container import Container
+from symupy.func.container import Container
 
 # Supplementary tools
 from lxml import etree
