@@ -7,6 +7,11 @@
     - Launching a simulation for the corresponding XML file
 """
 
+# ---------------------------IMPORTS--------------------------------------------
+
+# Utilities
+import os
+
 # C imports
 from ctypes import cdll, create_string_buffer, c_int, byref, c_bool, c_double
 
@@ -17,7 +22,23 @@ from symupy.func.container import Container
 from lxml import etree
 from datetime import datetime
 
-MAXSTEPS = 86400
+# ---------------------------CONSTANTS------------------------------------------
+
+
+MAXSTEPS = 86400  # Max simulation steps
+
+
+def find_simulator_lib():
+    "Returns absolute path libSymuVia.dylib"
+    for root, dirs, files in os.walk(os.getcwd()):
+        for name in files:
+            if name == 'libSymuVia.dylib':
+                return os.path.join(root, name)
+
+
+DEFAULT_LBR = find_simulator_lib()
+
+# ---------------------------CLASSES---------------------------------------------
 
 
 class Simulator(object):
@@ -32,7 +53,7 @@ class Simulator(object):
 
     """
 
-    def __init__(self, fullSymPath: str)-> None:
+    def __init__(self, fullSymPath: str = DEFAULT_LBR)-> None:
         """
         Class constructor
         """
@@ -57,7 +78,7 @@ class Simulation(Simulator):
         Simulation parses an XML data for a paricular case. When created a simulator is asociated
     """
 
-    def __init__(self, fileName, fullSymPath):
+    def __init__(self, fileName, fullSymPath: str = DEFAULT_LBR):
         """
             Class constructor
 
