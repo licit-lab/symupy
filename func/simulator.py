@@ -7,7 +7,7 @@
     - Launching a simulation for the corresponding XML file
 """
 
-# ---------------------------IMPORTS--------------------------------------------
+# ---------------------------IMPORTS------------------------------------------
 
 # Utilities
 import os
@@ -22,7 +22,7 @@ from symupy.func.container import Container
 from lxml import etree
 from datetime import datetime
 
-# ---------------------------CONSTANTS------------------------------------------
+# ---------------------------CONSTANTS----------------------------------------
 
 
 MAXSTEPS = 86400  # Max simulation steps
@@ -38,7 +38,7 @@ def find_simulator_lib():
 
 DEFAULT_LBR = find_simulator_lib()
 
-# ---------------------------CLASSES---------------------------------------------
+# ---------------------------CLASSES-------------------------------------------
 
 
 class Simulator(object):
