@@ -8,7 +8,7 @@ import numpy as np
 from numpy import ndarray
 import networkx as nx
 
-from .parameters import VehParameter, SimParameter
+from symupy.func.parameters import VehParameter, SimParameter
 
 from collections import OrderedDict
 
@@ -81,7 +81,6 @@ class VehDynamic(object):
         return self.veh_dyn.__name__
 
 
-@VehDynamic
 def dynamic_3rd(veh_cst: ndarray, veh_nif: ndarray, veh_ctr: ndarray,
                 veh_par: VehParameter, sim_par: SimParameter) -> ndarray:
     """

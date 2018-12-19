@@ -2,12 +2,37 @@
     Unit test for Models
 """
 
+# ---------------------------IMPORTS------------------------------------------
+
+# Internals
+from symupy.func import (dynamic_2nd, dynamic_3rd, VehDynamic, Vehicle)
+from symupy.func import VehParameter, SimParameter
+
+# Utils
+import unittest
 import numpy as np
 from numpy.testing import assert_almost_equal
 
-from symupy.func import (dynamic_2nd, dynamic_3rd, VehDynamic, Vehicle)
-from symupy.func import VehParameter, SimParameter
-import unittest
+# ---------------------------CONSTANTS----------------------------------------
+
+# Create a simulation timings
+T_STP = 0.01
+T_HOR = 0.5
+T_SIM = 60
+
+sim_par = SimParameter(T_STP, T_HOR, T_SIM)
+
+# Create a vehicle model / Provided originally by the simulator
+U_FFS = 25.0
+K_X = 0.16
+W_CGT = 6.25
+L_VEH = 4.0
+
+S0 = 10.0
+
+veh_par = VehParameter.VehParameterSym(U_FFS, K_X, W_CGT, L_VEH)
+
+# ---------------------------TESTS-------------------------------------------
 
 
 class TestModel(unittest.TestCase):
@@ -17,7 +42,7 @@ class TestModel(unittest.TestCase):
         Test Vehicle class generation
         """
         # veh_par = VehParameter()
-        veh_1 = Vehicle()
+        veh_1 = Vehicle(sim_par, veh_par, dynamic_2nd)
         self.assertTrue(isinstance(veh_1, Vehicle))
         self.assertEqual(veh_1.n_veh, 1)
 

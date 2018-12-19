@@ -38,7 +38,7 @@ def find_path_file(target_file: str = 'libSymuVia.dylib')->str:
 
 DEFAULT_LBR = find_path_file()
 
-# ---------------------------CLASSES---------------------------------------------
+# ---------------------------CLASSES-------------------------------------------
 
 
 class Simulator(object):
