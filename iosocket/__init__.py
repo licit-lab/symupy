@@ -1,5 +1,5 @@
 """
-    Imports from the io (Input/Output) submodule
+    Imports from the iosocket (Input/Output) submodule
 """
 
 from .importer import Scenario as Scenario
