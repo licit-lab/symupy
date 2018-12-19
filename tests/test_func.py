@@ -20,3 +20,7 @@ class Test_func(unittest.TestCase):
         sLibPath = os.path.join(os.getcwd(), *tRelLibPath)
         print(f'Test dir: {sLibPath}')
         # objSimulator = Simulator(sLibPath)
+
+
+if __name__ == "__main__":
+    unittest.main()

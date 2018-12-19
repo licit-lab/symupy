@@ -1,5 +1,3 @@
-from .func import *
-from .iosocket import *
 """
     SymuPy: Symuvia Traffic Simulator - Python API 
 
@@ -22,6 +20,9 @@ __maintainer__ = "Andres Ladino"
 __email__ = "andres.ladino@ifsttar.fr"
 __status__ = "Prototype"
 
+
+from symupy.func import *
+from symupy.iosocket import *
 
 __all__ = ['iosocket',
            'control',
