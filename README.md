@@ -20,7 +20,8 @@ Be sure to place one copy of the simulator within the folder `symuvia`. Be sure 
 └── symupy
     ├── control
     ├── func
-    ├── io
+    ├── iosocket
+    ├── network
     ├── symuvia
     │   └── Contents
     │       └── Frameworks
