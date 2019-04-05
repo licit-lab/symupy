@@ -21,7 +21,10 @@ __email__ = "andres.ladino@ifsttar.fr"
 __status__ = "Prototype"
 
 
-__all__ = ['io',
+from symupy.func import *
+from symupy.iosocket import *
+
+__all__ = ['iosocket',
            'control',
            'func',
            'util',
@@ -29,7 +32,5 @@ __all__ = ['io',
 
 print('Importing the Simupy package')
 
-from .io import *
-from .func import *
 # from control import *
 # from util import *
