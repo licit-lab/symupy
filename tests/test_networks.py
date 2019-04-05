@@ -5,7 +5,7 @@ import unittest
 
 
 from symupy.iosocket import Scenario, SymuViaExporter
-from symupy.network import VehicleNetwork
+from symupy.catnet import VehicleNetwork
 
 print(os.getcwd())
 stestDir = os.getcwd()
