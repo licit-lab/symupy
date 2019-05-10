@@ -14,9 +14,22 @@ Clone this repository or download the files [here](https://github.com/symuvia/sy
 git clone https://github.com/symuvia/symupy.git
 ```
 
+## Work environment 
+
+This package does not validate dependencies for the moment and relies on [Conda](https://www.anaconda.com/distribution/) for the updates. An environment is for the moment required. In a bash terminal launch:
+
+```sh
+conda create --file requirements.yaml
+```
+
 ## Symuvia library 
 
-A copy compiled version of symuvia is included within the folder `symupy/symuvia`. Unfortunately while we fix 
+A copy compiled version of symuvia is provided within the folder `symupy/lib`. Unfortunately while we fix this [issue](https://github.com/symuvia/symupy/issues/7), it is likely to fix dependencies manually. For this: 
+
+```sh 
+cd symupy/lib
+python3 launch.py
+```
 
 ## Usage 
 
