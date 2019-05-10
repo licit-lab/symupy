@@ -1,9 +1,11 @@
 # Folders
 .vscode
-*symuvia*
 
 # Ignore 
 *.pyc
 *.ipynb*
 *cache*
+*.log
+
 # Exceptions
+
