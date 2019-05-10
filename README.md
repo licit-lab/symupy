@@ -19,7 +19,7 @@ git clone https://github.com/symuvia/symupy.git
 This package does not validate dependencies for the moment and relies on [Conda](https://www.anaconda.com/distribution/) for the updates. An environment is for the moment required. In a bash terminal launch:
 
 ```sh
-conda create --file requirements.yaml
+conda env create --file requirements.yaml
 ```
 
 ## Symuvia library 
