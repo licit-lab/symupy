@@ -1,0 +1,200 @@
+Verification for: All libraries
+libsqlite3.0.dylib
+  origin (True): /usr/local/opt/sqlite/lib/libsqlite3.0.dylib
+  origin (True): /usr/lib/libSystem.B.dylib
+libxml2.2.dylib
+  origin (False): /usr/local/opt/libxml2/lib/libxml2.2.dylib
+  origin (True): /usr/lib/libSystem.B.dylib
+  origin (True): /usr/lib/libz.1.dylib
+  origin (True): /usr/lib/libiconv.2.dylib
+libboost_thread.dylib
+  origin (False): libboost_thread.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libboost_system.dylib
+  origin (True): /usr/lib/libc++.1.dylib
+  origin (True): /usr/lib/libSystem.B.dylib
+libboost_wserialization.dylib
+  origin (False): libboost_wserialization.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libboost_serialization.dylib
+  origin (True): /usr/lib/libc++.1.dylib
+  origin (True): /usr/lib/libSystem.B.dylib
+libxerces-c-3.1.dylib
+  origin (False): /usr/local/lib/libxerces-c-3.1.dylib
+  origin (True): /usr/lib/libSystem.B.dylib
+  origin (True): /usr/lib/libcurl.4.dylib
+  origin (True): /usr/lib/libc++.1.dylib
+libgeos_c.1.dylib
+  origin (False): /usr/local/lib/libgeos_c.1.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libgeos-3.4.2.dylib
+  origin (True): /usr/lib/libc++.1.dylib
+  origin (True): /usr/lib/libSystem.B.dylib
+libproj.9.dylib
+  origin (False): /usr/local/lib/libproj.9.dylib
+  origin (True): /usr/lib/libSystem.B.dylib
+liblwgeom-2.1.5.dylib
+  origin (False): /usr/local/opt/liblwgeom/lib/liblwgeom-2.1.5.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libgeos_c.1.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libproj.9.dylib
+  origin (True): /usr/lib/libSystem.B.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libjson-c.2.dylib
+libboost_locale.dylib
+  origin (False): libboost_locale.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libboost_system.dylib
+  origin (True): /usr/lib/libiconv.2.dylib
+  origin (True): /usr/lib/libc++.1.dylib
+  origin (True): /usr/lib/libSystem.B.dylib
+libpng16.16.dylib
+  origin (True): /usr/local/lib/libpng16.16.dylib
+  origin (True): /usr/lib/libz.1.dylib
+  origin (True): /usr/lib/libSystem.B.dylib
+libxqilla.3.dylib
+  origin (False): /usr/local/lib/libxqilla.3.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libxerces-c-3.1.dylib
+  origin (True): /usr/lib/libSystem.B.dylib
+  origin (True): /usr/lib/libc++.1.dylib
+libgeos-3.4.2.dylib
+  origin (False): /usr/local/lib/libgeos-3.4.2.dylib
+  origin (True): /usr/lib/libc++.1.dylib
+  origin (True): /usr/lib/libSystem.B.dylib
+libSymuMaster.dylib
+  origin (False): @rpath/libSymuMaster.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libSymuVia.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libSymuCore.dylib
+  origin (True): /usr/local/lib/libxerces-c-3.2.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libboost_date_time.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libboost_log.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libboost_system.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libboost_filesystem.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libboost_thread.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libboost_chrono.dylib
+  origin (True): /usr/lib/libc++.1.dylib
+  origin (True): /usr/lib/libSystem.B.dylib
+libboost_regex.dylib
+  origin (False): libboost_regex.dylib
+  origin (True): /usr/lib/libc++.1.dylib
+  origin (True): /usr/lib/libSystem.B.dylib
+libboost_python.dylib
+  origin (False): libboost_python.dylib
+  origin (True): /usr/lib/libc++.1.dylib
+  origin (True): /usr/lib/libSystem.B.dylib
+libboost_program_options.dylib
+  origin (False): libboost_program_options.dylib
+  origin (True): /usr/lib/libc++.1.dylib
+  origin (True): /usr/lib/libSystem.B.dylib
+libgeotiff.2.dylib
+  origin (False): /usr/local/lib/libgeotiff.2.dylib
+  origin (True): /usr/lib/libSystem.B.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libproj.9.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libtiff.5.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libjpeg.8.dylib
+  origin (True): /usr/lib/libz.1.dylib
+libSymuCore.dylib
+  origin (False): @rpath/libSymuCore.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libboost_date_time.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libboost_locale.dylib
+  origin (True): /usr/lib/libc++.1.dylib
+  origin (True): /usr/lib/libSystem.B.dylib
+libspatialite.7.dylib
+  origin (False): /usr/local/lib/libspatialite.7.dylib
+  origin (True): /usr/lib/libSystem.B.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libxml2.2.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libfreexl.1.dylib
+  origin (True): /usr/lib/libiconv.2.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libproj.9.dylib
+  origin (True): /usr/lib/libz.1.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libsqlite3.0.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/liblwgeom-2.1.5.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libgeos_c.1.dylib
+libboost_serialization.dylib
+  origin (False): libboost_serialization.dylib
+  origin (True): /usr/lib/libc++.1.dylib
+  origin (True): /usr/lib/libSystem.B.dylib
+libgdal.1.dylib
+  origin (False): /usr/local/lib/libgdal.1.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libproj.9.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libjson-c.2.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libfreexl.1.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libgeos_c.1.dylib
+  origin (True): /usr/lib/libexpat.1.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libgif.4.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libjpeg.8.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libgeotiff.2.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libtiff.5.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libpng16.16.dylib
+  origin (True): /usr/lib/libSystem.B.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libspatialite.7.dylib
+  origin (False): /Users/ladino/Documents/03-Code/02-Python/symupy/symupy-dev/symupy/symuvia/Contents/Frameworks/libsqlite3.0.dylib
+  origin (True): /usr/lib/libcurl.4.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libxml2.2.dylib
+  origin (True): /usr/lib/libz.1.dylib
+  origin (True): /usr/lib/libiconv.2.dylib
+  origin (True): /usr/lib/libc++.1.dylib
+libboost_filesystem.dylib
+  origin (False): libboost_filesystem.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libboost_system.dylib
+  origin (True): /usr/lib/libc++.1.dylib
+  origin (True): /usr/lib/libSystem.B.dylib
+libjson-c.2.dylib
+  origin (False): /usr/local/lib/libjson-c.2.dylib
+  origin (True): /usr/lib/libSystem.B.dylib
+libtiff.5.dylib
+  origin (True): /usr/local/lib/libtiff.5.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libjpeg.8.dylib
+  origin (True): /usr/lib/libz.1.dylib
+  origin (True): /usr/lib/libSystem.B.dylib
+libjpeg.8.dylib
+  origin (False): /usr/local/lib/libjpeg.8.dylib
+  origin (True): /usr/lib/libSystem.B.dylib
+libgif.4.dylib
+  origin (False): /usr/local/lib/libgif.4.dylib
+  origin (True): /usr/lib/libSystem.B.dylib
+libboost_log.dylib
+  origin (False): libboost_log.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libboost_chrono.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libboost_thread.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libboost_date_time.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libboost_filesystem.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libboost_system.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libboost_regex.dylib
+  origin (True): /usr/lib/libc++.1.dylib
+  origin (True): /usr/lib/libSystem.B.dylib
+libodbc.2.dylib
+  origin (False): /usr/local/lib/libodbc.2.dylib
+  origin (True): /usr/lib/libiconv.2.dylib
+  origin (True): /usr/lib/libSystem.B.dylib
+libboost_date_time.dylib
+  origin (False): libboost_date_time.dylib
+  origin (True): /usr/lib/libc++.1.dylib
+  origin (False): /Users/ladino/Documents/03-Code/02-Python/symupy/symupy/symuvia/Contents/Frameworks/libSystem.B.dylib
+libSymuVia.dylib
+  origin (False): @rpath/libSymuVia.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libboost_serialization.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libboost_wserialization.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libboost_python.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libboost_locale.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libboost_date_time.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libboost_log.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libboost_system.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libboost_filesystem.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libboost_thread.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libboost_chrono.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libxerces-c-3.1.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libxqilla.3.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libgdal.1.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libSymuCore.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libodbc.2.dylib
+  origin (True): /usr/lib/libc++.1.dylib
+  origin (True): /usr/lib/libSystem.B.dylib
+libboost_system.dylib
+  origin (False): libboost_system.dylib
+  origin (True): /usr/lib/libc++.1.dylib
+  origin (True): /usr/lib/libSystem.B.dylib
+libfreexl.1.dylib
+  origin (False): /usr/local/lib/libfreexl.1.dylib
+  origin (True): /usr/lib/libSystem.B.dylib
+  origin (True): /usr/lib/libiconv.2.dylib
+libboost_chrono.dylib
+  origin (False): libboost_chrono.dylib
+  origin (False): /Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin/libboost_system.dylib
+  origin (True): /usr/lib/libc++.1.dylib
+  origin (True): /usr/lib/libSystem.B.dylib
+['/usr/local/opt/sqlite/lib', '/usr/lib', '/usr/local/opt/libxml2/lib', '', '/Users/ladino/Documents/01-Platforms/01-Symuvia/05-SymuViaModPos/darwin', '/usr/local/lib', '/usr/local/opt/liblwgeom/lib', '@rpath', '/Users/ladino/Documents/03-Code/02-Python/symupy/symupy-dev/symupy/symuvia/Contents/Frameworks', '/Users/ladino/Documents/03-Code/02-Python/symupy/symupy/symuvia/Contents/Frameworks']
