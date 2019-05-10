@@ -11,24 +11,12 @@ A Python API to control and manipulate SymuVia
 Clone this repository or download the files [here](https://github.com/symuvia/symupy/archive/master.zip)
 
 ```sh 
-git clone https://github.com/research-licit/Hierarchical-Platooning.git
+git clone https://github.com/symuvia/symupy.git
 ```
 
-Be sure to place one copy of the simulator within the folder `symuvia`. Be sure to respect the following structure
+## Symuvia library 
 
-```sh
-└── symupy
-    ├── control
-    ├── func
-    ├── iosocket
-    ├── network
-    ├── symuvia
-    │   └── Contents
-    │       └── Frameworks
-    ├── tests
-    └── util
-```
-
+A copy compiled version of symuvia is included within the folder `symupy/symuvia`. Unfortunately while we fix 
 
 ## Usage 
 
@@ -37,11 +25,24 @@ In python
 ```python 
 from symupy.func import Simulation 
 
-XML_path = 'users/Documents/file.xml'
-Sim_path = 'users/Simulator/Contents/Frameworks/libSymuVia.dylib
+xml_path = 'path/file.xml'
+sim_path = 'path/libSymuVia.dylib'
 
-x = Simulation(fildir,symdir)
-b = x.run_Simulation()
+# Use the following in case you dont have access to a version of SymuVia 
+import os
+lib_path = ("symupy", "lib", "darwin", "libSymuVia.dylib")
+sim_path = os.path.join(os.getcwd(), *lib_path)
+
+# Charge library
+sim_instance = Simulation(sim_path)
+sim_instance.load_symuvia()
+
+# Location of Simulation File
+sim_file = Simulation(xml_path)
+
+# Run simulation 
+simulator.run_simulation(sim_case)
+
 ```
 ## External tools
 
