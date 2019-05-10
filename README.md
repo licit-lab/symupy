@@ -47,7 +47,7 @@ lib_path = ("symupy", "lib", "darwin", "libSymuVia.dylib")
 sim_path = os.path.join(os.getcwd(), *lib_path)
 
 # Charge library
-sim_instance = Simulation(sim_path)
+sim_instance = Simulator(sim_path)
 sim_instance.load_symuvia()
 
 # Location of Simulation File
