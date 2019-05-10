@@ -36,7 +36,7 @@ python3 launch.py
 In python 
 
 ```python 
-from symupy.func import Simulation 
+from symupy.api import Simulation, Simulator
 
 xml_path = 'path/file.xml'
 sim_path = 'path/libSymuVia.dylib'
