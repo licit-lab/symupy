@@ -28,7 +28,7 @@ A copy compiled version of symuvia is provided within the folder `symupy/lib`. U
 
 ```sh 
 cd symupy/lib
-python3 launch.py
+python3 launcher.py
 ```
 
 ## Usage 
