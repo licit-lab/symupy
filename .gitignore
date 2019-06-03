@@ -3,5 +3,6 @@ __pycache__
 .vscode
 *.pytest*
 *output*
+symupy/lib/
 
 *.log
