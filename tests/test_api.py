@@ -100,7 +100,7 @@ class TestBottleneck001(unittest.TestCase):
                 s.stop_step()
 
         self.assertGreaterEqual(veh_id, 0)
-        self.assertEqual(drive_status,1)
+        self.assertEqual(drive_status, 1)
         self.assertAlmostEqual(
             sim_instance.data.query_vehicle_position(0)[0], 1.0)
 
@@ -151,6 +151,9 @@ class TestBottleneck002(unittest.TestCase):
         pass
 
     def test_query_vehicle_neighbors_bottleneck002(self):
+        pass
+
+    def test_fixed_leader_neighbors_bottleneck002(self):
         pass
 
     def get_simulator(self):
