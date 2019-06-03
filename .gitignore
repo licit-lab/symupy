@@ -1,8 +1,9 @@
-__pycache__
+# Folders
+*cache*
 *.ipynb_checkpoints/
 .vscode
 *.pytest*
 *output*
-lib/
 
+# Files 
 *.log
