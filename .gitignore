@@ -1,4 +1,5 @@
 # Folders
+__pycache__
 *cache*
 *.ipynb_checkpoints/
 .vscode
