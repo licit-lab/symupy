@@ -1,9 +1,7 @@
-# Folders
+__pycache__
+*.ipynb_checkpoints/
 .vscode
-*symuvia*
+*.pytest*
+*output*
 
-# Ignore 
-*.pyc
-*.ipynb*
-*cache*
-# Exceptions
+*.log

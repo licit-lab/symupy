@@ -11,37 +11,51 @@ A Python API to control and manipulate SymuVia
 Clone this repository or download the files [here](https://github.com/symuvia/symupy/archive/master.zip)
 
 ```sh 
-git clone https://github.com/research-licit/Hierarchical-Platooning.git
+git clone https://github.com/symuvia/symupy.git
 ```
 
-Be sure to place one copy of the simulator within the folder `symuvia`. Be sure to respect the following structure
+## Work environment 
+
+This package does not validate dependencies for the moment and relies on [Conda](https://www.anaconda.com/distribution/) for the updates. An environment is for the moment required. In a bash terminal launch:
 
 ```sh
-└── symupy
-    ├── control
-    ├── func
-    ├── iosocket
-    ├── network
-    ├── symuvia
-    │   └── Contents
-    │       └── Frameworks
-    ├── tests
-    └── util
+conda env create --file requirements.yaml
 ```
 
+## Symuvia library 
+
+A copy compiled version of symuvia is provided within the folder `symupy/lib`. Unfortunately while we fix this [issue](https://github.com/symuvia/symupy/issues/7), it is likely to fix dependencies manually. For this: 
+
+```sh 
+cd symupy/lib
+python3 launcher.py
+```
 
 ## Usage 
 
 In python 
 
 ```python 
-from symupy.func import Simulation 
+from symupy.api import Simulation, Simulator
 
-XML_path = 'users/Documents/file.xml'
-Sim_path = 'users/Simulator/Contents/Frameworks/libSymuVia.dylib
+xml_path = 'path/file.xml'
+sim_path = 'path/libSymuVia.dylib'
 
-x = Simulation(fildir,symdir)
-b = x.run_Simulation()
+# Use the following in case you dont have access to a version of SymuVia 
+import os
+lib_path = ("symupy", "lib", "darwin", "libSymuVia.dylib")
+sim_path = os.path.join(os.getcwd(), *lib_path)
+
+# Charge library
+sim_instance = Simulator(sim_path)
+sim_instance.load_symuvia()
+
+# Location of Simulation File
+sim_file = Simulation(xml_path)
+
+# Run simulation 
+simulator.run_simulation(sim_case)
+
 ```
 ## External tools
 
