@@ -5,7 +5,7 @@ import unittest
 from symupy.api import Simulation, Simulator
 
 
-class TestBottleneck001(unittest.TestCase):
+class TestAPI(unittest.TestCase):
 
     def setUp(self):
         self.get_simulator()
@@ -16,6 +16,17 @@ class TestBottleneck001(unittest.TestCase):
         self.sim_instance.load_symuvia()
         self.assertEqual(self.sim_instance.libraryname,
                          self.sim_path)
+
+    def get_simulator(self):
+        self.libpath = ("symupy", "lib", "darwin", "libSymuVia.dylib")
+        self.sim_path = os.path.join(os.getcwd(), *self.libpath)
+
+
+class TestBottleneck001(unittest.TestCase):
+
+    def setUp(self):
+        self.get_simulator()
+        self.get_bottleneck_001()
 
     def test_load_bottleneck_001(self):
         sim_case = Simulation(self.mocks_path)
@@ -103,7 +114,7 @@ class TestBottleneck001(unittest.TestCase):
         self.assertGreaterEqual(veh_id, 0)
         self.assertEqual(drive_status, 1)
         self.assertAlmostEqual(
-            sim_instance.data.query_vehicle_position(0)[1], 20.0)
+            sim_instance.data.query_vehicle_position('1')[0], 20.0)
 
     def test_drive_vehicle_bottleneck_001(self):
         sim_case = Simulation(self.mocks_path)
@@ -114,7 +125,7 @@ class TestBottleneck001(unittest.TestCase):
         with sim_instance as s:
             while s.do_next:
                 s.run_step()
-                if s.data.vehicle_in_network(0):
+                if s.data.vehicle_in_network('0'):
                     drive_status = s.drive_vehicle(0, 1.0)
                     s.run_step()
                     s.stop_step()
@@ -123,7 +134,7 @@ class TestBottleneck001(unittest.TestCase):
                     continue
             self.assertEqual(drive_status, 1)
             self.assertAlmostEqual(
-                sim_instance.data.query_vehicle_position(0)[0], 1.0)
+                sim_instance.data.query_vehicle_position('0')[0], 1.0)
 
     def get_simulator(self):
         self.libpath = ("symupy", "lib", "darwin", "libSymuVia.dylib")
