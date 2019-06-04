@@ -83,6 +83,17 @@ class TestBottleneck001(unittest.TestCase):
         sim_instance.load_symuvia()
         sim_instance.run_simulation(sim_case)
 
+    @unittest.skip("Skipping momentary")
+    def test_initialize_container_bottleneck_001(self):
+        sim_case = Simulation(self.mocks_path)
+        sim_instance = Simulator(self.sim_path)
+        sim_instance.register_simulation(sim_case)
+
+        with sim_instance as s:
+            while s.do_next:
+                # TODO: This needs some work on Parser.py
+                s.data.get_vehicle_data()
+
     def test_create_vehicle_bottleneck_001(self):
         sim_case = Simulation(self.mocks_path)
         sim_instance = Simulator(self.sim_path)
