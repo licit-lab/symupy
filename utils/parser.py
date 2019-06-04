@@ -55,29 +55,51 @@ class SimulatorRequest():
         """
         return tuple(veh.get('@tron') for veh in self.get_vehicle_data())
 
-    def query_vehicle_position(self, vehid: int) -> tuple:
-        """Extracts current vehicle distance information from simulators response
+    def query_vehicle_position(self, vehid: int, *args) -> tuple:
+        """Extracts current vehicle distance on link information from simulators response
 
         :param vehid: vehicle distance information
         :type vehid: int
         :return: vehicle position float in tuple form (checks duplicity)
         :rtype: tuple
         """
+        if not args:
+            return tuple(float(veh.get('@dst'))
+                         for veh in self.get_vehicle_data() if veh.get('@id') == vehid)
         return tuple(float(veh.get('@dst'))
                      for veh in self.get_vehicle_data())
 
     def query_vehicle_neighbors(self):
         pass
 
-    def vehicle_in_network(self, vehid: int) -> bool:
-        """True if veh id is in the network at current state
+    def vehicle_in_network(self, vehid: str, *args) -> bool:
+        """True if veh id is in the network at current state, for multiple arguments 
+           True if all veh ids are in the network
 
-        :param vehid: Integer of vehicle id
+        :param vehid: Integer of vehicle id, comma separated if testing for multiple
         :type vehid: int
         :return: True if vehicle is in the network otherwise false
         :rtype: bool
         """
-        return vehid in self.get_vehicle_id()
+        all_vehs = self.get_vehicle_id()
+        if not args:
+            return vehid in all_vehs
+        vehids = set((vehid, *args))
+        return set(vehids).issubset(set(all_vehs))
+
+    def vehicle_in_link(self, link: str, lane: str = '1') -> tuple:
+        """Returns a tuple containing vehicle ids traveling on the same link+lane at current state
+
+        :param link: link name 
+        :type link: str
+        :param lane: lane number, defaults to '1'
+        :type lane: str, optional
+        :return: tuple containing vehicle ids 
+        :rtype: tuple
+        """
+        return tuple(veh.get('@id')
+                     for veh in self.get_vehicle_data()
+                     if veh.get('@tron') == link and veh.get('@voie') == lane)
 
     def vehicles_downstream_link(self, vehid: int) -> tuple:
         """Get ids of vehicles downstream to vehid 
