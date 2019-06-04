@@ -9,7 +9,6 @@ class TestAPI(unittest.TestCase):
 
     def setUp(self):
         self.get_simulator()
-        self.get_bottleneck_001()
 
     def test_load_symuvia_osx(self):
         self.sim_instance = Simulator(self.sim_path)
