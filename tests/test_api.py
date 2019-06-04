@@ -89,20 +89,21 @@ class TestBottleneck001(unittest.TestCase):
         sim_instance = Simulator(self.sim_path)
         sim_instance.register_simulation(sim_case)
 
-      # with
+        # with
+        # REVIEW: For the sake of simplicity the vehicle will be created after an entering vehicle has been created.
         with sim_instance as s:
             while s.do_next:
-                s.run_step()
+                s.request_answer()  # Initialize
+                s.request_answer()  # Vehicle 0
                 veh_id = s.create_vehicle("VL", "Ext_In", "Ext_Out")
-                s.request_answer()
-                drive_status = s.drive_vehicle(veh_id, 1.0, "Zone_001")
-                s.request_answer()
+                s.request_answer()  # Vehicle instantiation
+                drive_status = s.drive_vehicle(veh_id, 20.0, "Zone_001")
                 s.stop_step()
 
         self.assertGreaterEqual(veh_id, 0)
         self.assertEqual(drive_status, 1)
         self.assertAlmostEqual(
-            sim_instance.data.query_vehicle_position(0)[0], 1.0)
+            sim_instance.data.query_vehicle_position(0)[1], 20.0)
 
     def test_drive_vehicle_bottleneck_001(self):
         sim_case = Simulation(self.mocks_path)
