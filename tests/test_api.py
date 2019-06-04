@@ -5,7 +5,7 @@ import unittest
 from symupy.api import Simulation, Simulator
 
 
-class TestBottleneck001(unittest.TestCase):
+class TestAPI(unittest.TestCase):
 
     def setUp(self):
         self.get_simulator()
@@ -16,6 +16,17 @@ class TestBottleneck001(unittest.TestCase):
         self.sim_instance.load_symuvia()
         self.assertEqual(self.sim_instance.libraryname,
                          self.sim_path)
+
+    def get_simulator(self):
+        self.libpath = ("symupy", "lib", "darwin", "libSymuVia.dylib")
+        self.sim_path = os.path.join(os.getcwd(), *self.libpath)
+
+
+class TestBottleneck001(unittest.TestCase):
+
+    def setUp(self):
+        self.get_simulator()
+        self.get_bottleneck_001()
 
     def test_load_bottleneck_001(self):
         sim_case = Simulation(self.mocks_path)
@@ -72,6 +83,17 @@ class TestBottleneck001(unittest.TestCase):
         sim_instance.load_symuvia()
         sim_instance.run_simulation(sim_case)
 
+    @unittest.skip("Skipping momentary")
+    def test_initialize_container_bottleneck_001(self):
+        sim_case = Simulation(self.mocks_path)
+        sim_instance = Simulator(self.sim_path)
+        sim_instance.register_simulation(sim_case)
+
+        with sim_instance as s:
+            while s.do_next:
+                # TODO: This needs some work on Parser.py
+                s.data.get_vehicle_data()
+
     def test_create_vehicle_bottleneck_001(self):
         sim_case = Simulation(self.mocks_path)
         sim_instance = Simulator(self.sim_path)
@@ -103,7 +125,7 @@ class TestBottleneck001(unittest.TestCase):
         self.assertGreaterEqual(veh_id, 0)
         self.assertEqual(drive_status, 1)
         self.assertAlmostEqual(
-            sim_instance.data.query_vehicle_position(0)[1], 20.0)
+            sim_instance.data.query_vehicle_position('1')[0], 20.0)
 
     def test_drive_vehicle_bottleneck_001(self):
         sim_case = Simulation(self.mocks_path)
@@ -114,7 +136,7 @@ class TestBottleneck001(unittest.TestCase):
         with sim_instance as s:
             while s.do_next:
                 s.run_step()
-                if s.data.vehicle_in_network(0):
+                if s.data.vehicle_in_network('0'):
                     drive_status = s.drive_vehicle(0, 1.0)
                     s.run_step()
                     s.stop_step()
@@ -123,7 +145,7 @@ class TestBottleneck001(unittest.TestCase):
                     continue
             self.assertEqual(drive_status, 1)
             self.assertAlmostEqual(
-                sim_instance.data.query_vehicle_position(0)[0], 1.0)
+                sim_instance.data.query_vehicle_position('0')[0], 1.0)
 
     def get_simulator(self):
         self.libpath = ("symupy", "lib", "darwin", "libSymuVia.dylib")
@@ -146,15 +168,46 @@ class TestBottleneck002(unittest.TestCase):
         self.assertEqual(sim_case.filename, self.mocks_path)
 
     def test_query_vehicles_upstream_bottleneck002(self):
-        pass
+        sim_case = Simulation(self.mocks_path)
+        sim_instance = Simulator(self.sim_path)
+        sim_instance.register_simulation(sim_case)
+        with sim_instance as s:
+            while s.do_next:
+                s.run_step()
+                if s.data.vehicle_in_network('2'):
+                    nup, = s.data.vehicle_upstream('1')
+                    s.stop_step()
+                    continue
+                else:
+                    continue
+        self.assertEqual(nup, '2')
 
     def test_query_vehicles_downstream_bottleneck002(self):
-        pass
+        sim_case = Simulation(self.mocks_path)
+        sim_instance = Simulator(self.sim_path)
+        sim_instance.register_simulation(sim_case)
+
+        with sim_instance as s:
+            while s.do_next:
+                s.run_step()
+                if s.data.vehicle_in_network('2'):
+                    ndown, = s.data.vehicle_downstream('1')
+                    s.stop_step()
+                    continue
+                else:
+                    continue
+        self.assertEqual(ndown, '0')
 
     def test_query_vehicle_neighbors_bottleneck002(self):
+        sim_case = Simulation(self.mocks_path)
+        sim_instance = Simulator(self.sim_path)
+        sim_instance.register_simulation(sim_case)
         pass
 
     def test_fixed_leader_neighbors_bottleneck002(self):
+        sim_case = Simulation(self.mocks_path)
+        sim_instance = Simulator(self.sim_path)
+        sim_instance.register_simulation(sim_case)
         pass
 
     def get_simulator(self):

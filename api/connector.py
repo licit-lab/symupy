@@ -252,7 +252,7 @@ class Simulator(object):
         links = self._sim.get_network_links()
 
         if not destination:
-            destination = self.data.query_vehicle_link(veh_id)[0]
+            destination = self.data.query_vehicle_link(str(veh_id))[0]
 
         if (destination not in links):
             raise SymupyDriveVehicleError(
