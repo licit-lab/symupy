@@ -3,14 +3,11 @@ from xmltodict import parse
 
 class SimulatorRequest():
 
-    def __init__(self):
-        self._data_query = {}
-
     def __repr__(self):
         return f"{self.__class__.__name__}()"
 
     def __str__(self):
-        return 'Sim Time: {}, VehInNetwork: {}'.format(self.get_current_time, self.get_current_nbveh) if self._data_query else 'Simulation has not started'
+        return 'Sim Time: {}, VehInNetwork: {}'.format(self.get_current_time, self.get_current_nbveh) if self.data_query else 'Simulation has not started'
 
     def parse_data(self, response: str = None) -> dict:
         """Parses response from simulator to data
@@ -21,7 +18,6 @@ class SimulatorRequest():
         :rtype: dict
         """
         self._str_response = response
-        self._data_query = parse(self._str_response)
 
     def get_vehicle_data(self) -> list:
         """Extracts vehicles information from simulators response
@@ -31,11 +27,11 @@ class SimulatorRequest():
         :return: list of vehicles in the network
         :rtype: list of dictionaries
         """
-        if self._data_query.get('INST').get('TRAJS') is not None:
-            veh_data = self._data_query.get('INST').get('TRAJS')
-            if isinstance(veh_data, list):
-                return veh_data
-            return [veh_data]
+        if self.data_query.get('INST').get('TRAJS') is not None:
+            veh_data = self.data_query.get('INST').get('TRAJS')
+            if isinstance(veh_data['TRAJ'], list):
+                return veh_data['TRAJ']
+            return [veh_data['TRAJ']]
         return []
 
     def get_vehicle_id(self) -> list:
@@ -46,7 +42,7 @@ class SimulatorRequest():
         """
         veh_data = self.get_vehicle_data()
         if veh_data:
-            return [int(veh.get('TRAJ').get('@id')) for veh in veh_data]
+            return [int(veh.get('@id')) for veh in veh_data]
         return []
 
     def query_vehicle_link(self, vehid: int) -> tuple:
@@ -57,7 +53,7 @@ class SimulatorRequest():
         :return: vehicle link in tuple form (checks duplicity)
         :rtype: tuple
         """
-        return tuple(veh['TRAJ']['@tron'] for veh in self.get_vehicle_data())
+        return tuple(veh.get('@tron') for veh in self.get_vehicle_data())
 
     def query_vehicle_position(self, vehid: int) -> tuple:
         """Extracts current vehicle distance information from simulators response
@@ -67,7 +63,7 @@ class SimulatorRequest():
         :return: vehicle position float in tuple form (checks duplicity)
         :rtype: tuple
         """
-        return tuple(float(veh['TRAJ']['@dst'])
+        return tuple(float(veh.get('@dst'))
                      for veh in self.get_vehicle_data())
 
     def query_vehicle_neighbors(self):
@@ -83,10 +79,22 @@ class SimulatorRequest():
         """
         return vehid in self.get_vehicle_id()
 
+    def vehicles_downstream_link(self, vehid: int) -> tuple:
+        """Get ids of vehicles downstream to vehid 
+
+        :param vehid: integer describing id of reference veh
+        :type vehid: int
+        :return: tuple with ids of vehicles ahead (downstream)
+        :rtype: tuple
+        """
+    @property
+    def data_query(self):
+        return parse(self._str_response)
+
     @property
     def get_current_time(self) -> str:
-        return self._data_query.get('INST').get('@val')
+        return self.data_query.get('INST').get('@val')
 
     @property
     def get_current_nbveh(self) -> int:
-        return self._data_query.get('INST').get('@nbVeh')
+        return self.data_query.get('INST').get('@nbVeh')
