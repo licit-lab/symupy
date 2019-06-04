@@ -173,12 +173,13 @@ class Simulator(object):
         self._sim = sim_object
 
     def request_answer(self):
-        """Request simulator answer and return 
+        """Request simulator answer and maps the data locally
         """
         self._bContinue = self._library.SymRunNextStepEx(self._s_response,
                                                          self._b_trace,
                                                          byref(self._b_end)
                                                          )
+        self.data.parse_data(self.s_response_dec)
 
     def run_step(self) -> int:
         """ Run simulation step by step
@@ -190,7 +191,6 @@ class Simulator(object):
             self.request_answer()
             self._c_iter = next(self._n_iter)
             print(f"Step: {self._c_iter}")
-            self.data.parse_data(self.s_response_dec)
             return self._c_iter
         except StopIteration:
             self._bContinue = False
@@ -264,6 +264,7 @@ class Simulator(object):
                                                    c_int(lane),
                                                    c_double(new_pos),
                                                    1)
+        self.request_answer()
         return dr_state
 
     def __enter__(self) -> None:
@@ -296,7 +297,7 @@ class Simulator(object):
 
     @property
     def get_request(self) -> dict:
-        return self.data._data_query
+        return self.data.data_query
 
     @property
     def libraryname(self) -> str:
