@@ -157,15 +157,46 @@ class TestBottleneck002(unittest.TestCase):
         self.assertEqual(sim_case.filename, self.mocks_path)
 
     def test_query_vehicles_upstream_bottleneck002(self):
-        pass
+        sim_case = Simulation(self.mocks_path)
+        sim_instance = Simulator(self.sim_path)
+        sim_instance.register_simulation(sim_case)
+        with sim_instance as s:
+            while s.do_next:
+                s.run_step()
+                if s.data.vehicle_in_network('2'):
+                    nup, = s.data.vehicle_upstream('1')
+                    s.stop_step()
+                    continue
+                else:
+                    continue
+        self.assertEqual(nup, '2')
 
     def test_query_vehicles_downstream_bottleneck002(self):
-        pass
+        sim_case = Simulation(self.mocks_path)
+        sim_instance = Simulator(self.sim_path)
+        sim_instance.register_simulation(sim_case)
+
+        with sim_instance as s:
+            while s.do_next:
+                s.run_step()
+                if s.data.vehicle_in_network('2'):
+                    ndown, = s.data.vehicle_downstream('1')
+                    s.stop_step()
+                    continue
+                else:
+                    continue
+        self.assertEqual(ndown, '0')
 
     def test_query_vehicle_neighbors_bottleneck002(self):
+        sim_case = Simulation(self.mocks_path)
+        sim_instance = Simulator(self.sim_path)
+        sim_instance.register_simulation(sim_case)
         pass
 
     def test_fixed_leader_neighbors_bottleneck002(self):
+        sim_case = Simulation(self.mocks_path)
+        sim_instance = Simulator(self.sim_path)
+        sim_instance.register_simulation(sim_case)
         pass
 
     def get_simulator(self):
