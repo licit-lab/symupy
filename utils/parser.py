@@ -3,6 +3,9 @@ from xmltodict import parse
 
 class SimulatorRequest():
 
+    def __init__(self):
+        self._str_response = ""
+
     def __repr__(self):
         return f"{self.__class__.__name__}()"
 
@@ -34,16 +37,13 @@ class SimulatorRequest():
             return [veh_data['TRAJ']]
         return []
 
-    def get_vehicle_id(self) -> list:
+    def get_vehicle_id(self) -> tuple:
         """Extracts vehicle ids information from simulators response
 
-        :return: list of vehicle ids
+        :return: tuple containing vehicle ids at current state in all network
         :rtype: list
         """
-        veh_data = self.get_vehicle_data()
-        if veh_data:
-            return [int(veh.get('@id')) for veh in veh_data]
-        return []
+        return tuple(veh.get('@id') for veh in self.get_vehicle_data())
 
     def query_vehicle_link(self, vehid: int) -> tuple:
         """Extracts current vehicle link information from simulators response
