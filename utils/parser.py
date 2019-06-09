@@ -45,33 +45,44 @@ class SimulatorRequest():
         """
         return tuple(veh.get('@id') for veh in self.get_vehicle_data())
 
-    def query_vehicle_link(self, vehid: str) -> tuple:
-        """Extracts current vehicle link information from simulators response
+    def query_vehicle_link(self, vehid: str, *args) -> tuple:
+        """ Extracts current vehicle link information from simulators response
 
-        :param vehid: vehicle link
-        :type vehid: int
-        :return: vehicle link in tuple form (checks duplicity)
+        :param vehid: vehicle id multiple arguments accepted
+        :type vehid: str
+        :return: vehicle link in tuple form
         :rtype: tuple
         """
-        return tuple(veh.get('@tron') for veh in self.get_vehicle_data() if veh.get('@id') == vehid)
+        vehids = set((vehid, *args)) if args else vehid
+        vehid_pos = self.query_vehicle_data_dict('@tron', vehids)
+        return tuple(vehid_pos.get(veh) for veh in vehids)
 
     def query_vehicle_position(self, vehid: str, *args) -> tuple:
-        """Extracts current vehicle distance on link information from simulators response
+        """ Extracts current vehicle distance information from simulators response
 
-        :param vehid: vehicle distance information
-        :type vehid: int
-        :return: vehicle position float in tuple form (checks duplicity)
+        :param vehid: vehicle id multiple arguments accepted
+        :type vehid: str
+        :return: vehicle distance in link in tuple form
         :rtype: tuple
         """
-        if not args:
-            return tuple(float(veh.get('@dst'))
-                         for veh in self.get_vehicle_data() if veh.get('@id') == vehid)
-        vehids = set((vehid, *args))
-        return tuple(float(veh.get('@dst'))
-                     for veh in self.get_vehicle_data() if veh.get('@id') in vehids)
+        vehids = set((vehid, *args)) if args else vehid
+        vehid_pos = self.query_vehicle_data_dict('@dst', vehids)
+        return tuple(vehid_pos.get(veh) for veh in vehids)
 
-    def query_vehicle_neighbors(self):
-        pass
+    def query_vehicle_data_dict(self, dataval: str, vehid: str, *args) -> dict:
+        """ Extracts and filters vehicle data from the simulators response
+
+        :param dataval: parameter to be extracted e.g. '@id', '@dst'
+        :type dataval: str
+        :param vehid: vehicle id, multiple arguments accepted
+        :type vehid: str
+        :return: dictionary where key is @id and value is dataval
+        :rtype: dict
+        """
+        vehids = set((vehid, *args)) if args else set(vehid)
+        data_vehs = [(veh.get('@id'), veh.get(dataval))
+                     for veh in self.get_vehicle_data() if veh.get('@id') in vehids]
+        return dict(data_vehs)
 
     def vehicle_in_network(self, vehid: str, *args) -> bool:
         """True if veh id is in the network at current state, for multiple arguments

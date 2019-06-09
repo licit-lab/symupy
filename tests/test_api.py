@@ -124,7 +124,7 @@ class TestBottleneck001(unittest.TestCase):
         self.assertGreaterEqual(veh_id, 0)
         self.assertEqual(drive_status, 1)
         self.assertAlmostEqual(
-            sim_instance.data.query_vehicle_position('1')[0], 20.0)
+            float(sim_instance.data.query_vehicle_position('1')[0]), 20.0)
 
     def test_drive_vehicle_bottleneck_001(self):
         sim_case = Simulation(self.mocks_path)
@@ -144,7 +144,7 @@ class TestBottleneck001(unittest.TestCase):
                     continue
             self.assertEqual(drive_status, 1)
             self.assertAlmostEqual(
-                sim_instance.data.query_vehicle_position('0')[0], 1.0)
+                float(sim_instance.data.query_vehicle_position('0')[0]), 1.0)
 
     def get_simulator(self):
         self.libpath = ("symupy", "lib", "darwin", "libSymuVia.dylib")
