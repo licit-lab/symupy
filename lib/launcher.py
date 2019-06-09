@@ -21,8 +21,8 @@ if __name__ == "__main__":
     for fi in lib_file_names_flt:
         fi_path = os.path.join(*lib_rel_path, fi)
         fi_n = fi.split('.')[0]
-        subprocess.call(f"mkdir log/{fi_n}", shell=True)
-        subprocess.call(
+        subprocess.run(f"mkdir log/{fi_n}", shell=True)
+        subprocess.run(
             f"python3 spydsla.py md {fi_path} > log/{fi_n}/darwin__$(date +%Y-%m-%d_%H:%M:%S)_md.log", shell=True)
-        subprocess.call(
+        subprocess.run(
             f"python3 spydsla.py ck {fi_path} > log/{fi_n}/darwin__$(date +%Y-%m-%d_%H:%M:%S)_ck.log", shell=True)

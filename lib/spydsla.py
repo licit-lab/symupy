@@ -47,7 +47,7 @@ excluded_paths = ["@rpath"]
 def d2t(tag): return "exist" if tag else "absent"
 
 
-def call_dependency(libFullName):
+def get_dependencies(libFullName):
     """
         Determine all dependencies for a single library in the
         full absolute path
@@ -55,7 +55,10 @@ def call_dependency(libFullName):
     action = '/usr/bin/otool'
     option = '-L'
     sub_call = [action, option, libFullName]
-    return subprocess.Popen(sub_call, stdout=subprocess.PIPE)
+    call_str = " ".join(sub_call)
+    dep_enc = subprocess.check_output(call_str, shell=True)
+    dep_lst = dep_enc.decode('UTF8').split('\n')
+    return dep_lst[1:]
 
 
 def modify_dependency(start_dir, end_dir, library):
@@ -72,8 +75,9 @@ def modify_dependency(start_dir, end_dir, library):
     action = '/usr/bin/install_name_tool'
     option = '-change'
     sub_call = [action, option, start_dir, end_dir, library]
-    subprocess.Popen(sub_call)
-    return sub_call
+    call_str = " ".join(sub_call)
+    subprocess.call(call_str, shell=True)
+    return
 
 
 def verify_update_dependencies(lib_name, lib_rel_path, modify_dep=False):
@@ -86,14 +90,14 @@ def verify_update_dependencies(lib_name, lib_rel_path, modify_dep=False):
         target_dir = os.path.join(os.getcwd(),
                                   *lib_rel_path)
         lib_path = os.path.join(target_dir, lib_name)
-        oDependency = call_dependency(lib_path)
+        oDependency = get_dependencies(lib_path)
 
-        for dep in iter(oDependency.stdout):
+        for dep in oDependency:
             # print(dep)
             try:
-                dsl_path = pattern.findall(dep.decode('utf-8'))[0]
+                dsl_path = pattern.findall(dep)[0]
             except IndexError:
-                print(f"Undetected path in: {dep.decode('utf-8')}")
+                print(f"Undetected path in: {dep}")
                 continue
             dsl_filename = os.path.basename(dsl_path)
             dsl_dirname = os.path.dirname(dsl_path)
