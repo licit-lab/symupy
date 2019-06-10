@@ -243,10 +243,18 @@ class Simulator(object):
 
     def drive_vehicle(self, veh_id: int, new_pos: float,
                       destination: str = None, lane: str = 1) -> None:
-        """ Modifies the position of a vehicle
-        :param pos: [description]
-        :type pos: float
-        :return: [description]
+        """Drives a vehicle to a specific position
+
+        :param veh_id: vehicle id to drive 
+        :type veh_id: int
+        :param new_pos: position to place the vehicle
+        :type new_pos: float
+        :param destination: link of destination, defaults to None
+        :type destination: str, optional
+        :param lane: lane fo destination, defaults to 1
+        :type lane: str, optional
+        :raises SymupyDriveVehicleError: Raises error when link does not exist
+        :return: Value returned by SymDriveErr 1 ok, negative values are errors.
         :rtype: None
         """
         links = self._sim.get_network_links()
