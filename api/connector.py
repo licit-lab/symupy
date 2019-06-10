@@ -310,3 +310,14 @@ class Simulator(object):
     @property
     def libraryname(self) -> str:
         return self._path
+
+    @property
+    def casename(self) -> str:
+        return self._sim.filename
+
+    @classmethod
+    def from_path(cls, filename_path, simuvia_path):
+        case = Simulation(filename_path)
+        sim = cls(simuvia_path)
+        sim.register_simulation(case)
+        return sim
