@@ -1,4 +1,3 @@
-# sim_instance.run_simulation(sim_file)
 
 import os
 import unittest
@@ -30,6 +29,10 @@ class TestBottleneck001(unittest.TestCase):
     def test_load_bottleneck_001(self):
         sim_case = Simulation(self.mocks_path)
         self.assertEqual(sim_case.filename, self.mocks_path)
+
+    def test_constructor_bottleneck_001(self):
+        sim_instance = Simulator.from_path(self.mocks_path, self.sim_path)
+        self.assertEqual(self.mocks_path, sim_instance.casename)
 
     def test_get_simulation_data_bottleneck_001(self):
         sim_case = Simulation(self.mocks_path)
