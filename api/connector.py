@@ -12,7 +12,13 @@ from symupy.utils import SymupyWarning
 from symupy.utils import timer_func
 from symupy.utils import constants as ct
 
+from symupy.components import V2INetwork, V2VNetwork
+from symupy.components import Vehicle
+
 import typing
+from typing import Union
+
+NetworkType = Union[V2INetwork, V2VNetwork]
 
 
 class Simulation(object):
@@ -121,6 +127,7 @@ class Simulator(object):
 
     def __init__(self, path: str) -> None:
         self._path = path
+        self._net = []
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self.libraryname})"
@@ -171,6 +178,9 @@ class Simulator(object):
         :rtype: None
         """
         self._sim = sim_object
+
+    def register_network(self, network: NetworkType) -> None:
+        self._net.append(network)
 
     def request_answer(self):
         """Request simulator answer and maps the data locally
@@ -274,6 +284,19 @@ class Simulator(object):
                                                    1)
         self.request_answer()
         return dr_state
+
+    def get_vehicle_context(self, vehid: str):
+        ## TODO: Implement this
+        raise NotImplementedError
+    
+    def log_vehicle_in_network(self,veh: Vehicle, network:NetworkType):
+        # veh = Vehicle(vehid)
+        ## TODO: Finish 
+        network.register_vehicle(veh)
+
+    def log_vehid_in_network(self,vehid: str, network: NetworkType):
+        ## TODO: Optional
+        pass
 
     def __enter__(self) -> None:
         """ Implementation as a context manager
