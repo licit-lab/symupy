@@ -12,11 +12,16 @@ from symupy.utils import SymupyWarning
 from symupy.utils import timer_func
 from symupy.utils import constants as ct
 
+from symupy.components import V2INetwork, V2VNetwork
+from symupy.components import Vehicle
+
 import typing
+from typing import Union
+
+NetworkType = Union[V2INetwork, V2VNetwork]
 
 
 class Simulation(object):
-
     def __init__(self, file_name: str) -> None:
         if os.path.exists(file_name):
             self._file_name = file_name
@@ -41,7 +46,7 @@ class Simulation(object):
         :rtype: tuple
         """
         self.load_xml_tree()
-        branch_tree = 'SIMULATIONS'
+        branch_tree = "SIMULATIONS"
         sim_params = self._xml_tree.xpath(branch_tree)[0].getchildren()
         return tuple(par.attrib for par in sim_params)
 
@@ -52,7 +57,7 @@ class Simulation(object):
         :rtype: tuple
         """
         self.load_xml_tree()
-        branch_tree = 'TRAFICS/TRAFIC/TYPES_DE_VEHICULE'
+        branch_tree = "TRAFICS/TRAFIC/TYPES_DE_VEHICULE"
         vehicle_types = self._xml_tree.xpath(branch_tree)[0].getchildren()
         return tuple(v.attrib for v in vehicle_types)
 
@@ -63,9 +68,9 @@ class Simulation(object):
         :rtype: tuple
         """
         self.load_xml_tree()
-        branch_tree = 'TRAFICS/TRAFIC/EXTREMITES'
+        branch_tree = "TRAFICS/TRAFIC/EXTREMITES"
         end_points = self._xml_tree.xpath(branch_tree)[0].getchildren()
-        return tuple(ep.attrib['id'] for ep in end_points)
+        return tuple(ep.attrib["id"] for ep in end_points)
 
     def get_network_links(self) -> tuple:
         """ Get network link names
@@ -74,9 +79,9 @@ class Simulation(object):
         :rtype: tuple
         """
         self.load_xml_tree()
-        branch_tree = 'TRAFICS/TRAFIC/TRONCONS'
+        branch_tree = "TRAFICS/TRAFIC/TRONCONS"
         links = self._xml_tree.xpath(branch_tree)[0].getchildren()
-        return tuple(ep.attrib['id'] for ep in links)
+        return tuple(ep.attrib["id"] for ep in links)
 
     def get_simulation_steps(self, simid: int = 0) -> range:
         """Get simulation steps for an simulation. specify the simulation id  via an integer value
@@ -86,14 +91,10 @@ class Simulation(object):
         :return:
         :rtype: range
         """
-        t1 = datetime.strptime(
-            self.get_simulation_parameters()[simid].get('debut'), ct.HOUR_FORMAT)
-        t2 = datetime.strptime(
-            self.get_simulation_parameters()[simid].get('fin'), ct.HOUR_FORMAT)
+        t1 = datetime.strptime(self.get_simulation_parameters()[simid].get("debut"), ct.HOUR_FORMAT)
+        t2 = datetime.strptime(self.get_simulation_parameters()[simid].get("fin"), ct.HOUR_FORMAT)
         t = t2 - t1
-        n = t.seconds / \
-            float(self.get_simulation_parameters()
-                  [simid].get('pasdetemps'))
+        n = t.seconds / float(self.get_simulation_parameters()[simid].get("pasdetemps"))
         return range(int(n))
 
     def __contains__(self, value: tuple) -> bool:
@@ -110,17 +111,17 @@ class Simulation(object):
 
     @property
     def filename_enc(self):
-        return self._file_name.encode('UTF8')
+        return self._file_name.encode("UTF8")
 
-# FIXME: This should be a property simid is something that cannot be totally controlled via api
+    # FIXME: This should be a property simid is something that cannot be totally controlled via api
     def sampling_time(self, simid: int = 0):
-        return float(self.get_simulation_parameters()[simid].get('pasdetemps'))
+        return float(self.get_simulation_parameters()[simid].get("pasdetemps"))
 
 
 class Simulator(object):
-
     def __init__(self, path: str) -> None:
         self._path = path
+        self._net = []
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self.libraryname})"
@@ -135,7 +136,7 @@ class Simulator(object):
 
     def load_network(self) -> None:
         """ load SymuVia Simulation File """
-        if not hasattr(self, '_sim'):
+        if not hasattr(self, "_sim"):
             raise SymupyFileLoadError("File not provided", "")
         self._library.SymLoadNetworkEx(self._sim.filename_enc)
 
@@ -172,13 +173,15 @@ class Simulator(object):
         """
         self._sim = sim_object
 
+    def register_network(self, network: NetworkType) -> None:
+        self._net.append(network)
+
     def request_answer(self):
         """Request simulator answer and maps the data locally
         """
-        self._bContinue = self._library.SymRunNextStepEx(self._s_response,
-                                                         self._b_trace,
-                                                         byref(self._b_end)
-                                                         )
+        self._bContinue = self._library.SymRunNextStepEx(
+            self._s_response, self._b_trace, byref(self._b_end)
+        )
         self.data.parse_data(self.s_response_dec)
 
     def run_step(self) -> int:
@@ -201,11 +204,9 @@ class Simulator(object):
         """
         self._bContinue = False
 
-    def create_vehicle(self, vehtype: str,
-                       origin: str,
-                       destination: str,
-                       lane: int = 1,
-                       simid: int = 0) -> int:
+    def create_vehicle(
+        self, vehtype: str, origin: str, destination: str, lane: int = 1, simid: int = 0
+    ) -> int:
         """Creates a vehicle within the network
 
         :param vehtype: vehicle type according to simulation definitions
@@ -225,47 +226,70 @@ class Simulator(object):
         endpoints = self._sim.get_network_endpoints()
         veh_data = self._sim.get_vehicletype_information()
         dbTime = self._sim.sampling_time(simid)
-        veh_id = tuple(v['id'] for v in veh_data)
-        if(vehtype not in veh_id):
+        veh_id = tuple(v["id"] for v in veh_data)
+        if vehtype not in veh_id:
             raise SymupyVehicleCreationError(
-                "Unexisting Vehicle Class in File: ", self._sim.filename)
+                "Unexisting Vehicle Class in File: ", self._sim.filename
+            )
 
         if (origin not in endpoints) or (destination not in endpoints):
             raise SymupyVehicleCreationError(
-                "Unexisting Network Endpoint File: ", self._sim.filename)
+                "Unexisting Network Endpoint File: ", self._sim.filename
+            )
 
-        veh_id = self._library.SymCreateVehicleEx(vehtype.encode('UTF8'),
-                                                  origin.encode('UTF8'),
-                                                  destination.encode('UTF8'),
-                                                  c_int(lane),
-                                                  c_double(dbTime))
+        veh_id = self._library.SymCreateVehicleEx(
+            vehtype.encode("UTF8"),
+            origin.encode("UTF8"),
+            destination.encode("UTF8"),
+            c_int(lane),
+            c_double(dbTime),
+        )
         return veh_id
 
-    def drive_vehicle(self, veh_id: int, new_pos: float,
-                      destination: str = None, lane: str = 1) -> None:
-        """ Modifies the position of a vehicle
-        :param pos: [description]
-        :type pos: float
-        :return: [description]
+    def drive_vehicle(
+        self, veh_id: int, new_pos: float, destination: str = None, lane: str = 1
+    ) -> None:
+        """Drives a vehicle to a specific position
+
+        :param veh_id: vehicle id to drive 
+        :type veh_id: int
+        :param new_pos: position to place the vehicle
+        :type new_pos: float
+        :param destination: link of destination, defaults to None
+        :type destination: str, optional
+        :param lane: lane fo destination, defaults to 1
+        :type lane: str, optional
+        :raises SymupyDriveVehicleError: Raises error when link does not exist
+        :return: Value returned by SymDriveErr 1 ok, negative values are errors.
         :rtype: None
         """
         links = self._sim.get_network_links()
 
         if not destination:
-            destination = self.data.query_vehicle_link(veh_id)[0]
+            destination = self.data.query_vehicle_link(str(veh_id))[0]
 
-        if (destination not in links):
-            raise SymupyDriveVehicleError(
-                "Unexisting Network Endpoint File: ", self._sim.filename)
+        if destination not in links:
+            raise SymupyDriveVehicleError("Unexisting Network Endpoint File: ", self._sim.filename)
 
         # TODO: Validate that position do not overpass the max pos
-        dr_state = self._library.SymDriveVehicleEx(c_int(veh_id),
-                                                   destination.encode('UTF8'),
-                                                   c_int(lane),
-                                                   c_double(new_pos),
-                                                   1)
+        dr_state = self._library.SymDriveVehicleEx(
+            c_int(veh_id), destination.encode("UTF8"), c_int(lane), c_double(new_pos), 1
+        )
         self.request_answer()
         return dr_state
+
+    def get_vehicle_context(self, vehid: str):
+        ## TODO: Implement this
+        raise NotImplementedError
+
+    def log_vehicle_in_network(self, veh: Vehicle, network: NetworkType):
+        # veh = Vehicle(vehid)
+        ## TODO: Finish
+        network.register_vehicle(veh)
+
+    def log_vehid_in_network(self, vehid: str, network: NetworkType):
+        ## TODO: Optional
+        pass
 
     def __enter__(self) -> None:
         """ Implementation as a context manager
@@ -289,7 +313,7 @@ class Simulator(object):
         :return: last query from simulator
         :rtype: str
         """
-        return self._s_response.value.decode('UTF8')
+        return self._s_response.value.decode("UTF8")
 
     @property
     def do_next(self) -> bool:
@@ -302,3 +326,14 @@ class Simulator(object):
     @property
     def libraryname(self) -> str:
         return self._path
+
+    @property
+    def casename(self) -> str:
+        return self._sim.filename
+
+    @classmethod
+    def from_path(cls, filename_path, simuvia_path):
+        case = Simulation(filename_path)
+        sim = cls(simuvia_path)
+        sim.register_simulation(case)
+        return sim
