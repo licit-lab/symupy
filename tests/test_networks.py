@@ -1,4 +1,3 @@
-
 import os
 import unittest
 from symupy.api import Simulation, Simulator
@@ -6,7 +5,6 @@ from symupy.components import RoadSideUnit, V2INetwork, Vehicle
 
 
 class TestBottleneck001(unittest.TestCase):
-
     def setUp(self):
         self.get_simulator()
         self.get_bottleneck_001()
@@ -18,7 +16,7 @@ class TestBottleneck001(unittest.TestCase):
     def test_create_rsu_bottleneck001(self):
         sim_instance = Simulator.from_path(self.mocks_path, self.sim_path)
 
-        rsu = RoadSideUnit('Zone_001', 0.0)
+        rsu = RoadSideUnit("Zone_001", 0.0)
         v2i_net = V2INetwork()
         v2i_net.register_element(rsu)
 
@@ -27,11 +25,11 @@ class TestBottleneck001(unittest.TestCase):
         with sim_instance as s:
             while s.do_next:
                 s.run_step()
-                if s.data.vehicle_in_network('0'):
-                    v = Vehicle('0')
+                if s.data.vehicle_in_network("0"):
+                    v = Vehicle("0")
                     v.plug_vehicle_to_sim(s)
                     s.log_vehicle_in_network(v, v2i_net)
-                    ## TODO: To finish 
+                    ## TODO: To finish
 
         self.assertEqual(self.mocks_path, sim_instance.casename)
 
@@ -46,7 +44,6 @@ class TestBottleneck001(unittest.TestCase):
 
 
 class TestBottleneck002(unittest.TestCase):
-
     def setUp(self):
         self.get_simulator()
         self.get_bottleneck_002()
@@ -65,5 +62,5 @@ class TestBottleneck002(unittest.TestCase):
         self.mocks_path = os.path.join(os.getcwd(), *file_path)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

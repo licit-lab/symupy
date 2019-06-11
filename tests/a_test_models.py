@@ -5,7 +5,7 @@
 # ---------------------------IMPORTS------------------------------------------
 
 # Internals
-from symupy.func import (dynamic_2nd, dynamic_3rd, VehDynamic, Vehicle)
+from symupy.func import dynamic_2nd, dynamic_3rd, VehDynamic, Vehicle
 from symupy.func import VehParameter, SimParameter
 
 # Utils
@@ -36,7 +36,6 @@ veh_par = VehParameter.VehParameterSym(U_FFS, K_X, W_CGT, L_VEH)
 
 
 class TestModel(unittest.TestCase):
-
     def test_constructor(self):
         """
         Test Vehicle class generation
@@ -95,13 +94,15 @@ class TestModel(unittest.TestCase):
 
         # Matrix dynamics
         A = np.array(
-            [[1, 0, sim_par.t_stp, 0],
-             [0, 1, 0, sim_par.t_stp],
-             [0, 0, 1, -sim_par.t_stp],
-             [0, 0, 0, (1-sim_par.t_stp/veh_par.v_lag)]]
+            [
+                [1, 0, sim_par.t_stp, 0],
+                [0, 1, 0, sim_par.t_stp],
+                [0, 0, 1, -sim_par.t_stp],
+                [0, 0, 0, (1 - sim_par.t_stp / veh_par.v_lag)],
+            ]
         )
-        B1 = np.array([[0], [0], [0], [sim_par.t_stp/veh_par.v_lag]])
-        B2 = np.array([[0], [0], [0], [-sim_par.t_stp/veh_par.v_lag]])
+        B1 = np.array([[0], [0], [0], [sim_par.t_stp / veh_par.v_lag]])
+        B2 = np.array([[0], [0], [0], [-sim_par.t_stp / veh_par.v_lag]])
 
         # invariant
         veh_cst = np.array([0.0, 25.0, 0, 0])

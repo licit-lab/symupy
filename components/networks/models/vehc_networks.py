@@ -7,7 +7,6 @@ from symupy.components.vehicles import Vehicle
 
 
 class V2XNetwork(object):
-
     def __init__(self) -> None:
         self._nodes_elem = []
         self._veh_elem = []
