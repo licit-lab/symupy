@@ -10,7 +10,10 @@ class RoadNetwork(object):
 
 class RoadSideUnit(object):
 
+    rsuid = 0
+
     def __init__(self, link: str, position: float, radious: int = ct.RADIOUS_ANT):
+        self.__class__.rsuid += 1
         self._link = link
         self._pos = position
         self._radious = radious

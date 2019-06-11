@@ -25,8 +25,9 @@ class TestParameter(unittest.TestCase):
         """
         veh_par = VehParameter()
 
-        self.assertEqual(veh_par.cpcty * veh_par.t_dsp,
-                         veh_par.u_ffs / (veh_par.w_cgt + veh_par.u_ffs))
+        self.assertEqual(
+            veh_par.cpcty * veh_par.t_dsp, veh_par.u_ffs / (veh_par.w_cgt + veh_par.u_ffs)
+        )
 
     def test_constructor_symuvia(self):
         """
@@ -34,15 +35,16 @@ class TestParameter(unittest.TestCase):
         """
         veh_par = VehParameter.VehParameterSym()
         # print(veh_par)
-        self.assertEqual(veh_par.cpcty * veh_par.t_dsp,
-                         veh_par.u_ffs / (veh_par.w_cgt + veh_par.u_ffs))
+        self.assertEqual(
+            veh_par.cpcty * veh_par.t_dsp, veh_par.u_ffs / (veh_par.w_cgt + veh_par.u_ffs)
+        )
 
     def test_parameter_creation(self):
         """
         Check if values for specific parameters
         """
         x_hwy = l_veh + x_gap
-        k_max = 1/x_hwy
+        k_max = 1 / x_hwy
         k_crt = cpcty / u_ffs
         veh_par = VehParameter(u_ffs, l_veh, x_gap, cpcty=cpcty)
         # print(veh_par)
@@ -56,8 +58,9 @@ class TestParameter(unittest.TestCase):
         """
         veh_par = VehParameter(u_ffs, l_veh, x_gap, cpcty=cpcty)
         # print(veh_par)
-        self.assertEqual(veh_par.cpcty * veh_par.t_dsp,
-                         veh_par.u_ffs / (veh_par.w_cgt + veh_par.u_ffs))
+        self.assertEqual(
+            veh_par.cpcty * veh_par.t_dsp, veh_par.u_ffs / (veh_par.w_cgt + veh_par.u_ffs)
+        )
 
     def test_consistence_parameter_w_cgt(self):
         """
@@ -65,8 +68,9 @@ class TestParameter(unittest.TestCase):
         """
         veh_par = VehParameter(u_ffs, l_veh, x_gap, w_cgt=w_cgt)
         # print(veh_par)
-        self.assertEqual(veh_par.cpcty * veh_par.t_dsp,
-                         veh_par.u_ffs / (veh_par.w_cgt + veh_par.u_ffs))
+        self.assertEqual(
+            veh_par.cpcty * veh_par.t_dsp, veh_par.u_ffs / (veh_par.w_cgt + veh_par.u_ffs)
+        )
 
 
 if __name__ == "__main__":
