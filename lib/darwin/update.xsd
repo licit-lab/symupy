@@ -1,0 +1,1960 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--Created with Liquid XML Studio - FREE Community Edition 7.1.4.1284 (http://www.liquid-technologies.com)-->
+<xsd:schema version="1.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:simpleType name="typeFloatStrictPositif">
+    <xsd:restriction base="xsd:float">
+      <xsd:minExclusive value="0"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="typeFloatPositif">
+    <xsd:restriction base="xsd:float">
+      <xsd:minInclusive value="0"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="typeFloatNegatif">
+    <xsd:restriction base="xsd:float">
+      <xsd:maxInclusive value="0"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="typeFloat01">
+    <xsd:annotation>
+      <xsd:documentation>Réel compris entre 0 et 1</xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:float">
+      <xsd:minInclusive value="0"/>
+      <xsd:maxInclusive value="1"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="typeIntStrictPositif">
+    <xsd:restriction base="xsd:positiveInteger">
+      <xsd:minInclusive value="1"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="typeFloat01List">
+    <xsd:restriction>
+      <xsd:simpleType>
+        <xsd:list itemType="typeFloat01"/>
+      </xsd:simpleType>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="typeFloat01NormedList">
+    <xsd:annotation>
+      <xsd:documentation>La somme des coefficients doit être égale à 1</xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction>
+      <xsd:simpleType>
+        <xsd:list itemType="typeFloat01"/>
+      </xsd:simpleType>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="typeTouteLaSimulation">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="always"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="typeDuree">
+    <xsd:restriction base="xsd:string"/>
+  </xsd:simpleType>
+  <xsd:simpleType name="typeVitesses">
+    <xsd:union memberTypes="typeFloatStrictPositif"/>
+  </xsd:simpleType>
+  <xsd:simpleType name="typeInfini">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="infini"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:simpleType name="typeVitMax">
+    <xsd:annotation/>
+    <xsd:union memberTypes="typeFloatStrictPositif typeInfini"/>
+  </xsd:simpleType>
+  <xsd:simpleType name="typeCoordonnees">
+    <xsd:restriction>
+      <xsd:simpleType>
+        <xsd:list itemType="xsd:float"/>
+      </xsd:simpleType>
+      <xsd:minLength value="2"/>
+      <xsd:maxLength value="3"/>
+      <xsd:whiteSpace value="collapse"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:complexType name="typePointsInternes">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" maxOccurs="unbounded" name="POINT_INTERNE">
+        <xsd:annotation>
+          <xsd:documentation>
+                  Description d'un point interne du tronçon
+                </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+          <xsd:attribute name="coordonnees" type="typeCoordonnees" use="required">
+            <xsd:annotation>
+              <xsd:documentation>Coordonnées géographiques du point interne</xsd:documentation>
+            </xsd:annotation>
+          </xsd:attribute>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:simpleType name="typeString256">
+    <xsd:restriction>
+      <xsd:simpleType>
+        <xsd:list itemType="xsd:string"/>
+      </xsd:simpleType>
+      <xsd:maxLength value="256"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:complexType name="typeCoeffDir">
+    <xsd:sequence>
+      <xsd:element minOccurs="1" maxOccurs="unbounded" name="COEFF_DIR">
+        <xsd:annotation>
+          <xsd:documentation>Description d'une variante temporelle des coefficients directionnels</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="COEFFS_TRONCON_AMONT">
+              <xsd:annotation>
+                <xsd:documentation>Collection des coefficients directionnels pour la liste des tronçons amont</xsd:documentation>
+              </xsd:annotation>
+              <xsd:complexType>
+                <xsd:sequence>
+                  <xsd:element maxOccurs="unbounded" name="COEFF_TRONCON_AMONT">
+                    <xsd:annotation>
+                      <xsd:documentation>Description des coefficients directionnels pour un tronçon amont</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                      <xsd:sequence>
+                        <xsd:element name="COEFFS_VOIE_AMONT">
+                          <xsd:annotation>
+                            <xsd:documentation>Collection des coefficients directionnels pour la liste des voies du tronçon amont</xsd:documentation>
+                          </xsd:annotation>
+                          <xsd:complexType>
+                            <xsd:sequence>
+                              <xsd:element maxOccurs="unbounded" name="COEFF_VOIE_AMONT">
+                                <xsd:annotation>
+                                  <xsd:documentation>Description des coefficients directionnels pour un tronçon amont et une voie donnée</xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                  <xsd:sequence>
+                                    <xsd:element name="COEFFS_TRONCON_AVAL">
+                                      <xsd:annotation>
+                                        <xsd:documentation>Collection des coefficients directionnels des tronçons aval pour un tronçon et une voie données en amont. Si un tronçon aval du répartiteur parent ne se trouve pas dans la liste, cela signifie qu'aucun véhicule ou flux provenant de la voie du tronçon amont considéré ne sort du répartiteur par ce tronçon aval</xsd:documentation>
+                                      </xsd:annotation>
+                                      <xsd:complexType>
+                                        <xsd:sequence>
+                                          <xsd:element maxOccurs="unbounded"
+                                            name="COEFF_TRONCON_AVAL">
+                                            <xsd:annotation>
+                                              <xsd:documentation>Collection des coefficients directionnels pour un tronçon amont, une voie donnée et un tronçon aval</xsd:documentation>
+                                            </xsd:annotation>
+                                            <xsd:complexType>
+                                              <xsd:attribute name="id_aval" type="xsd:string"
+                                                use="required">
+                                                <xsd:annotation>
+                                                  <xsd:documentation>Identifiant unique du tronçon aval</xsd:documentation>
+                                                </xsd:annotation>
+                                              </xsd:attribute>
+                                              <xsd:attribute name="coeffs" type="typeFloat01List"
+                                                use="required">
+                                                <xsd:annotation>
+                                                  <xsd:documentation>Vecteur des coefficients directionnels des voies du tronçon aval pour le tronçon amont et la voie amont considérés. Les valeurs comprises entre 0 et 1 doivent être ordonnées selon la numérotation des voies (voie 1 la plus à droite dans le sens de la circulation).</xsd:documentation>
+                                                </xsd:annotation>
+                                              </xsd:attribute>
+                                            </xsd:complexType>
+                                          </xsd:element>
+                                        </xsd:sequence>
+                                      </xsd:complexType>
+                                    </xsd:element>
+                                  </xsd:sequence>
+                                  <xsd:attribute name="numvoie" type="typeIntStrictPositif"
+                                    use="required">
+                                    <xsd:annotation>
+                                      <xsd:documentation>Numéro de voie du tronçon amont considéré</xsd:documentation>
+                                    </xsd:annotation>
+                                  </xsd:attribute>
+                                </xsd:complexType>
+                              </xsd:element>
+                            </xsd:sequence>
+                          </xsd:complexType>
+                        </xsd:element>
+                      </xsd:sequence>
+                      <xsd:attribute name="id_amont" type="xsd:string" use="required">
+                        <xsd:annotation>
+                          <xsd:documentation>Identifiant du tronçon amont</xsd:documentation>
+                        </xsd:annotation>
+                      </xsd:attribute>
+                    </xsd:complexType>
+                  </xsd:element>
+                </xsd:sequence>
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:sequence>
+          <xsd:attribute default="always" name="duree" type="typeDuree">
+            <xsd:annotation>
+              <xsd:documentation>Identifiant de la plage temporelle associée, ou durée (en seconde) de la variante de répartition du flux</xsd:documentation>
+            </xsd:annotation>
+          </xsd:attribute>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="typeAffectation">
+    <xsd:sequence>
+      <xsd:element minOccurs="1" maxOccurs="unbounded" name="AFFECTATION">
+        <xsd:annotation>
+          <xsd:documentation>Description d'une variante des données d'affectation de la connexion (ce noeud est défini uniquement si le comportement de flux est de type 'destination').</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="1" maxOccurs="unbounded" name="COUPLES_ENTREE_DESTINATION">
+              <xsd:annotation>
+                <xsd:documentation>Noeud d'accès à la collection des couples entrée / destination des données d'affectation</xsd:documentation>
+              </xsd:annotation>
+              <xsd:complexType>
+                <xsd:sequence>
+                  <xsd:element minOccurs="1" maxOccurs="unbounded" name="COUPLE_ENTREE_DESTINATION">
+                    <xsd:annotation>
+                      <xsd:documentation>Description des données d'affectation d'un couple entrée / destination de la connexion</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                      <xsd:sequence>
+                        <xsd:element minOccurs="1" maxOccurs="1" name="SORTIES_CONNEXION">
+                          <xsd:annotation>
+                            <xsd:documentation>Noeud d'accès à la liste des sorties affectées</xsd:documentation>
+                          </xsd:annotation>
+                          <xsd:complexType>
+                            <xsd:sequence>
+                              <xsd:element minOccurs="1" maxOccurs="unbounded"
+                                name="SORTIE_CONNEXION">
+                                <xsd:annotation>
+                                  <xsd:documentation>Description de la sortie affectée</xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                  <xsd:attribute name="id_troncon_aval" type="xsd:string"
+                                    use="required">
+                                    <xsd:annotation>
+                                      <xsd:documentation>Identifiant du tronçon aval (sortie) de la connexion</xsd:documentation>
+                                    </xsd:annotation>
+                                  </xsd:attribute>
+                                  <xsd:attribute default="1" name="coeff" type="typeFloat01"
+                                    use="optional">
+                                    <xsd:annotation>
+                                      <xsd:documentation>Coefficient d'affectation de la sortie</xsd:documentation>
+                                    </xsd:annotation>
+                                  </xsd:attribute>
+                                </xsd:complexType>
+                              </xsd:element>
+                            </xsd:sequence>
+                          </xsd:complexType>
+                        </xsd:element>
+                      </xsd:sequence>
+                      <xsd:attribute name="id_troncon_amont" type="xsd:string" use="required">
+                        <xsd:annotation>
+                          <xsd:documentation>Identifiant du tronçon amont (entrée) de la connexion</xsd:documentation>
+                        </xsd:annotation>
+                      </xsd:attribute>
+                      <xsd:attribute name="id_destination" type="xsd:string" use="required">
+                        <xsd:annotation>
+                          <xsd:documentation>Identifiant de la destination</xsd:documentation>
+                        </xsd:annotation>
+                      </xsd:attribute>
+                    </xsd:complexType>
+                  </xsd:element>
+                </xsd:sequence>
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:sequence>
+          <xsd:attribute default="always" name="duree" type="typeDuree">
+            <xsd:annotation>
+              <xsd:documentation>Identifiant de la plage temporelle associée, ou durée (en seconde) de la variante de l'affectation</xsd:documentation>
+            </xsd:annotation>
+          </xsd:attribute>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="typeMouvementAutorise">
+    <xsd:sequence>
+      <xsd:element minOccurs="1" maxOccurs="unbounded" name="MOUVEMENT_AUTORISE">
+        <xsd:annotation>
+          <xsd:documentation>Description d'un mouvement de la connexion interne</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="1" maxOccurs="1" name="MOUVEMENT_SORTIES">
+              <xsd:annotation>
+                <xsd:documentation>Description de l'aval du mouvement (si un tronçon aval de la connexion n'est pas présent, les véhicules entrant par le tronçon et la voie considérés ne peuvent pas sortir par ce tronçon)</xsd:documentation>
+              </xsd:annotation>
+              <xsd:complexType>
+                <xsd:sequence>
+                  <xsd:element minOccurs="1" maxOccurs="unbounded" name="MOUVEMENT_SORTIE">
+                    <xsd:annotation>
+                      <xsd:documentation>Description de l'aval d'un mouvement</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                      <xsd:attribute name="id_troncon_aval" type="xsd:string" use="required">
+                        <xsd:annotation>
+                          <xsd:documentation>Identifiant du tronçon aval</xsd:documentation>
+                        </xsd:annotation>
+                      </xsd:attribute>
+                      <xsd:attribute default="1" name="num_voie_aval" type="typeIntStrictPositif"
+                        use="optional">
+                        <xsd:annotation>
+                          <xsd:documentation>Numéro de la voie aval</xsd:documentation>
+                        </xsd:annotation>
+                      </xsd:attribute>
+                      <xsd:attribute default="1" name="taux_utilisation" type="typeFloat01"
+                        use="optional">
+                        <xsd:annotation>
+                          <xsd:documentation>Taux d'utilisation de la voie aval par rapport à l'ensemble des voies du tronçon aval</xsd:documentation>
+                        </xsd:annotation>
+                      </xsd:attribute>
+                      <xsd:attribute name="libelle" type="xsd:string">
+                        <xsd:annotation>
+                          <xsd:documentation>Libellé du mouvement</xsd:documentation>
+                        </xsd:annotation>
+                      </xsd:attribute>
+                      <xsd:attribute default="0" name="ligne_feu" type="xsd:float" use="optional">
+                        <xsd:annotation>
+                          <xsd:documentation>Position curviligne de la ligne de feu rattachée au mouvement. Cette position est définie  par rapport à l'extrémité de la voie amont du mouvement et sur la trajectoire définie par le mouvement.
+A définir uniquuement si un contrôleur de feux est associé à la connexion.</xsd:documentation>
+                        </xsd:annotation>
+                      </xsd:attribute>
+                      <xsd:attribute name="vit_max" type="typeFloatStrictPositif" use="optional">
+                        <xsd:annotation>
+                          <xsd:documentation>Vitesse maximale spécifique à ce mouvement autorisé (en m/s)</xsd:documentation>
+                        </xsd:annotation>
+                      </xsd:attribute>
+                      <xsd:attribute name="exclusion_types_vehicules" type="xsd:string">
+                        <xsd:annotation>
+                          <xsd:documentation>Liste des identifiants des types de véhicules qui sont exclus de ce mouvement autorisé</xsd:documentation>
+                        </xsd:annotation>
+                      </xsd:attribute>
+                    </xsd:complexType>
+                  </xsd:element>
+                </xsd:sequence>
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:sequence>
+          <xsd:attribute name="id_troncon_amont" type="xsd:string">
+            <xsd:annotation>
+              <xsd:documentation>Identifiant du tronçon amont de la connexion interne</xsd:documentation>
+            </xsd:annotation>
+          </xsd:attribute>
+          <xsd:attribute default="1" name="num_voie_amont" type="typeIntStrictPositif"
+            use="optional">
+            <xsd:annotation>
+              <xsd:documentation>Numéro de la voie du tronçon amont considérée</xsd:documentation>
+            </xsd:annotation>
+          </xsd:attribute>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="typeConnexionInterne">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" maxOccurs="1" name="MOUVEMENTS_AUTORISES"
+        type="typeMouvementAutorise"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="typeParametrageSimulation">
+    <xsd:attribute name="pasdetemps" type="typeFloatStrictPositif" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Pas de temps de simulation</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="dirout" type="xsd:string" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Répertoire de sortie des résultats de la simulation</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="prefout" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Préfixe des fichiers de sortie</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="debut" type="xsd:time" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Heure de début de la simulation (Heures:Minutes:Secondes)</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="fin" type="xsd:time" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Heure de fin de la simulation (Heures:Minutes:Secondes)</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="typesimulation" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Type de simulation</xsd:documentation>
+      </xsd:annotation>
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:NMTOKEN">
+          <xsd:enumeration value="trafic">
+            <xsd:annotation>
+              <xsd:documentation>simulation du trafic</xsd:documentation>
+            </xsd:annotation>
+          </xsd:enumeration>
+          <xsd:enumeration value="acoustique">
+            <xsd:annotation>
+              <xsd:documentation>simulation de l'acoustique</xsd:documentation>
+            </xsd:annotation>
+          </xsd:enumeration>
+          <xsd:enumeration value="all">
+            <xsd:annotation>
+              <xsd:documentation>simulation du trafic et de l'acoustique</xsd:documentation>
+            </xsd:annotation>
+          </xsd:enumeration>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+    <xsd:attribute default="C" name="type_sortieacoustique">
+      <xsd:annotation>
+        <xsd:documentation>Type de sortie acoustique</xsd:documentation>
+      </xsd:annotation>
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:NMTOKEN">
+          <xsd:enumeration value="C">
+            <xsd:annotation>
+              <xsd:documentation>cellule acoustique</xsd:documentation>
+            </xsd:annotation>
+          </xsd:enumeration>
+          <xsd:enumeration value="P">
+            <xsd:annotation>
+              <xsd:documentation>ponctuel</xsd:documentation>
+            </xsd:annotation>
+          </xsd:enumeration>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+    <xsd:attribute default="estimee" name="loipoursuite" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Indique la loi de poursuite utilisée</xsd:documentation>
+      </xsd:annotation>
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:NMTOKEN">
+          <xsd:enumeration value="exacte">
+            <xsd:annotation>
+              <xsd:documentation>Loi de poursuite précédente avec calcul exacte de la vitesse du leader au pas de temps suivant</xsd:documentation>
+            </xsd:annotation>
+          </xsd:enumeration>
+          <xsd:enumeration value="estimee">
+            <xsd:annotation>
+              <xsd:documentation>Nouvelle loi de poursuite avec calcul approchée de la vitesse du leader au pas de temps suivant</xsd:documentation>
+            </xsd:annotation>
+          </xsd:enumeration>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+    <xsd:attribute name="comportementflux" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Comportement du flux</xsd:documentation>
+      </xsd:annotation>
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:NMTOKEN">
+          <xsd:enumeration value="dir">
+            <xsd:annotation>
+              <xsd:documentation>directionnel</xsd:documentation>
+            </xsd:annotation>
+          </xsd:enumeration>
+          <xsd:enumeration value="des">
+            <xsd:annotation>
+              <xsd:documentation>les véhicules connaissent leur destination</xsd:documentation>
+            </xsd:annotation>
+          </xsd:enumeration>
+          <xsd:enumeration value="iti">
+            <xsd:annotation>
+              <xsd:documentation>les véhicules connaissent leur itinéraire</xsd:documentation>
+            </xsd:annotation>
+          </xsd:enumeration>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+    <xsd:attribute default="1" name="nombre_pluscourtchemin" type="typeIntStrictPositif"
+      use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Nombre de plus court chemin à considérer dans le cas d'un comportment de flux de type 'itineraire'</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute default="0" name="debug" type="xsd:boolean" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Création d'un fichier trace et de sorties supplémentaires dans le fichier trafic (leader, deltaN)</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute default="false" name="offre_aval_convergent_deltaN" type="xsd:boolean"
+      use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Indique si l'offre en aval des convergents du réseau est calculé à l'aide de la quantité deltaN ou non </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute default="false" name="calcul_tq_convergent" type="xsd:boolean" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Indique si le calcul d'insertion du convergent prend en compte tq</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute default="1" name="trajectoires" type="xsd:boolean" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Indique si les trajectoires sont inscrites dans le fichier de sortie</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="date" type="xsd:date" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Date de la simulation</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute default="" name="titre" type="typeString256" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Titre de la simulation</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute default="0" name="proc_deceleration" type="xsd:boolean" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Indique si la procédure de décélération doit être lancée à la fin du calcul</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute default="3" name="proc_dec_taux" type="typeFloatStrictPositif" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Valeur du taux de décélération à prendre en compte dans la procédure de décélération</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute default="normal" name="sortie" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Mode se sortie du trafic. Le mode 'light' sauvegarde uniquement les résultats utiles à SymuPlot et SymuPlayer (notamment le mode 'light' ne permet pas de lancer la simulation acoustique correspondante).</xsd:documentation>
+      </xsd:annotation>
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:NMTOKEN">
+          <xsd:enumeration value="normal"/>
+          <xsd:enumeration value="light"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+    <xsd:attribute default="0" name="trace_route" type="xsd:boolean">
+      <xsd:annotation>
+        <xsd:documentation>Indique si les itinéraires des véhicules sont tracés dans le fichier trafic. 
+Si oui, le calcul de la distance parcourue dans la procédure de trace des trajectoire s'effectue de façon exacte sinon la procédure utilise la vitesse à chaque pas de temps pour en déduire la distance parcourue.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute default="0" name="seed" type="xsd:unsignedInt">
+      <xsd:annotation>
+        <xsd:documentation>Graine du générateur aléatoire (deux exécutions avec le même seed donnent des résultats identiques).
+La valeur par défaut 0 signifie que le 'seed' est évalué par le logiciel.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute default="predefinie" name="affectation" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Type d'affectation dans le cas d'un comportement de flux 'destination'</xsd:documentation>
+      </xsd:annotation>
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:NMTOKEN">
+          <xsd:enumeration value="predefinie"/>
+          <xsd:enumeration value="calculee"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+    <xsd:attribute default="false" name="affectation_debug" type="xsd:boolean" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Indique si des informations concernant le calcul d'affectation sont sorties dans le fichier de simulation.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute default="900" name="periode_affectation" type="typeIntStrictPositif"
+      use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Période d'affectation dans le cas d'un comportement de flux de type 'affectation_calculee'. Elle est saisie sous la forme d'un coefficient multiplicateur entier du pas de temps. Afin d'estimer au mieux les temps de parcours de chaque tronçon, la période doit être suffisamment grande pour que plusieurs véhicules aient le temps de parcourir entièrement le tronçon.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute default="NE" name="affectation_equilibre" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Paramétrage de la gestion de l'équilibre d'affectation : sans recherche d'équilibre (NE), recherche d'équilibre sans mémoire (ENM), recherche d'équilibre par la méthode des moyennes successives(EMS) </xsd:documentation>
+      </xsd:annotation>
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:NMTOKEN">
+          <xsd:enumeration value="NE">
+            <xsd:annotation>
+              <xsd:documentation>pas de recherche d'équilibre (les coefficients d'affectation sont calculés une seule fois au début de la période d'agrégation et appliqués durant la période d'affectation suivante sans recherche d'équilibre</xsd:documentation>
+            </xsd:annotation>
+          </xsd:enumeration>
+          <xsd:enumeration value="ENM">
+            <xsd:annotation>
+              <xsd:documentation>recherche d'équilibre sans mémoire (les coefficients d'affectation sont initialisés au début de la période d'agrégation puis appliqués durant toute la période. A la fin de la période, si l'équilibre entre temps de parcours désiré et simulé n'est pas obtenu, des nouveaux coefficients d'affectation sont calculés sans prendre en compte le résultat précédent</xsd:documentation>
+            </xsd:annotation>
+          </xsd:enumeration>
+          <xsd:enumeration value="MSA">
+            <xsd:annotation>
+              <xsd:documentation>recherche d'équilibre par la méthode des moyennes successives (les coefficients d'affectation sont initialisés au début de la période d'agrégation puis appliqués durant toute la période. A la fin de la période, si l'équilibre entre temps de parcours désiré et simulé n'est pas obtenu, des nouveaux coefficients d'affectation sont calculésen utilsant la méthode des moyennes successives</xsd:documentation>
+            </xsd:annotation>
+          </xsd:enumeration>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+    <xsd:attribute default="R" name="affectation_type_temps_de_parcours" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Type de calcul du temps de parcours : réalisé (R) ou prédictif (P)</xsd:documentation>
+      </xsd:annotation>
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:NMTOKEN">
+          <xsd:enumeration value="R">
+            <xsd:annotation>
+              <xsd:documentation>réalisé</xsd:documentation>
+            </xsd:annotation>
+          </xsd:enumeration>
+          <xsd:enumeration value="PN">
+            <xsd:annotation>
+              <xsd:documentation>prédictif 1 (Nico)</xsd:documentation>
+            </xsd:annotation>
+          </xsd:enumeration>
+          <xsd:enumeration value="PL">
+            <xsd:annotation>
+              <xsd:documentation>prédictif 2 (Ludo)</xsd:documentation>
+            </xsd:annotation>
+          </xsd:enumeration>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+    <xsd:attribute default="1" name="affectation_variation_temps_de_parcours" type="typeFloat01"
+      use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Variation minimale du temps de parcours d'un tronçon entraînant le calcul des coefficients d'affectation des connexions en amont du tronçon</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute default="1" name="affectation_nb_connexion_amont" type="typeIntStrictPositif"
+      use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Nombre de niveau à remonter à partir d'un tronçon lors du calcul des coefficients d'affectation suite à une variation importante du temps de parcours du tronçon</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute default="0.01" name="affectation_teta_logit" type="typeFloatStrictPositif"
+      use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Paramètre teta du modèle logit de l'affectation</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  <xsd:complexType name="typeParametrageTrafic">
+    <xsd:attribute name="accbornee" type="xsd:boolean" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Simulation de l'accélération bornée </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute default="true" name="chgtvoie" type="xsd:boolean" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Simulation du changement de voie</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute default="4" name="chgtvoie_tau" type="xsd:float" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Caractéristique Tau du changement de voie</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute default="0" name="pi_mandatory" type="xsd:float" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Valeur de Pi dans le cas d'un changement de voie 'mandatory' lié à une réduction de voie uniquement (si non définie ou égale à 0, égale à 1/pas de temps)</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute default="1" name="coeffrelax" type="xsd:float" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Coefficient de relaxation du réseau</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute default="50" name="chgtvoie_dstfin" type="xsd:float">
+      <xsd:annotation>
+        <xsd:documentation>Distance avant la fin du tronçon pour forcer un changement de voie d'un véhicule si il ne se trouve pas sur la bonne voie pour prendre la prochaine direction (en mètre)</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute default="0.2" name="pi_rabattement" type="typeFloat01" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Valeur de Pi dans le cas d'un rabattement vers la voie la plus à droite des véhicules </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute default="false" name="agressivite" type="xsd:boolean">
+      <xsd:annotation>
+        <xsd:documentation>Indique si la procédure d'agressivité des véhicules est appliquée</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  <xsd:complexType name="typeTypeDeVehicule">
+    <xsd:all>
+      <xsd:element minOccurs="0" maxOccurs="1" name="ACCELERATION_PLAGES">
+        <xsd:annotation>
+          <xsd:documentation>Liste ordonnée des plages de l'accélération en fonction de la vitesse dans le cas d'une accélération non constante (ce noeud n'est pas lu dans le cas où la simulation a pour caractéristique "accélération non bornée")</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="1" maxOccurs="unbounded" name="ACCELERATION_PLAGE">
+              <xsd:annotation>
+                <xsd:documentation>Description d'une plage d'accélération</xsd:documentation>
+              </xsd:annotation>
+              <xsd:complexType>
+                <xsd:attribute name="ax" type="typeFloatStrictPositif" use="required">
+                  <xsd:annotation>
+                    <xsd:documentation>Accélération en m/s2</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="vit_sup" type="typeVitMax" use="required">
+                  <xsd:annotation>
+                    <xsd:documentation>Vitesse (en m/s) de la borne supérieure de validité de l'accélération</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:attribute>
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element minOccurs="0" maxOccurs="1" name="SOURCES_ACOUSTIQUES">
+        <xsd:annotation>
+          <xsd:documentation>Liste des sources acoustiques du véhicule</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="1" maxOccurs="unbounded" name="SOURCE_ACOUSTIQUE">
+              <xsd:annotation>
+                <xsd:documentation>Description d'une source acoustique du type de véhicule parent</xsd:documentation>
+              </xsd:annotation>
+              <xsd:complexType>
+                <xsd:attribute default="0" name="position" type="xsd:float" use="optional">
+                  <xsd:annotation>
+                    <xsd:documentation>Position de la source acoustique du véhicule (l'origine est l'avant du véhicule)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="id_DB_LoiEmission" type="xsd:string" use="required">
+                  <xsd:annotation>
+                    <xsd:documentation>Identifiant base de donnée des lois d'émission de la source acoustique du type de véhicule</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:attribute>
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:all>
+    <xsd:attribute name="id" type="xsd:ID" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Identifiant du type de véhicule</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="w" type="typeFloatNegatif" use="required">
+      <xsd:annotation>
+        <xsd:documentation>W (en m/s, négatif par convention) d'un véhicule de ce type. Si les attributs 'w_dispersion', 'w_min' et 'w_max' sont également définis, lors de la création d'un véhicule de type, la valeur W sera calculée à l'aide d'une distribution normale de moyenne 'w' et de dispersion 'w' (la plage [w_min, w_max] permet d'exclure les valeurs tirées en dehors de cette plage), sinon 'w' est la valeur constante de W des véhicules de ce type.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="w_dispersion" type="typeVitesses" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Valeur de dispersion de W dans le cas d'une distribution normale pour chaque véhicule créé. ATTENTION : la valeur doit être positive puisque c'est une dispersion</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="w_min" type="typeFloatNegatif" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Borne inférieure des valeurs issues de la distribution normale de W (si une valeur tirée est strictement inférieure à cette borne, le tirage est réitéré), cette valeur est négative comme W</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="w_max" type="typeFloatNegatif" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Borne supérieure des valeurs issues de la distribution normale de W (si une valeur tirée est strictement supérieure à cette borne, le tirage est réitéré), cette valeur est négative comme W</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="kx" type="typeFloatStrictPositif" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Concentration max par voie (en veh/m). Si les attributs 'inv_kx_dispersion', 'kx_min' et 'kx_max' sont également définis, lors de la création d'un véhicule de type, la concentration sera calculée comme l'inverse d'une valeur issue d'une distribution normale de moyenne '1/kx' et de dispersion 'inv_kx_dispersion' (la plage [kx_min, kx_max] permet d'exclure les valeurs tirées en dehors de cette plage), sinon 'kx' est la concentration constante des véhicules de ce type.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="inv_kx_dispersion" type="typeFloatStrictPositif" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Valeur de dispersion de l'inverse de la concentration dans le cas d'une distribution normale pour chaque véhicule créé</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="kx_min" type="typeFloatStrictPositif" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Borne inférieure de concentration des inserves des valeurs issues de la distribution normale (si une valeur tirée est strictement inférieure à cette borne, le tirage est réitéré)</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="kx_max" type="typeFloatStrictPositif" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Borne supérieure de concentration des inverses des valeurs issues de la distribution normale (si une valeur tirée est strictement supérieure à cette borne, le tirage est réitéré)</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="vx" type="typeVitesses" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Vitesse libre (en m/s) d'un véhicule de ce type. Si les attributs 'vx_dispersion', 'vx_min' et 'vx_max' sont également définis, lors de la création d'un véhicule de type, la vitesse libre sera calculée à l'aide d'une distribution normale de moyenne 'vx' et de dispersion 'vx_dispersion' (la plage [vx_min, vx_max] permet d'exclure les valeurs tirées en dehors de cette plage), sinon 'vx' est la vitesse libre constante des véhicules de ce type.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="vx_dispersion" type="typeVitesses" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Valeur de dispersion de la vitesse libre dans le cas d'une distribution normale pour chaque véhicule créé</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="vx_min" type="typeVitesses" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Borne inférieure des valeurs issues de la distribution normale de la vitesse libre (si une valeur tirée est strictement inférieure à cette borne, le tirage est réitéré)</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="vx_max" type="typeVitesses" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Borne supérieure des valeurs issues de la distribution normale de la vitesse libre (si une valeur tirée est strictement supérieure à cette borne, le tirage est réitéré)</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute default="0.5" name="ax" type="typeFloatStrictPositif">
+      <xsd:annotation>
+        <xsd:documentation>Accélération maximale (en m/s2) dans le cas d'une accélération constante quelle que soit la vitesse (cet attribut n'est pas utilisé dans le cas où la simulation a pour caractéristique "accélération non bornée"</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="deceleration" type="typeFloatStrictPositif" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Décélération (en m/s2) lors de l'approche d'un arrêt pour un type de véhicule de transport guidé </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute default="1" name="espacement_arret" type="typeFloatStrictPositif" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Longueur en mètre de l'espace vide laissé par 2 véhicules successifs à l'arrêt (utilisé uniqement pour l'algorithme de traversée)</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute default="1" name="agressivite" type="typeFloat01">
+      <xsd:annotation>
+        <xsd:documentation>Valeur d'agressivité du type de véhicule (limite inférieure du delta N du véhicule avant adaptation de sa vitesse par rapport à son leader)</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  <xsd:complexType name="typeTroncon">
+    <xsd:all>
+      <xsd:element minOccurs="0" maxOccurs="1" name="VOIES_REDUITES">
+        <xsd:annotation>
+          <xsd:documentation>Liste des voies réduites pour les tronçons microscopiques(Symubruit force le changement de voie avant la fin du tronçon pour de telles voies)</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" name="VOIE_REDUITE">
+              <xsd:annotation>
+                <xsd:documentation>Description d'une voie réduite</xsd:documentation>
+              </xsd:annotation>
+              <xsd:complexType>
+                <xsd:attribute name="numvoie" type="typeIntStrictPositif" use="required">
+                  <xsd:annotation>
+                    <xsd:documentation>Numéro de voie réduite</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="exclusion_types_vehicules" type="xsd:string">
+                  <xsd:annotation>
+                    <xsd:documentation>Liste des identifiants des types de véhicules pour lesquels la voie réduite ne s'applique pas</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute default="true" name="active" type="xsd:boolean">
+                  <xsd:annotation>
+                    <xsd:documentation>Indique si la voie réduite est active ou non (utile pour désactiver une voie réduite existante)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:attribute>
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="VOIES_RESERVEES">
+        <xsd:annotation>
+          <xsd:documentation>Définition des voies réservées sur ce tronçon</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+          <xsd:sequence maxOccurs="1">
+            <xsd:element maxOccurs="unbounded" minOccurs="1" name="VOIE_RESERVEE">
+              <xsd:annotation>
+                <xsd:documentation>Définition d'une voie réservée</xsd:documentation>
+              </xsd:annotation>
+              <xsd:complexType>
+                <xsd:attribute name="num_voie" type="xsd:positiveInteger" use="required">
+                  <xsd:annotation>
+                    <xsd:documentation>Numéro de la voie réservée sur le tronçon</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="id_typesvehicules" type="xsd:string" use="required">
+                  <xsd:annotation>
+                    <xsd:documentation>Liste des identifiants des types de véhicule pour lesquels la voie est réservée</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute default="always" name="duree" type="typeDuree">
+                  <xsd:annotation>
+                    <xsd:documentation>Identifiant de la plage temporelle associée, ou durée (en seconde) de la voie réservée. Par défaut, la voie est réservée pour toute la simulation.</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute default="true" name="active" type="xsd:boolean">
+                  <xsd:annotation>
+                    <xsd:documentation>Indique si la voie réservée doit être activée ou désactivée</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:attribute>
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="VOIES_INTERDITES">
+        <xsd:annotation>
+          <xsd:documentation>Définition des voies interdites sur le tronçon</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" name="VOIE_INTERDITE">
+              <xsd:annotation>
+                <xsd:documentation>Définition d'une voie réservée</xsd:documentation>
+              </xsd:annotation>
+              <xsd:complexType>
+                <xsd:attribute name="num_voie" type="xsd:positiveInteger" use="required">
+                  <xsd:annotation>
+                    <xsd:documentation>Numéro de la voie interdite sur le tronçon</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="id_typesvehicules" type="xsd:string" use="required">
+                  <xsd:annotation>
+                    <xsd:documentation>Liste des identifiants des types de véhicule pour lesquels la voie est interdite</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:attribute>
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element maxOccurs="1" minOccurs="0" name="TERRE_PLEINS">
+        <xsd:annotation>
+          <xsd:documentation>Ensemble des terre-pleins présents sur le tronçon</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" name="TERRE_PLEIN">
+              <xsd:annotation>
+                <xsd:documentation>Terre-plein présent sur le tronçon</xsd:documentation>
+              </xsd:annotation>
+              <xsd:complexType>
+                <xsd:sequence>
+                  <xsd:element maxOccurs="unbounded" name="TERRE_PLEIN_VARIATION">
+                    <xsd:annotation>
+                      <xsd:documentation>Variation temporelle de la présence du terre-plein</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                      <xsd:attribute default="always" name="duree" type="typeDuree">
+                        <xsd:annotation>
+                          <xsd:documentation>Identifiant de la plage temporelle associée, ou durée (en seconde) de la présence du terre plein pour cette variation temporelle</xsd:documentation>
+                        </xsd:annotation>
+                      </xsd:attribute>
+                      <xsd:attribute default="true" name="actif" type="xsd:boolean">
+                        <xsd:annotation>
+                          <xsd:documentation>Indique si le terre-plein est actif ou non pendant la variation temporelle</xsd:documentation>
+                        </xsd:annotation>
+                      </xsd:attribute>
+                    </xsd:complexType>
+                  </xsd:element>
+                </xsd:sequence>
+                <xsd:attribute name="num_voie" type="xsd:positiveInteger" use="required">
+                  <xsd:annotation>
+                    <xsd:documentation>Numéro de la voie à gauche de laquelle se trouve le terre-plein</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute default="0" name="position_debut" type="typeFloatPositif">
+                  <xsd:annotation>
+                    <xsd:documentation>Position curviligne du début du terre-plein sur le tronçon (en m)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute default="INF" name="position_fin" type="typeFloatPositif">
+                  <xsd:annotation>
+                    <xsd:documentation>Position curviligne de la fin du terre-plein sur le tronçon (en m)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:attribute>
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:all>
+    <xsd:attribute name="id" type="xsd:ID" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Identifiant du tronçon</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute default="true" name="chgt_voie_droite" type="xsd:boolean">
+      <xsd:annotation>
+        <xsd:documentation>Indique si le changement de voie vers la voie la plus à droite est autorisé (oui par défaut)</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  <xsd:complexType name="typeExtremite">
+    <xsd:complexContent>
+      <xsd:extension base="typeOrigine">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="CAPACITES">
+            <xsd:annotation>
+              <xsd:documentation>Liste des variantes de la capacité de la sortie. Si cette liste n'existe pas, la sortie est libre.</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element minOccurs="1" maxOccurs="unbounded" name="CAPACITE">
+                  <xsd:annotation>
+                    <xsd:documentation>Description d'une variante de la capacité</xsd:documentation>
+                  </xsd:annotation>
+                  <xsd:complexType>
+                    <xsd:attribute default="always" name="duree" type="typeDuree">
+                      <xsd:annotation>
+                        <xsd:documentation>Identifiant de la plage temporelle associée, ou durée de la variante</xsd:documentation>
+                      </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="valeur" type="typeFloatPositif" use="required">
+                      <xsd:annotation>
+                        <xsd:documentation>Valeur en veh/sec de la capacité de la sortie</xsd:documentation>
+                      </xsd:annotation>
+                    </xsd:attribute>
+                  </xsd:complexType>
+                </xsd:element>
+              </xsd:sequence>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="typeFLUX">
+    <xsd:sequence>
+      <xsd:element minOccurs="0" name="DEMANDES">
+        <xsd:annotation>
+          <xsd:documentation>Noeud d'accès aux variantes temporelles de la demande pour l'extrémité courante</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="DEMANDE" maxOccurs="unbounded">
+              <xsd:annotation>
+                <xsd:documentation>Description d'une variante temporelle de demande de l'extrémité courante</xsd:documentation>
+              </xsd:annotation>
+              <xsd:complexType>
+                <xsd:attribute name="niveau" type="typeFloatPositif">
+                  <xsd:annotation>
+                    <xsd:documentation>Niveau de la demande en veh/s</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="duree" type="typeDuree" default="always" use="optional">
+                  <xsd:annotation>
+                    <xsd:documentation>Durée de la variante temporelle
+                    </xsd:documentation>
+                  </xsd:annotation>
+                </xsd:attribute>
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="REP_DESTINATIONS" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>Noeud d'accès aux variantes temporelles de la répartition vers les destinations pour l'extrémité courante</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="REP_DESTINATION" maxOccurs="unbounded">
+              <xsd:annotation>
+                <xsd:documentation>Description de la variante temporelle de la répartition vers les destinations</xsd:documentation>
+              </xsd:annotation>
+              <xsd:complexType>
+                <xsd:sequence>
+                  <xsd:element name="DESTINATION" maxOccurs="unbounded">
+                    <xsd:annotation>
+                      <xsd:documentation>Description d'une destination de l'extrémité courante
+                      </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                      <xsd:sequence>
+                        <xsd:annotation>
+                          <xsd:documentation>Liste des itinéraires affectés</xsd:documentation>
+                        </xsd:annotation>
+                        <xsd:element name="ROUTE" type="typeITINERAIRE" maxOccurs="unbounded"
+                          minOccurs="0"/>
+                      </xsd:sequence>
+                      <xsd:attribute name="sortie" type="xsd:string" use="required">
+                        <xsd:annotation>
+                          <xsd:documentation>Identifiant de la sortie destination</xsd:documentation>
+                        </xsd:annotation>
+                      </xsd:attribute>
+                      <xsd:attribute name="coeffOD" type="typeFloat01" use="required">
+                        <xsd:annotation>
+                          <xsd:documentation>Coefficient de la matrice OD pour l'origine (extrélité courante) et la destination considérée</xsd:documentation>
+                        </xsd:annotation>
+                      </xsd:attribute>
+                      <xsd:attribute name="affectation_teta_logit" type="typeFloatStrictPositif"
+                        use="optional">
+                        <xsd:annotation>
+                          <xsd:documentation>Paramètre teta du modèle logit de l'affectation spécifique pour ce couple OD</xsd:documentation>
+                        </xsd:annotation>
+                      </xsd:attribute>
+                      <xsd:attribute name="nombre_pluscourtchemin" type="typeIntStrictPositif"
+                        use="optional">
+                        <xsd:annotation>
+                          <xsd:documentation>Nombre de plus court chemin à considérer dans le cas d'un comportment de flux de type 'itineraire' pour ce couple OD</xsd:documentation>
+                        </xsd:annotation>
+                      </xsd:attribute>
+                      <xsd:attribute name="affectation_commonality_alpha" type="xsd:float">
+                        <xsd:annotation>
+                          <xsd:documentation>Valeur maximum du commonality factor admissible pour les itinéraires calculés par le module d'affectation pour ce couple OD</xsd:documentation>
+                        </xsd:annotation>
+                      </xsd:attribute>
+                      <xsd:attribute name="affectation_commonality_beta" type="typeFloat01">
+                        <xsd:annotation>
+                          <xsd:documentation>Valeur du paramètre beta pour le calcul du commonality factor pour ce couple OD</xsd:documentation>
+                        </xsd:annotation>
+                      </xsd:attribute>
+                      <xsd:attribute name="affectation_commonality_gamma" type="typeFloat01">
+                        <xsd:annotation>
+                          <xsd:documentation>Valeur du paramètre gamma pour le calcul du commonality factor pour ce couple OD</xsd:documentation>
+                        </xsd:annotation>
+                      </xsd:attribute>
+                    </xsd:complexType>
+                  </xsd:element>
+                </xsd:sequence>
+                <xsd:attribute name="duree" type="typeDuree" default="always" use="optional">
+                  <xsd:annotation>
+                    <xsd:documentation>Durée de la variante temporelle</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:attribute>
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="REP_VOIES" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>Noeud d'accès aux variantes temporelles de la répartition par voie du flux provenant de l'extrémité (origine) courante</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="REP_VOIE" maxOccurs="unbounded">
+              <xsd:annotation>
+                <xsd:documentation>Description d'une variante temporelle de la répartition par voie du flux provenant de l'extrémité (origine) courante</xsd:documentation>
+              </xsd:annotation>
+              <xsd:complexType>
+                <xsd:attribute name="duree" type="typeDuree" default="always">
+                  <xsd:annotation>
+                    <xsd:documentation>Durée de la variante temporelle</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="coeffs" default="1" type="typeFloat01NormedList">
+                  <xsd:annotation>
+                    <xsd:documentation>Liste ordonnée des coefficients de répartition sur les voies du tronçon amont de l'extrémité courante</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:attribute>
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="typeRepTypeVehicules">
+    <xsd:sequence>
+      <xsd:element name="REP_TYPEVEHICULE" maxOccurs="unbounded">
+        <xsd:annotation>
+          <xsd:documentation>Description d'une variante temporelle de la répartition du flux par type de véhicule</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+          <xsd:attribute name="duree" type="typeDuree" default="always">
+            <xsd:annotation>
+              <xsd:documentation>Durée de la variante temporelle</xsd:documentation>
+            </xsd:annotation>
+          </xsd:attribute>
+          <xsd:attribute name="coeffs" type="typeFloat01List">
+            <xsd:annotation>
+              <xsd:documentation>Liste ordonnée des coefficients de répartition du flux selon le type de véhicule. La somme doit être égale à 1, la liste doit contenir auntant d'élément que de type de véhicule défini, l'ordre des coefficients doit être identique à celui de la liste des types de véhicules.</xsd:documentation>
+            </xsd:annotation>
+          </xsd:attribute>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="typeITINERAIRE">
+    <xsd:sequence minOccurs="1">
+      <xsd:element name="TRONCONS_" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>Liste des tronçons constituant l'itinéraire</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" name="TRONCON_">
+              <xsd:complexType>
+                <xsd:attribute name="libelle" type="xsd:string" use="required">
+                  <xsd:annotation>
+                    <xsd:documentation>Identifiant du tronçon</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:attribute>
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+    <xsd:attribute name="coeffAffectation" type="typeFloat01" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Coefficient d'affectation des vahicules à cet itinéraire. La somme des coefficients des itinéraires doit être égale à 1.</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="id" type="xsd:string">
+      <xsd:annotation>
+        <xsd:documentation>Identifiant de l'itinéraire défini au niveau du noeud RESEAU/ROUTES. Si cet identifiant n'est pas défini, l'utilisateur doit listé les tronçons de l'itinéraire au niveau du noeud enfant TRONCONS_</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  <xsd:complexType name="typeFLUX_GLOBAL">
+    <xsd:sequence>
+      <xsd:element name="FLUX" type="typeFLUX">
+        <xsd:annotation>
+          <xsd:documentation>Description du flux </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element minOccurs="0" name="REP_TYPEVEHICULES" type="typeRepTypeVehicules">
+        <xsd:annotation>
+          <xsd:documentation>Description des variantes temporelles de la répartition du flux par type de véhicule (cette répartition est utilisée pour calculer le type de véhicule lors de sa création)</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <xsd:complexType name="typeOrigine">
+    <xsd:sequence minOccurs="1">
+      <xsd:element name="FLUX_GLOBAL" type="typeFLUX_GLOBAL" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>Noeud d'accès à la description d'un flux global ayant pour origine l'extrémité courante (pour tous les types de véhicule)</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="FLUX_TYPEVEHS" minOccurs="0">
+        <xsd:annotation>
+          <xsd:documentation>Noeud d'accès à la collection des flux par type de véhicule pour l'extrémité courante</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+          <xsd:sequence maxOccurs="unbounded">
+            <xsd:element name="FLUX_TYPEVEH">
+              <xsd:complexType>
+                <xsd:sequence>
+                  <xsd:element name="FLUX" type="typeFLUX">
+                    <xsd:annotation>
+                      <xsd:documentation>Description du flux pour un type de véhicule pour l'extrémité courante</xsd:documentation>
+                    </xsd:annotation>
+                  </xsd:element>
+                </xsd:sequence>
+                <xsd:attribute name="id_typevehicule" type="xsd:string" use="required">
+                  <xsd:annotation>
+                    <xsd:documentation>Identifiant de type de véhicule associé à la description du flux</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:attribute>
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+    <xsd:attribute name="id" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Identifiant de l'élément</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute default="demande" name="typeCreationVehicule" use="optional">
+      <xsd:annotation>
+        <xsd:documentation>Précise le mode de création de véhicules (liste de véhicule avec l'heure d'entrée sur le réseau ou demande)</xsd:documentation>
+      </xsd:annotation>
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:NMTOKEN">
+          <xsd:enumeration value="demande">
+            <xsd:annotation>
+              <xsd:documentation>Les véhicules sont créés à partir d'une demande en véhicule par seconde. Dès que la demande cumulée atteind 1, un véhicule est créé.</xsd:documentation>
+            </xsd:annotation>
+          </xsd:enumeration>
+          <xsd:enumeration value="distributionExponentielle">
+            <xsd:annotation>
+              <xsd:documentation>Les instants de création des véhicules suivent une distribution exponentielle</xsd:documentation>
+            </xsd:annotation>
+          </xsd:enumeration>
+          <xsd:enumeration value="listeVehicules">
+            <xsd:annotation>
+              <xsd:documentation>Liste de véhicules avec leur heure d'entrée sur le réseau et leur type</xsd:documentation>
+            </xsd:annotation>
+          </xsd:enumeration>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+  </xsd:complexType>
+  <xsd:complexType name="typeRepartiteur">
+    <xsd:complexContent mixed="false">
+      <xsd:extension base="typeConnexionInterne">
+        <xsd:attribute name="id" type="xsd:ID" use="required">
+          <xsd:annotation>
+            <xsd:documentation>Identifiant du répartiteur</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="typeConvergent">
+    <xsd:complexContent mixed="false">
+      <xsd:extension base="typeConnexionInterne">
+        <xsd:sequence>
+          <xsd:element minOccurs="1" maxOccurs="1" name="TRONCONS_AMONT">
+            <xsd:annotation>
+              <xsd:documentation>Liste des tronçons amont du convergent</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element minOccurs="1" maxOccurs="unbounded" name="TRONCON_AMONT">
+                  <xsd:annotation>
+                    <xsd:documentation>Description d'un tronçon amont du convergent</xsd:documentation>
+                  </xsd:annotation>
+                  <xsd:complexType>
+                    <xsd:attribute name="id" type="xsd:string" use="required">
+                      <xsd:annotation>
+                        <xsd:documentation>Identifiant du tronçon amont</xsd:documentation>
+                      </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute default="0" name="priorite" type="xsd:nonNegativeInteger">
+                      <xsd:annotation>
+                        <xsd:documentation>Niveau de priorité du tronçon (1 priorité la plus forte puis plus le niveau augmente, plus la priorité diminue, 0 correspond à une priorité non définie). Si deux tronçons possèdent le même niveau de priorité, SymuVia applique la règle de priorité à droite</xsd:documentation>
+                      </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute default="20" name="pos_cpt" type="typeFloatPositif"
+                      use="optional">
+                      <xsd:annotation>
+                        <xsd:documentation>Position (en mètre) du capteur sur le tronçon amont</xsd:documentation>
+                      </xsd:annotation>
+                    </xsd:attribute>
+                  </xsd:complexType>
+                </xsd:element>
+              </xsd:sequence>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element minOccurs="1" maxOccurs="1" name="LISTE_TEMPS_INSERTION">
+            <xsd:annotation>
+              <xsd:documentation>Liste des temps d'insertion sur le convergent pour tous les types de véhicule circulant sur le réseau</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element minOccurs="1" maxOccurs="unbounded" name="TEMPS_INSERTION">
+                  <xsd:annotation>
+                    <xsd:documentation>Temps d'insertion sur le convergent pour un type de véhicule</xsd:documentation>
+                  </xsd:annotation>
+                  <xsd:complexType>
+                    <xsd:attribute name="id_typevehicule" type="xsd:string" use="required">
+                      <xsd:annotation>
+                        <xsd:documentation>Identifiant du type de véhicule concerné</xsd:documentation>
+                      </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="tf" type="typeFloatStrictPositif" use="required">
+                      <xsd:annotation>
+                        <xsd:documentation>Temps (en seconde) d'insertion</xsd:documentation>
+                      </xsd:annotation>
+                    </xsd:attribute>
+                  </xsd:complexType>
+                </xsd:element>
+              </xsd:sequence>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="id" type="xsd:ID" use="required">
+          <xsd:annotation>
+            <xsd:documentation>Identifiant du convergent</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute default="1" name="Gamma" type="typeFloatStrictPositif" use="optional">
+          <xsd:annotation>
+            <xsd:documentation>Rapport Gamma</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute default="1" name="Mu" type="typeFloat01" use="optional">
+          <xsd:annotation>
+            <xsd:documentation>Coefficient de priorité</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="typeGiratoire">
+    <xsd:complexContent mixed="false">
+      <xsd:extension base="typeConnexionInterne">
+        <xsd:sequence>
+          <xsd:element minOccurs="1" maxOccurs="1" name="LISTE_TEMPS_CRITIQUES">
+            <xsd:annotation>
+              <xsd:documentation>Liste des temps critiques du giratoire pour tous les types de véhicule circulant sur le réseau</xsd:documentation>
+            </xsd:annotation>
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element minOccurs="1" maxOccurs="unbounded" name="TEMPS_CRITIQUES">
+                  <xsd:annotation>
+                    <xsd:documentation>Temps critiques du giratoire pour un type de véhicule</xsd:documentation>
+                  </xsd:annotation>
+                  <xsd:complexType>
+                    <xsd:attribute name="id_typevehicule" type="xsd:string" use="required">
+                      <xsd:annotation>
+                        <xsd:documentation>Identifiant du type de véhicule concerné</xsd:documentation>
+                      </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="tcc" type="typeFloatStrictPositif" use="required">
+                      <xsd:annotation>
+                        <xsd:documentation>Temps (en seconde) d'insertion</xsd:documentation>
+                      </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="tct" type="typeFloatStrictPositif" use="optional">
+                      <xsd:annotation>
+                        <xsd:documentation>Temps (en seconde) de traversée de la voie externe (paramètre à définir uniquement dans le cas de giratoire multivoie)</xsd:documentation>
+                      </xsd:annotation>
+                    </xsd:attribute>
+                  </xsd:complexType>
+                </xsd:element>
+              </xsd:sequence>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="id" type="xsd:ID" use="required">
+          <xsd:annotation>
+            <xsd:documentation>Identifiant unique du giratoire</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="vit_max" type="typeFloatStrictPositif" use="required">
+          <xsd:annotation>
+            <xsd:documentation>Vitesse maximale sur l'anneau du giratoire (en m/s)</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute default="1" name="Gamma" type="typeFloatStrictPositif" use="optional">
+          <xsd:annotation>
+            <xsd:documentation>Rapport Gamma</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute default="1" name="Mu" type="typeFloat01" use="optional">
+          <xsd:annotation>
+            <xsd:documentation>Coefficient de priorité</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="Beta" type="typeFloat01" use="required">
+          <xsd:annotation>
+            <xsd:documentation>Probabilité pour un véhicule voulant s'insérer de détecter un véhicule sortant du giratoire en régime fluide (le véhicule sortant détecté ne gène pas l'insertion)</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute default="0.3" name="BetaInt" type="typeFloat01" use="optional">
+          <xsd:annotation>
+            <xsd:documentation>Probabilité pour un véhicule voulant s'insérer d'être géné par un véhicule arrivant sur la voie interne du giratoire en régime fluide (à définir uniquement dans le cas d'un giratoire à 2 voies)</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="typeCarrefourAFeux">
+    <xsd:complexContent mixed="false">
+      <xsd:extension base="typeConnexionInterne">
+        <xsd:attribute name="id" type="xsd:ID" use="required">
+          <xsd:annotation>
+            <xsd:documentation>Identifiant unique du carrefour à feu</xsd:documentation>
+          </xsd:annotation>
+        </xsd:attribute>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:complexType name="typeLTG">
+    <xsd:all>
+      <xsd:element minOccurs="0" name="LIGNES_TRANSPORT_GUIDEES">
+        <xsd:annotation>
+          <xsd:documentation>Liste des lignes de transport guidée du réseau</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="1" maxOccurs="unbounded" name="LIGNE_TRANSPORT_GUIDEE">
+              <xsd:annotation>
+                <xsd:documentation>Description d'une ligne de transport guidée</xsd:documentation>
+              </xsd:annotation>
+              <xsd:complexType>
+                <xsd:sequence>
+                  <xsd:element minOccurs="1" name="HORAIRES">
+                    <xsd:annotation>
+                      <xsd:documentation>Liste des horaires des véhicules guidés (uniquement le premier véhicule guidé dans le cas d'un paramétrage de type global)</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                      <xsd:sequence>
+                        <xsd:element minOccurs="1" maxOccurs="unbounded" name="HORAIRE">
+                          <xsd:annotation>
+                            <xsd:documentation>Description d'un horaire de véhicule guidé (heure de départ et durée des arrêts&gt;</xsd:documentation>
+                          </xsd:annotation>
+                          <xsd:complexType>
+                            <xsd:attribute name="heuredepart" type="xsd:time" use="required">
+                              <xsd:annotation>
+                                <xsd:documentation>Heure de départ du véhicule guidé</xsd:documentation>
+                              </xsd:annotation>
+                            </xsd:attribute>
+                            <xsd:attribute default="" name="dureearrets" use="optional">
+                              <xsd:annotation>
+                                <xsd:documentation>Liste des durées aux arrêts (en seconde), les durées sont listées dans l'ordre de parcours des arrêts</xsd:documentation>
+                              </xsd:annotation>
+                              <xsd:simpleType>
+                                <xsd:restriction>
+                                  <xsd:simpleType>
+                                    <xsd:list itemType="typeFloatPositif"/>
+                                  </xsd:simpleType>
+                                </xsd:restriction>
+                              </xsd:simpleType>
+                            </xsd:attribute>
+                          </xsd:complexType>
+                        </xsd:element>
+                      </xsd:sequence>
+                    </xsd:complexType>
+                  </xsd:element>
+                </xsd:sequence>
+                <xsd:attribute name="id" type="xsd:ID" use="required">
+                  <xsd:annotation>
+                    <xsd:documentation>Identifiant de la ligne</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="type_veh" type="xsd:string" use="required">
+                  <xsd:annotation>
+                    <xsd:documentation>Type de véhicule utilisé sur la ligne guidée (il doit être un des types défini dans la section TYPES_DE_VEHICULE)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="frequence" type="typeIntStrictPositif" use="optional">
+                  <xsd:annotation>
+                    <xsd:documentation>Fréqence en seconde entre le lancement de 2 véhicules (à définir uniquement si le type de paramétrage est global)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="troncons" use="required">
+                  <xsd:annotation>
+                    <xsd:documentation>Itinéraires de la ligne guidée (liste de tronçons successifs, l'élément amont du premier tronçon de la liste doit être une entrée, l'élément aval du dernier tronçon de la liste doit être une sortie)</xsd:documentation>
+                  </xsd:annotation>
+                  <xsd:simpleType>
+                    <xsd:restriction>
+                      <xsd:simpleType>
+                        <xsd:list itemType="xsd:string"/>
+                      </xsd:simpleType>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:attribute>
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:all>
+  </xsd:complexType>
+  <xsd:complexType name="typeParametrageCapteurs">
+    <xsd:sequence>
+      <xsd:element name="CAPTEURS">
+        <xsd:annotation>
+          <xsd:documentation>Liste des capteurs du réseau</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" name="CAPTEUR">
+              <xsd:annotation>
+                <xsd:documentation>Description d'un capteur</xsd:documentation>
+              </xsd:annotation>
+              <xsd:complexType>
+                <xsd:attribute name="id" type="xsd:ID" use="required">
+                  <xsd:annotation>
+                    <xsd:documentation>Identifiant du capteur</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="troncon" type="xsd:string" use="required">
+                  <xsd:annotation>
+                    <xsd:documentation>Tron9on sur lequel est positionné le capteur</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="position" type="typeFloatPositif" use="required">
+                  <xsd:annotation>
+                    <xsd:documentation>Position du capteur sur le tronçon (en m)</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:attribute>
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+    <xsd:attribute name="periodeagregation" type="typeFloatStrictPositif" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Période d'agrégation (en s) pour les calculs</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  <xsd:complexType name="typeTraficConnexionInterne">
+    <xsd:sequence>
+      <xsd:element maxOccurs="1" minOccurs="0" name="COEFFS_DIR" type="typeCoeffDir"/>
+    </xsd:sequence>
+    <xsd:attribute name="id" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Identifiant de l'élément du réseau associé</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  <xsd:complexType name="typeControleurDeFeux">
+    <xsd:sequence minOccurs="1" maxOccurs="1">
+      <xsd:element minOccurs="0" maxOccurs="1" name="PLANS_DE_FEUX">
+        <xsd:annotation>
+          <xsd:documentation>Noeud d'accès à la liste des plans de feux</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+          <xsd:sequence minOccurs="1" maxOccurs="1">
+            <xsd:element minOccurs="0" maxOccurs="unbounded" name="PLAN_DE_FEUX">
+              <xsd:annotation>
+                <xsd:documentation>Noeud de description d'un plan de feux</xsd:documentation>
+              </xsd:annotation>
+              <xsd:complexType>
+                <xsd:sequence>
+                  <xsd:element minOccurs="0" maxOccurs="1" name="SEQUENCES">
+                    <xsd:annotation>
+                      <xsd:documentation>Noeud d'accès à la liste des séquences du plan de feux</xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                      <xsd:sequence minOccurs="1">
+                        <xsd:element minOccurs="1" maxOccurs="unbounded" name="SEQUENCE">
+                          <xsd:annotation>
+                            <xsd:documentation>Noeud de description d'une séquence du plan de feux
+</xsd:documentation>
+                          </xsd:annotation>
+                          <xsd:complexType>
+                            <xsd:sequence>
+                              <xsd:element minOccurs="1" maxOccurs="1" name="SIGNAUX_ACTIFS">
+                                <xsd:annotation>
+                                  <xsd:documentation>Noeud d'accès à la liste de description des signaux actifs de la séquence
+</xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                  <xsd:sequence>
+                                    <xsd:element minOccurs="1" maxOccurs="unbounded"
+                                      name="SIGNAL_ACTIF">
+                                      <xsd:complexType>
+                                        <xsd:attribute name="duree_retard_allumage" use="required">
+                                          <xsd:annotation>
+                                            <xsd:documentation>Durée en seconde du retard à l'allumage  (cette durée doit être telle que la différence entre la durée de la séquence et la somme du temps de vert et du retard à l'allumage doit être supérieure à la durée de rouge de dégagement définie au niveau du controleur de feux).
+</xsd:documentation>
+                                          </xsd:annotation>
+                                          <xsd:simpleType>
+                                            <xsd:restriction base="xsd:int">
+                                              <xsd:minInclusive value="0"/>
+                                            </xsd:restriction>
+                                          </xsd:simpleType>
+                                        </xsd:attribute>
+                                        <xsd:attribute name="duree_vert" use="required">
+                                          <xsd:annotation>
+                                            <xsd:documentation>Durée en seconde du temps de vert (cette durée doit être supérieure au temps de vert minimale défini au niveau du contrôleur de feux).
+</xsd:documentation>
+                                          </xsd:annotation>
+                                          <xsd:simpleType>
+                                            <xsd:restriction base="xsd:int">
+                                              <xsd:minInclusive value="0"/>
+                                            </xsd:restriction>
+                                          </xsd:simpleType>
+                                        </xsd:attribute>
+                                        <xsd:attribute name="troncon_entree" type="xsd:string"
+                                          use="required">
+                                          <xsd:annotation>
+                                            <xsd:documentation>Identifiant unique du tronçon d'entrée du signal
+</xsd:documentation>
+                                          </xsd:annotation>
+                                        </xsd:attribute>
+                                        <xsd:attribute name="troncon_sortie" type="xsd:string"
+                                          use="required">
+                                          <xsd:annotation>
+                                            <xsd:documentation>Identifiant unique du tronçon d'entrée du signal
+</xsd:documentation>
+                                          </xsd:annotation>
+                                        </xsd:attribute>
+                                      </xsd:complexType>
+                                    </xsd:element>
+                                  </xsd:sequence>
+                                </xsd:complexType>
+                              </xsd:element>
+                            </xsd:sequence>
+                            <xsd:attribute name="duree_totale" use="required">
+                              <xsd:annotation>
+                                <xsd:documentation>Durée totale de la séquence en seconde</xsd:documentation>
+                              </xsd:annotation>
+                              <xsd:simpleType>
+                                <xsd:restriction base="xsd:int">
+                                  <xsd:minExclusive value="0"/>
+                                </xsd:restriction>
+                              </xsd:simpleType>
+                            </xsd:attribute>
+                          </xsd:complexType>
+                        </xsd:element>
+                      </xsd:sequence>
+                    </xsd:complexType>
+                  </xsd:element>
+                </xsd:sequence>
+                <xsd:attribute name="id" use="required">
+                  <xsd:annotation>
+                    <xsd:documentation>Identifiant unique du plan de feux (il permet notamment de lancer son déroulement dans le cas d'une régulation ou d'une commande forcée
+)</xsd:documentation>
+                  </xsd:annotation>
+                  <xsd:simpleType>
+                    <xsd:restriction base="xsd:ID">
+                      <xsd:maxLength value="80"/>
+                    </xsd:restriction>
+                  </xsd:simpleType>
+                </xsd:attribute>
+                <xsd:attribute name="debut" type="xsd:time" use="optional">
+                  <xsd:annotation>
+                    <xsd:documentation>Heure exacte du début du plan de feux (si cette heure n'est pas précisée, ce plan de feux ne pourra se dérouler uniquement sur commande)
+</xsd:documentation>
+                  </xsd:annotation>
+                </xsd:attribute>
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+    <xsd:attribute name="id" use="required">
+      <xsd:annotation>
+        <xsd:documentation>Identifiant unique du contrôleur de feu</xsd:documentation>
+      </xsd:annotation>
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:ID">
+          <xsd:maxLength value="80"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+    <xsd:attribute default="6" name="duree_vert_min">
+      <xsd:annotation>
+        <xsd:documentation>Durée (en seconde) minimale de vert du contrôleur de feu. Symubruit vérifie que pour chaque signal actif des séquences des plans de feux du contrôleur de feux, la durée de vert est supérieure à la durée minimale du vert du contrôleur (sinon avertissement).
+</xsd:documentation>
+      </xsd:annotation>
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:int">
+          <xsd:minExclusive value="0"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+    <xsd:attribute default="5" name="duree_rouge_degagement">
+      <xsd:annotation>
+        <xsd:documentation>Durée en seconde du rouge de dégagement. Symubruit vérifie que pour chaque signa actif des séquences des plans de feux du contrôleur de feux, la durée de rouge restante (durée de la séquence - durée du vert du signal - retard à l'allumage du signal) est supérieure à la durée du rouge de dégagement (sinon avertissement).
+</xsd:documentation>
+      </xsd:annotation>
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:int">
+          <xsd:minExclusive value="0"/>
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+  </xsd:complexType>
+  <xsd:element name="ROOT_UPDATE_SYMUVIA">
+    <xsd:annotation>
+      <xsd:documentation>Noeud racine des données de modification de SYMUVIA</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="TRAFICS">
+          <xsd:annotation>
+            <xsd:documentation>Liste des définitions de paramètres de trafic</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="TRAFIC" maxOccurs="unbounded" minOccurs="0">
+                <xsd:annotation>
+                  <xsd:documentation>Paramétrage du trafic</xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                  <xsd:all>
+                    <xsd:element minOccurs="0" name="EXTREMITES">
+                      <xsd:annotation>
+                        <xsd:documentation>Liste des entrées</xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element minOccurs="0" maxOccurs="unbounded" name="EXTREMITE"
+                            type="typeExtremite">
+                            <xsd:annotation>
+                              <xsd:documentation>Description d'une entrée</xsd:documentation>
+                            </xsd:annotation>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element minOccurs="0" name="PARKINGS">
+                      <xsd:annotation>
+                        <xsd:documentation>Liste des parkings</xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element minOccurs="0" maxOccurs="unbounded" name="PARKING"
+                            type="typeOrigine">
+                            <xsd:annotation>
+                              <xsd:documentation>Description d'un parking</xsd:documentation>
+                            </xsd:annotation>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element minOccurs="0" name="ZONES_DE_TERMINAISON">
+                      <xsd:annotation>
+                        <xsd:documentation>Liste des zones de terminaison</xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element minOccurs="0" maxOccurs="unbounded"
+                            name="ZONE_DE_TERMINAISON" type="typeOrigine">
+                            <xsd:annotation>
+                              <xsd:documentation>Description d'une zone de terminaison</xsd:documentation>
+                            </xsd:annotation>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="CONTROLEURS_DE_FEUX">
+                      <xsd:annotation>
+                        <xsd:documentation>Liste des contrôleurs de feux
+</xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element minOccurs="0" maxOccurs="unbounded" name="CONTROLEUR_DE_FEUX"
+                            type="typeControleurDeFeux">
+                            <xsd:annotation>
+                              <xsd:documentation>Description d'un contrôleur de feux
+</xsd:documentation>
+                            </xsd:annotation>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element minOccurs="0" name="CONNEXIONS_INTERNES">
+                      <xsd:annotation>
+                        <xsd:documentation>Liste des connexions internes au réseau pour lesquelles des paramètres de trafic spécifiques sont définis</xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element maxOccurs="unbounded" name="CONNEXION_INTERNE"
+                            type="typeTraficConnexionInterne">
+                            <xsd:annotation>
+                              <xsd:documentation>Connexion interne pour laquelle sont définis des paramètres de trafic particuliers</xsd:documentation>
+                            </xsd:annotation>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                  </xsd:all>
+                  <xsd:attribute name="id" type="xsd:ID" use="required">
+                    <xsd:annotation>
+                      <xsd:documentation>Identifiant de la section TRAFIC</xsd:documentation>
+                    </xsd:annotation>
+                  </xsd:attribute>
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+        <xsd:element name="RESEAUX">
+          <xsd:annotation>
+            <xsd:documentation>Liste des définitions de réseaux</xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+            <xsd:sequence>
+              <xsd:element name="RESEAU" maxOccurs="unbounded" minOccurs="0">
+                <xsd:annotation>
+                  <xsd:documentation>Données du réseau</xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                  <xsd:all>
+                    <xsd:element minOccurs="0" name="TRONCONS">
+                      <xsd:annotation>
+                        <xsd:documentation>Liste des tronçons</xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element maxOccurs="unbounded" name="TRONCON" type="typeTroncon">
+                            <xsd:annotation>
+                              <xsd:documentation>Description d'un tronçon</xsd:documentation>
+                            </xsd:annotation>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element minOccurs="0" name="CONNEXIONS">
+                      <xsd:annotation>
+                        <xsd:documentation>Noeud </xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:complexType>
+                        <xsd:all>
+                          <xsd:element minOccurs="0" name="REPARTITEURS">
+                            <xsd:annotation>
+                              <xsd:documentation>Liste des répartiteurs</xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                              <xsd:sequence>
+                                <xsd:element minOccurs="0" maxOccurs="unbounded" name="REPARTITEUR"
+                                  type="typeRepartiteur">
+                                  <xsd:annotation>
+                                    <xsd:documentation>Description d'un répartiteur</xsd:documentation>
+                                  </xsd:annotation>
+                                </xsd:element>
+                              </xsd:sequence>
+                            </xsd:complexType>
+                          </xsd:element>
+                          <xsd:element minOccurs="0" name="CARREFOURSAFEUX">
+                            <xsd:annotation>
+                              <xsd:documentation>Liste des carrefours à feux</xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                              <xsd:sequence>
+                                <xsd:element maxOccurs="unbounded" minOccurs="0"
+                                  name="CARREFOURAFEUX" type="typeCarrefourAFeux">
+                                  <xsd:annotation>
+                                    <xsd:documentation>Description d'un carrefour à feux</xsd:documentation>
+                                  </xsd:annotation>
+                                </xsd:element>
+                              </xsd:sequence>
+                            </xsd:complexType>
+                          </xsd:element>
+                        </xsd:all>
+                      </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element minOccurs="0" name="ROUTES">
+                      <xsd:annotation>
+                        <xsd:documentation>Liste d'itinéraires du réseau</xsd:documentation>
+                      </xsd:annotation>
+                      <xsd:complexType>
+                        <xsd:sequence>
+                          <xsd:element maxOccurs="unbounded" minOccurs="0" name="ROUTE">
+                            <xsd:annotation>
+                              <xsd:documentation>Description d'un itinéraire du réseau</xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                              <xsd:sequence maxOccurs="1">
+                                <xsd:element name="TRONCONS_">
+                                  <xsd:annotation>
+                                    <xsd:documentation>Liste ordonnée des tronçons composant l'itinéraire</xsd:documentation>
+                                  </xsd:annotation>
+                                  <xsd:complexType>
+                                    <xsd:sequence maxOccurs="1">
+                                      <xsd:element maxOccurs="unbounded" name="TRONCON_">
+                                        <xsd:annotation>
+                                          <xsd:documentation>Tronçon de l'itinéraire</xsd:documentation>
+                                        </xsd:annotation>
+                                        <xsd:complexType>
+                                          <xsd:attribute use="required" name="id" type="xsd:string">
+                                            <xsd:annotation>
+                                              <xsd:documentation>Identifiant du tronçon</xsd:documentation>
+                                            </xsd:annotation>
+                                          </xsd:attribute>
+                                        </xsd:complexType>
+                                      </xsd:element>
+                                    </xsd:sequence>
+                                  </xsd:complexType>
+                                </xsd:element>
+                              </xsd:sequence>
+                              <xsd:attribute name="id" type="xsd:ID" use="required">
+                                <xsd:annotation>
+                                  <xsd:documentation>Identifiant unique de l'itinéraire</xsd:documentation>
+                                </xsd:annotation>
+                              </xsd:attribute>
+                              <xsd:attribute name="description" type="xsd:string">
+                                <xsd:annotation>
+                                  <xsd:documentation>Description de l'itinéraire</xsd:documentation>
+                                </xsd:annotation>
+                              </xsd:attribute>
+                            </xsd:complexType>
+                          </xsd:element>
+                        </xsd:sequence>
+                      </xsd:complexType>
+                    </xsd:element>
+                  </xsd:all>
+                  <xsd:attribute name="id" type="xsd:ID" use="required">
+                    <xsd:annotation>
+                      <xsd:documentation>Identifiant de la section RESEAU</xsd:documentation>
+                    </xsd:annotation>
+                  </xsd:attribute>
+                </xsd:complexType>
+              </xsd:element>
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+      <xsd:attribute name="version" type="xsd:string" use="required">
+        <xsd:annotation>
+          <xsd:documentation>Numéro de version de format des données initiales de SymuVia</xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

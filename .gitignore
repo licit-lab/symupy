@@ -1,0 +1,10 @@
+# Folders
+__pycache__
+*cache*
+*.ipynb_checkpoints/
+.vscode
+*.pytest*
+*output*
+
+# Files 
+*.log
