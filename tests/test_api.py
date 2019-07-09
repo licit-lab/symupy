@@ -22,6 +22,15 @@ class TestBottleneck001(unittest.TestCase):
         self.get_simulator()
         self.get_bottleneck_001()
 
+    def get_simulator(self):
+        self.libpath = ("symupy", "lib", "darwin", "libSymuVia.dylib")
+        self.sim_path = os.path.join(os.getcwd(), *self.libpath)
+
+    def get_bottleneck_001(self):
+        self.file_name = "bottleneck_001.xml"
+        file_path = ("symupy", "tests", "mocks", "bottlenecks", self.file_name)
+        self.mocks_path = os.path.join(os.getcwd(), *file_path)
+
     def test_load_bottleneck_001(self):
         sim_case = Simulation(self.mocks_path)
         self.assertEqual(sim_case.filename, self.mocks_path)
@@ -82,6 +91,18 @@ class TestBottleneck001(unittest.TestCase):
         sim_instance.load_symuvia()
         sim_instance.run_simulation(sim_case)
 
+    def test_run_simulation_alternative_constructor_bottleneck_001(self):
+        sim_instance = Simulator.from_path(self.mocks_path, self.sim_path)
+        sim_instance.run_simulation()
+
+    def test_run_stepbystep_bottleneck_001(self):
+        # Using new constructor
+        sim_instance = Simulator.from_path(self.mocks_path, self.sim_path)
+
+        with sim_instance as s:
+            while s.do_next:
+                s.run_step()
+
     @unittest.skip("Skipping momentary")
     def test_initialize_container_bottleneck_001(self):
         sim_case = Simulation(self.mocks_path)
@@ -91,7 +112,7 @@ class TestBottleneck001(unittest.TestCase):
         with sim_instance as s:
             while s.do_next:
                 # TODO: This needs some work on Parser.py
-                s.data.get_vehicle_data()
+                s.state.get_vehicle_data()
 
     def test_create_vehicle_bottleneck_001(self):
         sim_case = Simulation(self.mocks_path)
@@ -123,7 +144,7 @@ class TestBottleneck001(unittest.TestCase):
 
         self.assertGreaterEqual(veh_id, 0)
         self.assertEqual(drive_status, 1)
-        self.assertAlmostEqual(float(sim_instance.data.query_vehicle_position("1")[0]), 20.0)
+        self.assertAlmostEqual(float(sim_instance.state.query_vehicle_position("1")[0]), 20.0)
 
     def test_drive_vehicle_bottleneck_001(self):
         sim_case = Simulation(self.mocks_path)
@@ -134,7 +155,7 @@ class TestBottleneck001(unittest.TestCase):
         with sim_instance as s:
             while s.do_next:
                 s.run_step()
-                if s.data.vehicle_in_network("0"):
+                if s.state.vehicle_in_network("0"):
                     drive_status = s.drive_vehicle(0, 1.0)
                     s.run_step()
                     s.stop_step()
@@ -142,16 +163,7 @@ class TestBottleneck001(unittest.TestCase):
                 else:
                     continue
             self.assertEqual(drive_status, 1)
-            self.assertAlmostEqual(float(sim_instance.data.query_vehicle_position("0")[0]), 1.0)
-
-    def get_simulator(self):
-        self.libpath = ("symupy", "lib", "darwin", "libSymuVia.dylib")
-        self.sim_path = os.path.join(os.getcwd(), *self.libpath)
-
-    def get_bottleneck_001(self):
-        self.file_name = "bottleneck_001.xml"
-        file_path = ("symupy", "tests", "mocks", "bottlenecks", self.file_name)
-        self.mocks_path = os.path.join(os.getcwd(), *file_path)
+            self.assertAlmostEqual(float(sim_instance.state.query_vehicle_position("0")[0]), 1.0)
 
 
 class TestBottleneck002(unittest.TestCase):
@@ -159,9 +171,32 @@ class TestBottleneck002(unittest.TestCase):
         self.get_simulator()
         self.get_bottleneck_002()
 
+    def get_simulator(self):
+        self.libpath = ("symupy", "lib", "darwin", "libSymuVia.dylib")
+        self.sim_path = os.path.join(os.getcwd(), *self.libpath)
+
+    def get_bottleneck_002(self):
+        self.file_name = "bottleneck_002.xml"
+        file_path = ("symupy", "tests", "mocks", "bottlenecks", self.file_name)
+        self.mocks_path = os.path.join(os.getcwd(), *file_path)
+
     def test_load_bottleneck_002(self):
         sim_case = Simulation(self.mocks_path)
         self.assertEqual(sim_case.filename, self.mocks_path)
+
+    def test_run_bottleneck_002(self):
+        sim_case = Simulation(self.mocks_path)
+        sim_instance = Simulator(self.sim_path)
+        sim_instance.load_symuvia()
+        sim_instance.run_simulation(sim_case)
+
+    def test_run_stepbystep_bottleneck_002(self):
+        # Using new constructor
+        sim_instance = Simulator.from_path(self.mocks_path, self.sim_path)
+
+        with sim_instance as s:
+            while s.do_next:
+                s.run_step()
 
     def test_query_vehicles_upstream_bottleneck002(self):
         sim_case = Simulation(self.mocks_path)
@@ -170,8 +205,8 @@ class TestBottleneck002(unittest.TestCase):
         with sim_instance as s:
             while s.do_next:
                 s.run_step()
-                if s.data.vehicle_in_network("2"):
-                    nup, = s.data.vehicle_upstream("1")
+                if s.state.vehicle_in_network("2"):
+                    nup, = s.state.vehicle_upstream("1")
                     s.stop_step()
                     continue
                 else:
@@ -186,8 +221,8 @@ class TestBottleneck002(unittest.TestCase):
         with sim_instance as s:
             while s.do_next:
                 s.run_step()
-                if s.data.vehicle_in_network("2"):
-                    ndown, = s.data.vehicle_downstream("1")
+                if s.state.vehicle_in_network("2"):
+                    ndown, = s.state.vehicle_downstream("1")
                     s.stop_step()
                     continue
                 else:
@@ -205,15 +240,6 @@ class TestBottleneck002(unittest.TestCase):
         sim_instance = Simulator(self.sim_path)
         sim_instance.register_simulation(sim_case)
         pass
-
-    def get_simulator(self):
-        self.libpath = ("symupy", "lib", "darwin", "libSymuVia.dylib")
-        self.sim_path = os.path.join(os.getcwd(), *self.libpath)
-
-    def get_bottleneck_002(self):
-        self.file_name = "bottleneck_002.xml"
-        file_path = ("symupy", "tests", "mocks", "bottlenecks", self.file_name)
-        self.mocks_path = os.path.join(os.getcwd(), *file_path)
 
 
 if __name__ == "__main__":
