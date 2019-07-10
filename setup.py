@@ -25,7 +25,7 @@ setup(
         "numpy>=1.14",
         "lxml>=4.3.3",
         "xmltodict>=0.12",
-        "networkx>=2.3",
+        "networkx>=2.2",
         "matplotlib>=3.0",
         "sqlalchemy>=1.3",
     ],
