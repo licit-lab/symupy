@@ -1,6 +1,13 @@
 import os
 import unittest
 from symupy.api import Simulation, Simulator
+import platform
+
+DCT_PATH = {"Darwin": "osx-64"}
+DCT_LFN = {"Darwin": "libSymuVia.dylib"}
+_platform = platform.system()
+_libpath = DCT_PATH.get(_platform)
+_libfilen = DCT_LFN.get(_platform)
 
 
 class TestAPI(unittest.TestCase):
@@ -13,7 +20,7 @@ class TestAPI(unittest.TestCase):
         self.assertEqual(self.sim_instance.libraryname, self.sim_path)
 
     def get_simulator(self):
-        self.libpath = ("symupy", "lib", "darwin", "libSymuVia.dylib")
+        self.libpath = ("lib", _libpath, _libfilen)
         self.sim_path = os.path.join(os.getcwd(), *self.libpath)
 
 
@@ -23,12 +30,12 @@ class TestBottleneck001(unittest.TestCase):
         self.get_bottleneck_001()
 
     def get_simulator(self):
-        self.libpath = ("symupy", "lib", "darwin", "libSymuVia.dylib")
+        self.libpath = ("lib", _libpath, _libfilen)
         self.sim_path = os.path.join(os.getcwd(), *self.libpath)
 
     def get_bottleneck_001(self):
         self.file_name = "bottleneck_001.xml"
-        file_path = ("symupy", "tests", "mocks", "bottlenecks", self.file_name)
+        file_path = ("tests", "mocks", "bottlenecks", self.file_name)
         self.mocks_path = os.path.join(os.getcwd(), *file_path)
 
     def test_load_bottleneck_001(self):
@@ -172,12 +179,12 @@ class TestBottleneck002(unittest.TestCase):
         self.get_bottleneck_002()
 
     def get_simulator(self):
-        self.libpath = ("symupy", "lib", "darwin", "libSymuVia.dylib")
+        self.libpath = ("lib", _libpath, _libfilen)
         self.sim_path = os.path.join(os.getcwd(), *self.libpath)
 
     def get_bottleneck_002(self):
         self.file_name = "bottleneck_002.xml"
-        file_path = ("symupy", "tests", "mocks", "bottlenecks", self.file_name)
+        file_path = ("tests", "mocks", "bottlenecks", self.file_name)
         self.mocks_path = os.path.join(os.getcwd(), *file_path)
 
     def test_load_bottleneck_002(self):
