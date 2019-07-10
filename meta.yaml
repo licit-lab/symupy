@@ -5,17 +5,25 @@ package:
     version: {{ setup_py.get('version') }}
 
 source:
-    path: ./
+    git_url: https://github.com/symuvia/symupy.git
+    git_rev: 0.1.0
+
+build: 
+    number: 0
 
 requirements:
     run:
         - python=3.7
         - lxml
         - xmltodict 
-        - numpy
+        - numpy>=1.16
     build:
         - python
         - setuptools
+
+test:
+    imports: 
+        - symupy
 
 about:
     license: {{ setup_py.get('license') }}
