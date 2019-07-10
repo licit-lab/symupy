@@ -22,11 +22,11 @@ setup(
     version=find_version("symupy", "__init__.py"),
     packages=find_packages(exclude=["tests*"]),
     install_requires=[
-        "numpy>=1.14",
+        "numpy>=1.16",
         "lxml>=4.3.3",
         "xmltodict>=0.12",
         "networkx>=2.2",
-        "matplotlib>=3.0",
+        "matplotlib>=3.0.0",
         "sqlalchemy>=1.3",
     ],
     author="Andres Ladino",
