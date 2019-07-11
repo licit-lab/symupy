@@ -93,7 +93,7 @@ class SimulatorRequest:
         ]
         return dict(data_vehs)
 
-    def vehicle_in_network(self, vehid: str, *args) -> bool:
+    def is_vehicle_in_network(self, vehid: str, *args) -> bool:
         """True if veh id is in the network at current state, for multiple arguments
            True if all veh ids are in the network
 
@@ -124,7 +124,20 @@ class SimulatorRequest:
             if veh.get("@tron") == link and veh.get("@voie") == lane
         )
 
-    def vehicle_downstream(self, vehid: str) -> tuple:
+    def is_vehicle_in_link(self, veh: str, link: str) -> bool:
+        """ Returns true if a vehicle is in a link at current state
+        
+        :param veh: vehicle id
+        :type veh: str
+        :param link: link name
+        :type link: str
+        :return: True if veh is in link
+        :rtype: bool
+        """
+        veh_ids = self.vehicle_in_link(link)
+        return set(veh).issubset(set(veh_ids))
+
+    def vehicle_downstream_of(self, vehid: str) -> tuple:
         """Get ids of vehicles downstream to vehid
 
         :param vehid: integer describing id of reference veh
@@ -142,7 +155,7 @@ class SimulatorRequest:
 
         return tuple(nbh for nbh, npos in zip(neigh, neighpos) if float(npos) > float(vehpos))
 
-    def vehicle_upstream(self, vehid: str) -> tuple:
+    def vehicle_upstream_of(self, vehid: str) -> tuple:
         """Get ids of vehicles upstream to vehid
 
         :param vehid: integer describing id of reference veh

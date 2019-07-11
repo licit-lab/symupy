@@ -162,7 +162,7 @@ class TestBottleneck001(unittest.TestCase):
         with sim_instance as s:
             while s.do_next:
                 s.run_step()
-                if s.state.vehicle_in_network("0"):
+                if s.state.is_vehicle_in_network("0"):
                     drive_status = s.drive_vehicle(0, 1.0)
                     s.run_step()
                     s.stop_step()
@@ -212,8 +212,8 @@ class TestBottleneck002(unittest.TestCase):
         with sim_instance as s:
             while s.do_next:
                 s.run_step()
-                if s.state.vehicle_in_network("2"):
-                    nup, = s.state.vehicle_upstream("1")
+                if s.state.is_vehicle_in_network("2"):
+                    nup, = s.state.vehicle_upstream_of("1")
                     s.stop_step()
                     continue
                 else:
@@ -228,8 +228,8 @@ class TestBottleneck002(unittest.TestCase):
         with sim_instance as s:
             while s.do_next:
                 s.run_step()
-                if s.state.vehicle_in_network("2"):
-                    ndown, = s.state.vehicle_downstream("1")
+                if s.state.is_vehicle_in_network("2"):
+                    ndown, = s.state.vehicle_downstream_of("1")
                     s.stop_step()
                     continue
                 else:

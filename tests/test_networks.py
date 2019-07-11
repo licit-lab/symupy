@@ -42,7 +42,7 @@ class TestBottleneck001(unittest.TestCase):
         with sim_instance as s:
             while s.do_next:
                 s.run_step()
-                if s.state.vehicle_in_network("0"):
+                if s.state.is_vehicle_in_network("0"):
                     s.state.create_vehicle_list()
                     x = 1
                     # v = Vehicle("0")
@@ -83,11 +83,11 @@ class TestBottleneck002(unittest.TestCase):
         with sim_instance as s:
             while s.do_next:
                 s.run_step()
-                if s.state.vehicle_in_network("0"):
+                if s.state.is_vehicle_in_network("0"):
                     s.state.update_vehicle_list()
-                if s.state.vehicle_in_network("1"):
+                if s.state.is_vehicle_in_network("1"):
                     s.state.update_vehicle_list()
-                if s.state.vehicle_in_network("2"):
+                if s.state.is_vehicle_in_network("2"):
                     s.state.update_vehicle_list()
         x = 2
         self.assertEqual(self.mocks_path, sim_instance.casename)
