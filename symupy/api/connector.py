@@ -339,6 +339,10 @@ class Simulator(object):
         return self._path
 
     @property
+    def simulation(self) -> Simulation:
+        return self._sim
+
+    @property
     def casename(self) -> str:
         return self._sim.filename
 
