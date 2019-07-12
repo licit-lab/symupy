@@ -35,7 +35,7 @@ class TestBottleneck001(unittest.TestCase):
         with sim_instance as s:
             while s.do_next:
                 s.run_step()
-                if s.state.vehicle_in_network("0"):
+                if s.state.is_vehicle_in_network("0"):
                     s.state.vehicles
                     flag = True
 
@@ -67,11 +67,11 @@ class TestBottleneck002(unittest.TestCase):
         with sim_instance as s:
             while s.do_next:
                 s.run_step()
-                if s.state.vehicle_in_network("0", "1"):
+                if s.state.is_vehicle_in_network("0", "1"):
                     flag0 = True
-                if s.state.vehicle_in_network("1"):
+                if s.state.is_vehicle_in_network("1"):
                     flag1 = True
-                if s.state.vehicle_in_network("2"):
+                if s.state.is_vehicle_in_network("2"):
                     flag2 = True
         self.assertTrue(flag0)
         self.assertTrue(flag1)
