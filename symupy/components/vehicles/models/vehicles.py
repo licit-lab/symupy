@@ -3,7 +3,7 @@
     Vehicle model acts as an instance to modify vehicle's behaviour according to 
 """
 
-from typing import List
+from typing import Dict, List
 from collections import OrderedDict
 from dataclasses import dataclass, field
 import numpy as np
@@ -33,7 +33,7 @@ class Vehicle(object):
     elevation: float = field(default=0.0, compare=False, metadata={"unit": "m"})
 
     # Internal states
-    totaldistance: float = field(default=0.0, compare=False, metadata={"unit": "m"})
+    totaldistance: float = field(default=distance, compare=False, metadata={"unit": "m"})
 
     def update_state(self, dataveh: OrderedDict):
         """Updates data within the structure with 
@@ -77,7 +77,9 @@ class Vehicle(object):
         :return: Dictionary as in description
         :rtype: [type]
         """
-        return {ct.FIELD_DATA[key]: ct.FIELD_FORMAT[key](val) for key, val in dataveh.items()}
+        data = {ct.FIELD_DATA[key]: ct.FIELD_FORMAT[key](val) for key, val in dataveh.items()}
+        data["totaldistance"] = data["distance"]  # Complementary information
+        return data
 
     @classmethod
     def from_response(cls, dataveh: OrderedDict):
@@ -95,12 +97,14 @@ lstordct = List[OrderedDict]
 lstvehs = List[Vehicle]
 
 
-@dataclass
 class VehicleList(object):
     """Class for defining a list of vehicles
     """
 
-    vehicles: List[Vehicle] = field(default_factory=list)
+    def __init__(self, newvehs: lstvehs):
+        self.vehicles = {}
+        for veh in newvehs:
+            self.vehicles[veh.vehid] = veh
 
     def update_list(self, newvehs: lstvehs):
         """ Appends a new list of vehicles
@@ -109,25 +113,24 @@ class VehicleList(object):
         :type vehlist: lstordct
         """
         for veh in newvehs:
-            if veh not in self.vehicles:
-                self.vehicles.append(veh)
+            self.vehicles[veh.vehid] = veh
 
     def __str__(self):
         if not self.vehicles:
             return "No vehicles have been registered"
         return "\n".join(
-            ", ".join(f"{k}:{v}" for k, v in veh.__dict__.items()) for veh in self.vehicles
+            ", ".join(f"{k}:{v}" for k, v in veh.__dict__.items()) for veh in self.vehicles.values()
         )
 
     def __repr__(self):
         if not self.vehicles:
             return "No vehicles have been registered"
         return "\n".join(
-            ", ".join(f"{k}:{v}" for k, v in veh.__dict__.items()) for veh in self.vehicles
+            ", ".join(f"{k}:{v}" for k, v in veh.__dict__.items()) for veh in self.vehicles.values()
         )
 
     def __iter__(self):
-        self.iterveh = iter(self.vehicles)
+        self.iterveh = iter(self.vehicles.values())
         return self
 
     def __next__(self):
@@ -135,6 +138,9 @@ class VehicleList(object):
 
     def __contains__(self, veh: Vehicle):
         return veh.vehid in self.get_vehid
+
+    def __getitem__(self, key: int):
+        return self.vehicles[key]
 
     @classmethod
     def from_request(cls, vehlistdct: lstordct):
