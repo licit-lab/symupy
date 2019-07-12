@@ -205,7 +205,7 @@ class SimulatorRequest:
         return self._vehs
 
     @property
-    def get_current_time(self) -> str:
+    def current_time(self) -> str:
         return self.data_query.get("INST").get("@val")
 
     @property
