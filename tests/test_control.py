@@ -32,11 +32,11 @@ class TestBottleneck001(unittest.TestCase):
     def test_reduce_speed_bottleneck_001(self):
         sim_instance = Simulator.from_path(self.mocks_path, self.sim_path)
         flag = False
+        link = sim_instance.simulation.get_network_links()[0]
         with sim_instance as s:
             while s.do_next:
                 s.run_step()
-                if s.state.is_vehicle_in_network("0"):
-                    s.state.vehicles
+                if s.state.is_vehicle_in_link("0", link):
                     flag = True
 
         self.assertTrue(flag)
@@ -60,7 +60,20 @@ class TestBottleneck002(unittest.TestCase):
         sim_case = Simulation(self.mocks_path)
         self.assertEqual(sim_case.filename, self.mocks_path)
 
-    def test_vehicle_in_network_bottleneck_002(self):
+    def test_reduce_speed_bottleneck_002(self):
+        sim_instance = Simulator.from_path(self.mocks_path, self.sim_path)
+        flag = False
+        links = sim_instance.simulation.get_network_links()[0]
+        with sim_instance as s:
+            while s.do_next:
+                s.run_step()
+                if s.state.is_vehicle_in_link("0", links) and s.state.is_vehicle_in_link(
+                    "1", links
+                ):
+                    flag = True
+        self.assertTrue(flag)
+
+    def test_is_vehicle_in_network_bottleneck_002(self):
         sim_instance = Simulator.from_path(self.mocks_path, self.sim_path)
 
         flag0, flag1, flag2 = False, False, False
