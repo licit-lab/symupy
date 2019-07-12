@@ -352,6 +352,10 @@ class Simulator(object):
 
     @classmethod
     def from_path(cls, filename_path, simuvia_path):
+        """ Alternative constructor for the Simulator 
+
+            Simulator.from_path(file,lib)
+        """
         case = Simulation(filename_path)
         sim = cls(simuvia_path)
         sim.register_simulation(case)
