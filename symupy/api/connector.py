@@ -228,7 +228,7 @@ class Simulator(object):
         """
         endpoints = self._sim.get_network_endpoints()
         veh_data = self._sim.get_vehicletype_information()
-        dbTime = self._sim.sampling_time(simid)
+        dbTime = self._sim.sampling_time
         vehid = tuple(v["id"] for v in veh_data)
         if vehtype not in vehid:
             raise SymupyVehicleCreationError(
