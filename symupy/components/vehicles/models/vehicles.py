@@ -44,10 +44,35 @@ class Vehicle(object):
         dct_format = Vehicle.format_dict(dataveh)
         self.__dict__ = dct_format
 
-    def vehicle_sensor(self):
-        """ Implement vehicle sensor 
+    @property
+    def C(self):
+        """Output matrix"""
+        return self.__output_matrix
+
+    def activate_sensor(self, **kwargs) -> None:
+        """Define the observation matrix and observed states in the vehicle
+           
+           vehicle.activate_sensor(speed=True,position=True)
+        
+        :return: Set the observation matrix __output_matrix
+        :rtype: None
         """
+        dct_idx = {"position": 0, "speed": 1, "acceleration": 2}
+        C = np.zeros([len(kwargs.keys()), 3])
+        for key in kwargs.keys():
+            idx = dct_idx.get(key)
+            C[idx][idx] = kwargs.get(key, 0)
+        self.__output_matrix = C
+
+    @property
+    def vector_state(self) -> np.array:
+        """Vehicle state vector (x,v,a)"""
         return np.array((self.distance, self.speed, self.acceleration))
+
+    @property
+    def observed_state(self) -> np.array:
+        """ Return observed states via C@(x,v,a)"""
+        return self.C @ self.vector_state
 
     # TODO: Accept other car following laws
     # TODO: Get environment
