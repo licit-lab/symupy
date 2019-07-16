@@ -114,9 +114,9 @@ class Simulation(object):
     def filename_encoded(self):
         return self._file_name.encode("UTF8")
 
-    # FIXME: This should be a property simid is something that cannot be totally controlled via api
-    def sampling_time(self, simid: int = 0):
-        return float(self.get_simulation_parameters()[simid].get("pasdetemps"))
+    @property
+    def sampling_time(self):
+        return float(self.get_simulation_parameters()[0].get("pasdetemps"))
 
 
 class Simulator(object):
@@ -312,10 +312,20 @@ class Simulator(object):
         self._n_iter = iter(self._sim.get_simulation_steps())
         self._c_iter = None
         self._bContinue = True
+        # Extra
+        self.build_dynamic_param()
         return self
 
     def __exit__(self, type, value, traceback) -> bool:
         return False
+
+    def build_dynamic_param(self):
+        """Construct parameters for vehicle dynamics
+        """
+        self.__dct_par = {
+            "time_step": self.simulation.sampling_time,
+            "engine_tau": ct.ENGINE_CONSTANT,
+        }
 
     @property
     def s_response_dec(self):
