@@ -10,6 +10,7 @@ import numpy as np
 
 from symupy.utils import constants as ct
 
+from .dynamics import dynamic_3rd_ego, dynamic_2nd_ego
 
 @dataclass
 class Vehicle(object):
