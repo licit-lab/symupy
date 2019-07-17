@@ -28,6 +28,7 @@ setup(
         "networkx>=2.2",
         "matplotlib>=3.0.0",
         "sqlalchemy>=1.3",
+        "pandas>=0.24",
     ],
     author="Andres Ladino",
     author_email="aladinoster@gmail.com",
