@@ -20,3 +20,29 @@ def dynamic_2nd_ego(state: np.array, control: np.array, parameters=PAR) -> np.ar
     A = np.array([[1, parameters["time_step"]], [0, 1]])
     B = np.array([[0], [parameters["time_Step"]]])
     return A @ state[:2] + B @ control[:1]
+
+
+class VehicleDynamic(object):
+    def __init__(self, time_step=ct.TIME_STEP, veh_dyn=dynamic_2nd_ego) -> None:
+        self.time_step = time_step
+        self.veh_dyn = veh_dyn
+        self.prev_state = np.array([])
+
+    def __call__(self, *args, **kwargs):
+
+        vehicle, control, parameters = args
+        DCT_DIRECTIVES = {
+            "dynamic_3rd_ego": {"args": (vehicle.state, control, parameters), "kwargs": kwargs},
+            "dynamic_2nd_ego": {"args": (vehicle.state, control), "kwargs": kwargs},
+        }
+
+        dynamic_name = self.veh_dyn.__name__
+        args = DCT_DIRECTIVES.get(dynamic_name).get("args")
+        kwargs = DCT_DIRECTIVES.get(dynamic_name).get("kwargs")
+        return self.veh_dyn(*args, **kwargs)
+
+    def __repr__(self):
+        return f"{self.__class__.__name__}(time_step = {self.time_step}, veh_dyn ={self.veh_dyn.__name__})"
+
+    def __str__(self):
+        return f"{self.__class__.__name__}(time_step = {self.time_step}, veh_dyn ={self.veh_dyn.__name__})"

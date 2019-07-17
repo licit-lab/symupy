@@ -40,9 +40,10 @@ FIELD_FORMAT = {
     "@tron": str,
     "@type": str,
     "@vit": float,
-    "@voie": str,
+    "@voie": int,
     "@z": float,
 }
+
 
 # *****************************************************************************
 # XML Data

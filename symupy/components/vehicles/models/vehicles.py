@@ -5,45 +5,70 @@
 
 from typing import Dict, List
 from collections import OrderedDict
-from dataclasses import dataclass, field
+import itertools
 import numpy as np
+import pandas as pd
 
 from symupy.utils import constants as ct
 
-from .dynamics import dynamic_3rd_ego, dynamic_2nd_ego
+from .dynamics import VehicleDynamic
 
-@dataclass
+
 class Vehicle(object):
     """Class for defining a vehicle
     """
 
-    # Vehicle identity (comparison values)
-    vehtype: str = field(default="")
-    vehid: int = field(default=None)
+    counter = itertools.count()
 
-    # Location
-    abscisa: float = field(default=0.0, compare=False, metadata={"unit": "m"})
-    ordinate: float = field(default=0.0, compare=False, metadata={"unit": "m"})
-    link: str = field(default="", compare=False)
-    lane: str = field(default="", compare=False)
+    def __init__(
+        self,
+        abscisa=0.0,
+        acceleration=0.0,
+        distance=0.0,
+        vehid=0,
+        ordinate=0.0,
+        link="",
+        vehtype="",
+        speed=0.0,
+        lane=0,
+        elevation=0.0,
+        dynamic=VehicleDynamic(),
+        itinerary=[],
+    ):
+        """ This initializer creates a Vehicle
+        """
+        self.abscisa = abscisa
+        self.acceleration = acceleration
+        self.distance = distance
+        self.vehid = vehid
+        self.ordinate = ordinate
+        self.link = link
+        self.vehtype = vehtype
+        self.speed = speed
+        self.lane = lane
+        self.elevation = elevation
+        self.dynamic = dynamic
+        self.itinerary = itinerary
 
-    # State
-    distance: float = field(default=0.0, compare=False, metadata={"unit": "m"})
-    speed: float = field(default=0.0, compare=False, metadata={"unit": "m/s"})
-    acceleration: float = field(default=0.0, compare=False, metadata={"unit": "m/s^2"})
-    elevation: float = field(default=0.0, compare=False, metadata={"unit": "m"})
+    def __repr__(self):
+        data_dct = ", ".join(f"{k}:{v}" for k, v in self.__dict__.items())
+        return f"{self.__class__.__name__}({data_dct})"
 
-    # Internal states
-    totaldistance: float = field(default=distance, compare=False, metadata={"unit": "m"})
+    def __str__(self):
+        data_dct = ", ".join(f"{k}:{v}" for k, v in self.__dict__.items())
+        return f"{self.__class__.__name__}({data_dct})"
 
-    def update_state(self, dataveh: OrderedDict):
+    def update_state(self, dataveh):
         """Updates data within the structure with 
         
-        :param dataveh: [description]
-        :type dataveh: OrderedDict
+        :param dataveh: vehicle 
+        :type dataveh: Vehicle
         """
-        dct_format = Vehicle.format_dict(dataveh)
-        self.__dict__ = dct_format
+        self.__dict__.update(**dataveh)
+
+        link = getattr(self, "link")
+        if link not in getattr(self, "itinerary"):
+            self.itinerary.append(link)
 
     @property
     def C(self):
@@ -75,13 +100,9 @@ class Vehicle(object):
         """ Return observed states via C@(x,v,a)"""
         return self.C @ self.vector_state
 
-    # TODO: Accept other car following laws
-    # TODO: Get environment
-    # TODO: Organice matrix external info
-    # TODO: Implement xi+ =  f(yi,ui) ->vector
-    # TODO: Implement xi+ =  f(yi,ui,yinb,uinb) ->vector?
-    # TODO: Implement xi+= f(y,u) ->vector
-    # TODO: Perform update coherently via update_state or
+    def predict_state(self, control) -> np.array:
+        """ Return predicted states via self.dynamic"""
+        return self.dynamic(self, control)
 
     @staticmethod
     def format_dict(dataveh: OrderedDict) -> dict:
@@ -94,7 +115,7 @@ class Vehicle(object):
                 "link":          str (data),
                 "vehtype":       str (data),
                 "speed":         float(data),
-                "lane":          str (data),
+                "lane":          int (data),
                 "elevation":     float(data),
                } 
         
@@ -104,7 +125,6 @@ class Vehicle(object):
         :rtype: [type]
         """
         data = {ct.FIELD_DATA[key]: ct.FIELD_FORMAT[key](val) for key, val in dataveh.items()}
-        data["totaldistance"] = data["distance"]  # Complementary information
         return data
 
     @classmethod
@@ -132,26 +152,35 @@ class VehicleList(object):
         for veh in newvehs:
             self.vehicles[veh.vehid] = veh
 
-    def update_list(self, newvehs: lstvehs):
+    def update_list(self, current_vehs: lstordct):
         """ Appends a new list of vehicles
 
         :param vehlist: List of vehicles
         :type vehlist: lstordct
         """
-        for veh in newvehs:
-            self.vehicles[veh.vehid] = veh
+        # Reformating data in vehicle dict
+        current_vehs = [Vehicle.format_dict(veh) for veh in current_vehs]
+
+        for veh in current_vehs:
+            veh_id = veh.get("vehid")
+            if veh_id in self.vehicles.keys():
+                # Update existing vehicle
+                self.vehicles.get(veh_id).update_state(veh)
+            else:
+                # Create a new vehicle and append
+                self.vehicles[veh_id] = Vehicle(**veh)
 
     def __str__(self):
         if not self.vehicles:
             return "No vehicles have been registered"
-        return "\n".join(
+        return "Current Vehicles:\n" + "\n".join(
             ", ".join(f"{k}:{v}" for k, v in veh.__dict__.items()) for veh in self.vehicles.values()
         )
 
     def __repr__(self):
         if not self.vehicles:
             return "No vehicles have been registered"
-        return "\n".join(
+        return "Current Vehicles:\n" + "\n".join(
             ", ".join(f"{k}:{v}" for k, v in veh.__dict__.items()) for veh in self.vehicles.values()
         )
 
