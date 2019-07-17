@@ -13,7 +13,7 @@ class SimulatorRequest:
 
     def __str__(self):
         return (
-            "Sim Time: {}, VehInNetwork: {}".format(self.get_current_time, self.get_current_nbveh)
+            "Sim Time: {}, VehInNetwork: {}".format(self.current_time, self.current_nbveh)
             if self.data_query
             else "Simulation has not started"
         )
@@ -184,8 +184,7 @@ class SimulatorRequest:
         """ Construct and or update vehicle data
         """
         if self._vehs:
-            newvehs = VehicleList.from_request(self.get_vehicle_data())
-            self._vehs.update_list(newvehs)
+            self._vehs.update_list(self.get_vehicle_data())
             return
         self.create_vehicle_list()
 
@@ -209,5 +208,5 @@ class SimulatorRequest:
         return self.data_query.get("INST").get("@val")
 
     @property
-    def get_current_nbveh(self) -> int:
+    def current_nbveh(self) -> int:
         return self.data_query.get("INST").get("@nbVeh")

@@ -115,7 +115,7 @@ class Simulation(object):
         return self._file_name.encode("UTF8")
 
     @property
-    def sampling_time(self):
+    def time_step(self):
         return float(self.get_simulation_parameters()[0].get("pasdetemps"))
 
 
@@ -228,7 +228,7 @@ class Simulator(object):
         """
         endpoints = self._sim.get_network_endpoints()
         veh_data = self._sim.get_vehicletype_information()
-        dbTime = self._sim.sampling_time
+        dbTime = self._sim.time_step
         vehid = tuple(v["id"] for v in veh_data)
         if vehtype not in vehid:
             raise SymupyVehicleCreationError(
@@ -322,10 +322,7 @@ class Simulator(object):
     def build_dynamic_param(self):
         """Construct parameters for vehicle dynamics
         """
-        self.__dct_par = {
-            "time_step": self.simulation.sampling_time,
-            "engine_tau": ct.ENGINE_CONSTANT,
-        }
+        self.__dct_par = {"time_step": self.simulation.time_step, "engine_tau": ct.ENGINE_CONSTANT}
 
     @property
     def s_response_dec(self):
@@ -359,6 +356,14 @@ class Simulator(object):
     @property
     def simulationstep(self) -> str:
         return self._c_iter
+
+    @property
+    def time_step(self) -> float:
+        return self.simulation.time_step
+
+    @property
+    def sampling_time(self) -> float:
+        return self.simulation.time_step
 
     @classmethod
     def from_path(cls, filename_path, simuvia_path):
