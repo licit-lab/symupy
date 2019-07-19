@@ -183,7 +183,19 @@ class VehicleList(object):
             return constructor([getattr(veh, attribute) for veh in self], dtype=ftype)
         return [getattr(veh, attribute) for veh in self]  # Case str
 
-    def create_pandas(self) -> pd.DataFrame:
+    @property
+    def acceleration(self):
+        return self._get_vehicles_attribute("acceleration")
+
+    @property
+    def speed(self):
+        return self._get_vehicles_attribute("speed")
+
+    @property
+    def distance(self):
+        return self._get_vehicles_attribute("distance")
+
+    def _to_pandas(self) -> pd.DataFrame:
         """ Transforms vehicle list into a pandas for rendering purposes 
         
         :return: Returns a table with pandas data.
@@ -198,14 +210,14 @@ class VehicleList(object):
     def __str__(self):
         if not self.vehicles:
             return "No vehicles have been registered"
-        df_to_print = self.create_pandas()
+        df_to_print = self._to_pandas()
         return str(df_to_print)
 
     def __repr__(self):
         if not self.vehicles:
             return "No vehicles have been registered"
-        df_to_print = self.create_pandas()
-        return df_to_print
+        df_to_print = self._to_pandas()
+        return repr(df_to_print)
 
     def __iter__(self):
         self.iterveh = iter(self.vehicles.values())
