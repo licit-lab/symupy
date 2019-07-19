@@ -170,19 +170,29 @@ class VehicleList(object):
                 # Create a new vehicle and append
                 self.vehicles[veh_id] = Vehicle(**veh)
 
+    def create_pandas(self) -> pd.DataFrame:
+        """ Transforms vehicle list into a pandas for rendering purposes 
+        
+        :return: Returns a table with pandas data.
+        :rtype: pd.DataFrame
+        """
+
+        df_print = pd.DataFrame()
+        for key, value in self.vehicles.items():
+            df_print = df_print.append(pd.DataFrame(value.__dict__, index=(key,)))
+        return df_print
+
     def __str__(self):
         if not self.vehicles:
             return "No vehicles have been registered"
-        return "Current Vehicles:\n" + "\n".join(
-            ", ".join(f"{k}:{v}" for k, v in veh.__dict__.items()) for veh in self.vehicles.values()
-        )
+        df_to_print = self.create_pandas()
+        return str(df_to_print)
 
     def __repr__(self):
         if not self.vehicles:
             return "No vehicles have been registered"
-        return "Current Vehicles:\n" + "\n".join(
-            ", ".join(f"{k}:{v}" for k, v in veh.__dict__.items()) for veh in self.vehicles.values()
-        )
+        df_to_print = self.create_pandas()
+        return df_to_print
 
     def __iter__(self):
         self.iterveh = iter(self.vehicles.values())
