@@ -170,6 +170,19 @@ class VehicleList(object):
                 # Create a new vehicle and append
                 self.vehicles[veh_id] = Vehicle(**veh)
 
+    def get_vehicles_attribute(self, attribute: str) -> np.array:
+        """ Retrieve list of parameters 
+        
+        :param attribute: One of the vehicles attribute e.g. 'distance'
+        :type attribute: str
+        :return: vector of all parameters
+        :rtype: np.array
+        """
+        constructor, ftype = ct.FIELD_FORMATAGG[attribute]
+        if ftype:
+            return constructor([getattr(veh, attribute) for veh in self], dtype=ftype)
+        return [getattr(veh, attribute) for veh in self]  # Case str
+
     def create_pandas(self) -> pd.DataFrame:
         """ Transforms vehicle list into a pandas for rendering purposes 
         

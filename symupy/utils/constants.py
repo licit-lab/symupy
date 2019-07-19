@@ -1,4 +1,5 @@
 from datetime import date, datetime, timedelta
+from numpy import array, float64, int32
 
 # *****************************************************************************
 # CONNECTOR
@@ -42,6 +43,22 @@ FIELD_FORMAT = {
     "@vit": float,
     "@voie": int,
     "@z": float,
+}
+
+FLOAT_SELECT = float64
+INT_SELECT = int32
+
+FIELD_FORMATAGG = {
+    "abscisa": (array, FLOAT_SELECT),
+    "acceleration": (array, FLOAT_SELECT),
+    "distance": (array, FLOAT_SELECT),
+    "vehid": (array, INT_SELECT),
+    "ordinate": (array, FLOAT_SELECT),
+    "link": (list, None),
+    "vehtype": (list, None),
+    "speed": (array, FLOAT_SELECT),
+    "lane": (array, INT_SELECT),
+    "elevation": (array, FLOAT_SELECT),
 }
 
 
