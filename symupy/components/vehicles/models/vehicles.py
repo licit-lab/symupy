@@ -170,7 +170,7 @@ class VehicleList(object):
                 # Create a new vehicle and append
                 self.vehicles[veh_id] = Vehicle(**veh)
 
-    def get_vehicles_attribute(self, attribute: str) -> np.array:
+    def _get_vehicles_attribute(self, attribute: str) -> np.array:
         """ Retrieve list of parameters 
         
         :param attribute: One of the vehicles attribute e.g. 'distance'
