@@ -1,3 +1,13 @@
+""" 
+    Parser submodule  
+    
+    This module handles the Simulation response converting it into proper formats for querying data afterwards. 
+
+    LICIT-LAB 
+    Author: Andres Ladino
+"""
+
+
 from xmltodict import parse
 from xml.parsers.expat import ExpatError
 from symupy.components import Vehicle, VehicleList
