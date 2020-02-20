@@ -1,5 +1,4 @@
 from setuptools import setup, find_packages
-from version import find_version
 
 CLASSIFIERS = [
     "Development Status :: 1 - Planning",
@@ -22,7 +21,7 @@ with open("HISTORY.md", "r") as history_file:
 
 setup(
     name="symupy",
-    version=find_version("symupy", "__init__.py"),
+    version="0.1.1",
     packages=find_packages(exclude=["tests*"]),
     install_requires=[
         "numpy>=1.16",
@@ -44,4 +43,5 @@ setup(
     keywords="traffic microsimulation",
     license="MIT",
     classifiers=CLASSIFIERS,
+    zip_safe=False,
 )
