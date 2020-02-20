@@ -1,0 +1,5 @@
+Sphinx==2.4.2
+Recommonmark==0.6.0
+pytest==5.3.5
+bump2version==1.0.0
+sphinx-rtd-theme==0.4.3

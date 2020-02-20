@@ -17,6 +17,9 @@ CLASSIFIERS = [
 with open("README.md", "r") as f:
     LONG_DESCRIPTION = f.read()
 
+with open("HISTORY.md", "r") as history_file:
+    HISTORY = history_file.read()
+
 setup(
     name="symupy",
     version=find_version("symupy", "__init__.py"),
@@ -27,15 +30,16 @@ setup(
         "xmltodict>=0.12",
         "networkx>=2.2",
         "matplotlib>=3.0.0",
-        "sqlalchemy>=1.3",
+        "sqlalchemy>=1.3.5",
         "pandas>=0.24",
     ],
     author="Andres Ladino",
     author_email="aladinoster@gmail.com",
-    description="Using Symuvia inside Python",
+    description="A module for Symuvia inside Python",
     url="https://github.com/symuvia/symupy",
     download_url="https://github.com/symuvia/symupy",
-    long_description=LONG_DESCRIPTION,
+    include_package_data=True,
+    long_description=LONG_DESCRIPTION + "\n\n" + HISTORY,
     long_description_content_type="text/markdown",
     keywords="traffic microsimulation",
     license="MIT",
