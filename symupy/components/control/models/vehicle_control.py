@@ -15,7 +15,9 @@ import numpy as np
 class VehicleControl:
     """ Controls a single vehicle"""
 
-    def __init__(self, vehicle: Vehicle, mode: str = "manual", time: float = ct.TIME_STEP):
+    def __init__(
+        self, vehicle: Vehicle, mode: str = "manual", time: float = ct.TIME_STEP
+    ):
         self.mode = mode
         self.time = time
         self.vehicle = vehicle
@@ -59,13 +61,14 @@ class VehicleGroupControl:
         if not self.controls:
             return "No vehicles registered for control"
         return "\n".join(
-            ", ".join(f"{k}:{v}" for k, v in ctr.vehicles.__dict__.items()) for ctr in self.controls
+            ", ".join(f"{k}:{v}" for k, v in ctr.vehicles.__dict__.items())
+            for ctr in self.controls
         )
 
     def __repr__(self):
         if not self.controls:
             return "No vehicles registered for control"
         return "\n".join(
-            ", ".join(f"{k}:{v}" for k, v in ctr.vehicles.__dict__.items()) for ctr in self.controls
+            ", ".join(f"{k}:{v}" for k, v in ctr.vehicles.__dict__.items())
+            for ctr in self.controls
         )
-

@@ -9,7 +9,11 @@ def dynamic_3rd_ego(state: np.array, control: np.array, parameters=PAR) -> np.ar
     """Update vehicle state in 3rd order dynamics"""
     K_a = parameters["time_step"] / parameters["engine_tau"]
     A = np.array(
-        [[1, parameters["time_step"], 0], [0, 1, parameters["time_step"]], [0, 0, (1 - K_a)]]
+        [
+            [1, parameters["time_step"], 0],
+            [0, 1, parameters["time_step"]],
+            [0, 0, (1 - K_a)],
+        ]
     )
     B = np.array([[0], [0], [K_a]])
     return A @ state[:3] + B @ control[:1]
@@ -32,7 +36,10 @@ class VehicleDynamic(object):
 
         vehicle, control, parameters = args
         DCT_DIRECTIVES = {
-            "dynamic_3rd_ego": {"args": (vehicle.state, control, parameters), "kwargs": kwargs},
+            "dynamic_3rd_ego": {
+                "args": (vehicle.state, control, parameters),
+                "kwargs": kwargs,
+            },
             "dynamic_2nd_ego": {"args": (vehicle.state, control), "kwargs": kwargs},
         }
 

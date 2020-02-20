@@ -96,8 +96,12 @@ class Simulation(object):
         :return:
         :rtype: range
         """
-        t1 = datetime.strptime(self.get_simulation_parameters()[simid].get("debut"), ct.HOUR_FORMAT)
-        t2 = datetime.strptime(self.get_simulation_parameters()[simid].get("fin"), ct.HOUR_FORMAT)
+        t1 = datetime.strptime(
+            self.get_simulation_parameters()[simid].get("debut"), ct.HOUR_FORMAT
+        )
+        t2 = datetime.strptime(
+            self.get_simulation_parameters()[simid].get("fin"), ct.HOUR_FORMAT
+        )
         t = t2 - t1
         n = t.seconds / float(self.get_simulation_parameters()[simid].get("pasdetemps"))
         return range(int(n))
@@ -272,7 +276,9 @@ class Simulator(object):
             destination = self.state.query_vehicle_link(str(vehid))[0]
 
         if destination not in links:
-            raise SymupyDriveVehicleError("Unexisting Network Endpoint File: ", self._sim.filename)
+            raise SymupyDriveVehicleError(
+                "Unexisting Network Endpoint File: ", self._sim.filename
+            )
 
         # TODO: Validate that position do not overpass the max pos
         dr_state = self._library.SymDriveVehicleEx(
@@ -322,7 +328,10 @@ class Simulator(object):
     def build_dynamic_param(self):
         """Construct parameters for vehicle dynamics
         """
-        self.__dct_par = {"time_step": self.simulation.time_step, "engine_tau": ct.ENGINE_CONSTANT}
+        self.__dct_par = {
+            "time_step": self.simulation.time_step,
+            "engine_tau": ct.ENGINE_CONSTANT,
+        }
 
     @property
     def s_response_dec(self):

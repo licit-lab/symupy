@@ -13,7 +13,9 @@ class SimulatorRequest:
 
     def __str__(self):
         return (
-            "Sim Time: {}, VehInNetwork: {}".format(self.current_time, self.current_nbveh)
+            "Sim Time: {}, VehInNetwork: {}".format(
+                self.current_time, self.current_nbveh
+            )
             if self.data_query
             else "Simulation has not started"
         )
@@ -153,7 +155,9 @@ class SimulatorRequest:
 
         neighpos = self.query_vehicle_position(*neigh)
 
-        return tuple(nbh for nbh, npos in zip(neigh, neighpos) if float(npos) > float(vehpos))
+        return tuple(
+            nbh for nbh, npos in zip(neigh, neighpos) if float(npos) > float(vehpos)
+        )
 
     def vehicle_upstream_of(self, vehid: str) -> tuple:
         """Get ids of vehicles upstream to vehid
@@ -171,7 +175,9 @@ class SimulatorRequest:
 
         neighpos = self.query_vehicle_position(*neigh)
 
-        return tuple(nbh for nbh, npos in zip(neigh, neighpos) if float(npos) < float(vehpos))
+        return tuple(
+            nbh for nbh, npos in zip(neigh, neighpos) if float(npos) < float(vehpos)
+        )
 
     def create_vehicle_list(self):
         """Initialize 
