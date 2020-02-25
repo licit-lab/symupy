@@ -1,8 +1,6 @@
 # Created by https://www.gitignore.io/api/python
 # Edit at https://www.gitignore.io/?templates=python
 
-### IDE ### 
-.vscode
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
@@ -132,3 +130,11 @@ dmypy.json
 
 # End of https://www.gitignore.io/api/python
 test_output
+
+
+### IDE ### 
+.vscode
+
+### Package ### 
+# Automatic generation by docs 
+docs/source/symupy.*
