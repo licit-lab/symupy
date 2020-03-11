@@ -102,6 +102,33 @@ class Simulation(object):
         n = t.seconds / float(self.get_simulation_parameters()[simid].get("pasdetemps"))
         return range(int(n))
 
+    def get_mfd_sensor_names(self) -> tuple:
+        """ Get MFD sensors defined for a specific simulation
+        
+        :return: tuple of MFD sensors in the network
+        :rtype: tuple
+        """
+        branch_tree = "TRAFICS/TRAFIC/PARAMETRAGE_CAPTEURS/CAPTEURS"
+        sensors = self.xmltree.xpath(branch_tree)[0].getchildren()
+        return tuple(sn.attrib["id"] for sn in sensors)
+
+    def get_links_in_mfd_sensor(self, sensor_id: str) -> tuple:
+        """ Get links associated to a particular MFD sensor for a specific simulation
+        
+        :param sensor_id: Sensor id
+        :type sensor_id: str
+        :return: tuple of strings with links covered by the sensor
+        :rtype: tuple
+        """
+        branch_tree = "TRAFICS/TRAFIC/PARAMETRAGE_CAPTEURS/CAPTEURS"
+        sensors = self.xmltree.xpath(branch_tree)[0].getchildren()
+        try:
+            sensor_element = sensors[self.get_mfd_sensor_names().index(sensor_id)]
+            links = sensor_element.getchildren()[0].getchildren()
+            return tuple(lk.attrib["id"] for lk in links)
+        except:
+            return ()
+
     def __contains__(self, value: tuple) -> bool:
         # REVIEW: Implement? in method? maybe useful
         raise NotImplementedError
