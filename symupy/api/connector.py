@@ -237,6 +237,51 @@ class Simulator(object):
         )
         return vehid
 
+    def create_vehicle_with_route(
+        self, vehtype: str, origin: str, destination: str, lane: int = 1, creation_time: float = 0, route: str = ""
+    ) -> int:
+        """ Creates a vehicle with a specific route
+        
+            :param vehtype: vehicle type according to simulation definitions
+            :type vehtype: str
+            :param origin: network endpoint node according to simulation
+            :type origin: str
+            :param destination: network endpoint node according to simulation
+            :type destination: str
+            :param lane: vehicle lane number, defaults to 1
+            :type lane: int, optional
+            :param creation_time: time instant of creation [0,Ts], defaults to 0
+            :type creation_time: float, optional
+            :param route: route followed by the vehicle, defaults to ""
+            :type route: str, optional
+
+            :return: Vehicle id of the vehicle created >0
+            :rtype: int        
+        """
+        if origin == destination:
+            return -1
+
+        endpoints = self._sim.get_network_endpoints()
+        veh_data = self._sim.get_vehicletype_information()
+        dbTime = self._sim.time_step
+        vehid = tuple(v["id"] for v in veh_data)
+
+        if vehtype not in vehid:
+            raise SymupyVehicleCreationError("Unexisting Vehicle Class in File: ", self._sim.filename)
+
+        if (origin not in endpoints) or (destination not in endpoints):
+            raise SymupyVehicleCreationError("Unexisting Network Endpoint File: ", self._sim.filename)
+
+        vehid = self._library.SymCreateVehicleWithRouteEx(
+            origin.encode("UTF8"),
+            destination.encode("UTF8"),
+            vehtype.encode("UTF8"),
+            c_int(lane),
+            c_double(creation_time - dbTime),
+            route.encode("UTF8"),
+        )
+        return vehid
+
     def drive_vehicle(self, vehid: int, new_pos: float, destination: str = None, lane: str = 1) -> None:
         """Drives a vehicle to a specific position
 
