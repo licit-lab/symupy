@@ -74,10 +74,7 @@ def create_DCT_NETWORK_INFO(networkid: str) -> dict:
 
 
 def create_DCT_TRAFIC_INFO(
-    trafid: str,
-    bounded_acc: bool = True,
-    relaxation: float = 4,
-    ghost_lanechange: bool = False,
+    trafid: str, bounded_acc: bool = True, relaxation: float = 4, ghost_lanechange: bool = False,
 ) -> dict:
     """Computes dictionary DCT_TRAFIC_INFO for XML file 
     
@@ -99,9 +96,7 @@ def create_DCT_TRAFIC_INFO(
     return DCT_TRAFIC_INFO
 
 
-def create_DCT_EXPORT_INFO(
-    trace_rout: bool = False, trajectories: bool = True, csv: bool = True
-) -> dict:
+def create_DCT_EXPORT_INFO(trace_rout: bool = False, trajectories: bool = True, csv: bool = True) -> dict:
     """Computes dictionary DCT_SCENARIO_INFO for XML file
     
     :param trace_rout: trace routes True/False
@@ -120,12 +115,7 @@ def create_DCT_EXPORT_INFO(
 
 
 def create_DCT_SCENARIO_INFO(
-    scnid: str,
-    dirout: str,
-    prefout: str,
-    dct_sim: dict,
-    dct_traffic: dict,
-    dct_network: dict,
+    scnid: str, dirout: str, prefout: str, dct_sim: dict, dct_traffic: dict, dct_network: dict,
 ) -> dict:
     """Computes dictionary DCT_SCENARIO_INFO for XML file
     
@@ -180,9 +170,4 @@ class XMLGenerator(object):
     def __init__(self, path_xsd: str = ""):
         # Create a general scheme
         attr_qname = ET.QName(self.xmlns, self.namespace)
-        self.root = ET.Element(
-            "ROOT_SYMUBRUIT",
-            {attr_qname: "reseau.xsd"},
-            version="2.05",
-            nsmap=self.nsmap,
-        )
+        self.root = ET.Element("ROOT_SYMUBRUIT", {attr_qname: "reseau.xsd"}, version="2.05", nsmap=self.nsmap,)

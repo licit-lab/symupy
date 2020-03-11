@@ -96,12 +96,8 @@ class Simulation(object):
         :return:
         :rtype: range
         """
-        t1 = datetime.strptime(
-            self.get_simulation_parameters()[simid].get("debut"), ct.HOUR_FORMAT
-        )
-        t2 = datetime.strptime(
-            self.get_simulation_parameters()[simid].get("fin"), ct.HOUR_FORMAT
-        )
+        t1 = datetime.strptime(self.get_simulation_parameters()[simid].get("debut"), ct.HOUR_FORMAT)
+        t2 = datetime.strptime(self.get_simulation_parameters()[simid].get("fin"), ct.HOUR_FORMAT)
         t = t2 - t1
         n = t.seconds / float(self.get_simulation_parameters()[simid].get("pasdetemps"))
         return range(int(n))
@@ -186,9 +182,7 @@ class Simulator(object):
     def request_answer(self):
         """Request simulator answer and maps the data locally
         """
-        self._bContinue = self._library.SymRunNextStepEx(
-            self._s_response, self._b_trace, byref(self._b_end)
-        )
+        self._bContinue = self._library.SymRunNextStepEx(self._s_response, self._b_trace, byref(self._b_end))
         self.state.parse_data(self.s_response_dec)
 
     @printer_time
@@ -211,9 +205,7 @@ class Simulator(object):
         """
         self._bContinue = False
 
-    def create_vehicle(
-        self, vehtype: str, origin: str, destination: str, lane: int = 1, simid: int = 0
-    ) -> int:
+    def create_vehicle(self, vehtype: str, origin: str, destination: str, lane: int = 1, simid: int = 0) -> int:
         """Creates a vehicle within the network
 
         :param vehtype: vehicle type according to simulation definitions
@@ -235,27 +227,17 @@ class Simulator(object):
         dbTime = self._sim.time_step
         vehid = tuple(v["id"] for v in veh_data)
         if vehtype not in vehid:
-            raise SymupyVehicleCreationError(
-                "Unexisting Vehicle Class in File: ", self._sim.filename
-            )
+            raise SymupyVehicleCreationError("Unexisting Vehicle Class in File: ", self._sim.filename)
 
         if (origin not in endpoints) or (destination not in endpoints):
-            raise SymupyVehicleCreationError(
-                "Unexisting Network Endpoint File: ", self._sim.filename
-            )
+            raise SymupyVehicleCreationError("Unexisting Network Endpoint File: ", self._sim.filename)
 
         vehid = self._library.SymCreateVehicleEx(
-            vehtype.encode("UTF8"),
-            origin.encode("UTF8"),
-            destination.encode("UTF8"),
-            c_int(lane),
-            c_double(dbTime),
+            vehtype.encode("UTF8"), origin.encode("UTF8"), destination.encode("UTF8"), c_int(lane), c_double(dbTime),
         )
         return vehid
 
-    def drive_vehicle(
-        self, vehid: int, new_pos: float, destination: str = None, lane: str = 1
-    ) -> None:
+    def drive_vehicle(self, vehid: int, new_pos: float, destination: str = None, lane: str = 1) -> None:
         """Drives a vehicle to a specific position
 
         :param vehid: vehicle id to drive 
@@ -276,9 +258,7 @@ class Simulator(object):
             destination = self.state.query_vehicle_link(str(vehid))[0]
 
         if destination not in links:
-            raise SymupyDriveVehicleError(
-                "Unexisting Network Endpoint File: ", self._sim.filename
-            )
+            raise SymupyDriveVehicleError("Unexisting Network Endpoint File: ", self._sim.filename)
 
         # TODO: Validate that position do not overpass the max pos
         dr_state = self._library.SymDriveVehicleEx(
@@ -287,9 +267,7 @@ class Simulator(object):
         self.request_answer()
         return dr_state
 
-    def drive_vehicle_with_control(
-        self, vehcontrol, vehid: int, destination: str = None, lane: str = 1
-    ):
+    def drive_vehicle_with_control(self, vehcontrol, vehid: int, destination: str = None, lane: str = 1):
         # TODO: Basic prototyping
         vehcontrol.set_current_state(self.state)
         new_pos = vehcontrol.new_position
