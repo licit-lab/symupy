@@ -6,9 +6,7 @@ from functools import wraps
 def logger_func(orig_func):
     import logging
 
-    logging.basicConfig(
-        filename="{}.log".format(orig_func.__name__), level=logging.INFO
-    )
+    logging.basicConfig(filename="{}.log".format(orig_func.__name__), level=logging.INFO)
 
     @wraps(orig_func)
     def wrapper(*args, **kwargs):

@@ -124,10 +124,7 @@ class Vehicle(object):
         :return: Dictionary as in description
         :rtype: [type]
         """
-        data = {
-            ct.FIELD_DATA[key]: ct.FIELD_FORMAT[key](val)
-            for key, val in dataveh.items()
-        }
+        data = {ct.FIELD_DATA[key]: ct.FIELD_FORMAT[key](val) for key, val in dataveh.items()}
         return data
 
     @classmethod

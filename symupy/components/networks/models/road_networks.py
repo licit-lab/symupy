@@ -13,6 +13,7 @@ from symupy.utils import constants as ct
 
 import networkx as nx
 
+
 class RoadNetwork(object):
     pass
 

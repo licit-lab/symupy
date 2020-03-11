@@ -23,9 +23,7 @@ class SimulatorRequest:
 
     def __str__(self):
         return (
-            "Sim Time: {}, VehInNetwork: {}".format(
-                self.current_time, self.current_nbveh
-            )
+            "Sim Time: {}, VehInNetwork: {}".format(self.current_time, self.current_nbveh)
             if self.data_query
             else "Simulation has not started"
         )
@@ -98,11 +96,7 @@ class SimulatorRequest:
         :rtype: dict
         """
         vehids = set((vehid, *args)) if args else set(vehid)
-        data_vehs = [
-            (veh.get("@id"), veh.get(dataval))
-            for veh in self.get_vehicle_data()
-            if veh.get("@id") in vehids
-        ]
+        data_vehs = [(veh.get("@id"), veh.get(dataval)) for veh in self.get_vehicle_data() if veh.get("@id") in vehids]
         return dict(data_vehs)
 
     def is_vehicle_in_network(self, vehid: str, *args) -> bool:
@@ -131,9 +125,7 @@ class SimulatorRequest:
         :rtype: tuple
         """
         return tuple(
-            veh.get("@id")
-            for veh in self.get_vehicle_data()
-            if veh.get("@tron") == link and veh.get("@voie") == lane
+            veh.get("@id") for veh in self.get_vehicle_data() if veh.get("@tron") == link and veh.get("@voie") == lane
         )
 
     def is_vehicle_in_link(self, veh: str, link: str) -> bool:
@@ -165,9 +157,7 @@ class SimulatorRequest:
 
         neighpos = self.query_vehicle_position(*neigh)
 
-        return tuple(
-            nbh for nbh, npos in zip(neigh, neighpos) if float(npos) > float(vehpos)
-        )
+        return tuple(nbh for nbh, npos in zip(neigh, neighpos) if float(npos) > float(vehpos))
 
     def vehicle_upstream_of(self, vehid: str) -> tuple:
         """Get ids of vehicles upstream to vehid
@@ -185,9 +175,7 @@ class SimulatorRequest:
 
         neighpos = self.query_vehicle_position(*neigh)
 
-        return tuple(
-            nbh for nbh, npos in zip(neigh, neighpos) if float(npos) < float(vehpos)
-        )
+        return tuple(nbh for nbh, npos in zip(neigh, neighpos) if float(npos) < float(vehpos))
 
     def create_vehicle_list(self):
         """Initialize 

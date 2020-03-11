@@ -77,7 +77,7 @@ help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
 lint: ## check style with black
-	black symupy
+	black --line-length 120 symupy
 
 test: ## run tests quickly with the default Python
 	pytest

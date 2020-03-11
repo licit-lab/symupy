@@ -14,7 +14,7 @@ class SymupyError(Exception):
 
     @property
     def get_messsage(self) -> str:
-        mess, = self.args
+        (mess,) = self.args
         return mess
 
 
