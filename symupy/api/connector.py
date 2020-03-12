@@ -421,6 +421,27 @@ class Simulator(object):
                 spd.append(10)  # minimum speed?
         return tuple(spd)
 
+    def add_control_probability_zone_mfd(self, access_probability: dict, minimum_distance: dict) -> None:
+        self.accrate = {}
+
+        for tp_zn_pb, tp_zn_md in zip(access_probability.items(), minimum_distance.items()):
+            sensor, accrate = tp_zn_pb
+            _, min_dst = tp_zn_md
+            links = self.simulation.get_links_in_mfd_sensor(sensor)
+            links_str = " ".join(links)
+            self.accrate[sensor] = self._library.SymAddControlZoneEx(
+                -1, c_double(accrate), c_double(min_dst), f"'{links_str}'".encode("UTF8"),
+            )
+        return self.accrate
+
+    def modify_control_probability_zone_mfd(self, access_probability: dict) -> None:
+
+        for sensor, probablity in access_probability.items():
+            self.accrate[sensor] = self._library.SymModifyControlZoneEx(
+                -1, c_double(self.accrate[sensor]), c_double(probablity)
+            )
+        return self.accrate
+
     def __enter__(self) -> None:
         """ Implementation as a context manager
             FIXME: Implement state machine ???
