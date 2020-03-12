@@ -361,11 +361,13 @@ class Simulator(object):
     def init_total_travel_time(self):
         """ Counter initializer for total travel time
         """
+        # TODO: Improvement → Better organizadtion
         self._library.SymGetTotalTravelTimeEx.restype = c_double
 
     def init_total_travel_distance(self):
         """ Counter initializer for total travel time
         """
+        # TODO: Improvement → Better organizadtion
         self._library.SymGetTotalTravelDistanceEx.restype = c_double
 
     def get_total_travel_time(self, zone_id: str = None):
@@ -375,6 +377,7 @@ class Simulator(object):
         :type zone_id: str, optional
         :return: Associated total travel time
         """
+        # TODO: Improvement → Better organizadtion
         if zone_id:
             return self._library.SymGetTotalTravelTimeEx(zone_id.encode("UTF8"))
 
@@ -388,6 +391,7 @@ class Simulator(object):
         :type zone_id: str, optional
         :return: Associated total travel distance
         """
+        # TODO: Improvement → Better organizadtion
         if zone_id:
             return self._library.SymGetTotalTravelDistanceEx(zone_id.encode("UTF8"))
 
@@ -401,6 +405,7 @@ class Simulator(object):
         :type zone_id: str, optional
         :return: speed computed as ttt/ttd
         """
+        # TODO: Improvement → Better organizadtion
         if zone_id:
             d = self.get_total_travel_distance(zone_id)
             t = self.get_total_travel_time(zone_id)
