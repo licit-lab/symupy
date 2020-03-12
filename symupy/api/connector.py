@@ -358,6 +358,64 @@ class Simulator(object):
         ## TODO: Optional
         pass
 
+    def init_total_travel_time(self):
+        """ Counter initializer for total travel time
+        """
+        self._library.SymGetTotalTravelTimeEx.restype = c_double
+
+    def init_total_travel_distance(self):
+        """ Counter initializer for total travel time
+        """
+        self._library.SymGetTotalTravelDistanceEx.restype = c_double
+
+    def get_total_travel_time(self, zone_id: str = None):
+        """ Computes the total travel time of vehicles in a MFD region
+        
+        :param zone_id: MFD sensor id, defaults to None
+        :type zone_id: str, optional
+        :return: Associated total travel time
+        """
+        if zone_id:
+            return self._library.SymGetTotalTravelTimeEx(zone_id.encode("UTF8"))
+
+        sensors = self.simulation.get_mfd_sensor_names()
+        return tuple(self._library.SymGetTotalTravelTimeEx(sensor.encode("UTF8")) for sensor in sensors)
+
+    def get_total_travel_distance(self, zone_id: str = None):
+        """ Computes the total travel distance of vehicles in a MFD region
+        
+        :param zone_id: MFD sensor id, defaults to None
+        :type zone_id: str, optional
+        :return: Associated total travel distance
+        """
+        if zone_id:
+            return self._library.SymGetTotalTravelDistanceEx(zone_id.encode("UTF8"))
+
+        sensors = self.simulation.get_mfd_sensor_names()
+        return tuple(self._library.SymGetTotalTravelDistanceEx(sensor.encode("UTF8")) for sensor in sensors)
+
+    def get_mfd_speed(self, zone_id: str = None):
+        """ Computes the total speed of vehicles in a MFD region
+        
+        :param zone_id: MFD sensor id, defaults to None
+        :type zone_id: str, optional
+        :return: speed computed as ttt/ttd
+        """
+        if zone_id:
+            d = self.get_total_travel_distance(zone_id)
+            t = self.get_total_travel_time(zone_id)
+            spd = d / t if t != 0 else 10
+            return spd
+
+        itdsttm = zip(self.get_total_travel_distance(), self.get_total_travel_time())
+        spd = []
+        for d, t in itdsttm:
+            if t != 0:
+                spd.append(d / t)
+            else:
+                spd.append(10)  # minimum speed?
+        return tuple(spd)
+
     def __enter__(self) -> None:
         """ Implementation as a context manager
             FIXME: Implement state machine ???
@@ -369,6 +427,8 @@ class Simulator(object):
         self._c_iter = None
         self._bContinue = True
         # Extra
+        self.init_total_travel_distance()
+        self.init_total_travel_time()
         self.build_dynamic_param()
         return self
 
