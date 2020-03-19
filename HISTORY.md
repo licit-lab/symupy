@@ -8,8 +8,15 @@
 
 * Small fixes on basic interfacing
 
-## 0.2.1 (20-02-20)
+## 0.2.0 (2020-02-20)
 
 * Standardizing python package 
 * Adding documentation 
 * Makefile is now available for `testing`, `cleaning`, `building`, `installing` 
+
+## 0.2.1 (2020-03-20)
+
+* Adding control zones 
+* Creating vehicles with routes
+* Extract indicators such as TTT, TTD and SPD for zones 
+* Makefile now tests distribution
