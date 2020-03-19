@@ -212,7 +212,7 @@ class Simulator(object):
         self._bContinue = self._library.SymRunNextStepEx(self._s_response, self._b_trace, byref(self._b_end))
         self.state.parse_data(self.s_response_dec)
 
-    @printer_time
+    # @printer_time
     def run_step(self) -> int:
         """ Run simulation step by step
 
