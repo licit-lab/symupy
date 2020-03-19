@@ -102,6 +102,33 @@ class Simulation(object):
         n = t.seconds / float(self.get_simulation_parameters()[simid].get("pasdetemps"))
         return range(int(n))
 
+    def get_mfd_sensor_names(self) -> tuple:
+        """ Get MFD sensors defined for a specific simulation
+        
+        :return: tuple of MFD sensors in the network
+        :rtype: tuple
+        """
+        branch_tree = "TRAFICS/TRAFIC/PARAMETRAGE_CAPTEURS/CAPTEURS"
+        sensors = self.xmltree.xpath(branch_tree)[0].getchildren()
+        return tuple(sn.attrib["id"] for sn in sensors)
+
+    def get_links_in_mfd_sensor(self, sensor_id: str) -> tuple:
+        """ Get links associated to a particular MFD sensor for a specific simulation
+        
+        :param sensor_id: Sensor id
+        :type sensor_id: str
+        :return: tuple of strings with links covered by the sensor
+        :rtype: tuple
+        """
+        branch_tree = "TRAFICS/TRAFIC/PARAMETRAGE_CAPTEURS/CAPTEURS"
+        sensors = self.xmltree.xpath(branch_tree)[0].getchildren()
+        try:
+            sensor_element = sensors[self.get_mfd_sensor_names().index(sensor_id)]
+            links = sensor_element.getchildren()[0].getchildren()
+            return tuple(lk.attrib["id"] for lk in links)
+        except:
+            return ()
+
     def __contains__(self, value: tuple) -> bool:
         # REVIEW: Implement? in method? maybe useful
         raise NotImplementedError
@@ -185,7 +212,7 @@ class Simulator(object):
         self._bContinue = self._library.SymRunNextStepEx(self._s_response, self._b_trace, byref(self._b_end))
         self.state.parse_data(self.s_response_dec)
 
-    @printer_time
+    # @printer_time
     def run_step(self) -> int:
         """ Run simulation step by step
 
@@ -234,6 +261,51 @@ class Simulator(object):
 
         vehid = self._library.SymCreateVehicleEx(
             vehtype.encode("UTF8"), origin.encode("UTF8"), destination.encode("UTF8"), c_int(lane), c_double(dbTime),
+        )
+        return vehid
+
+    def create_vehicle_with_route(
+        self, vehtype: str, origin: str, destination: str, lane: int = 1, creation_time: float = 0, route: str = ""
+    ) -> int:
+        """ Creates a vehicle with a specific route
+        
+            :param vehtype: vehicle type according to simulation definitions
+            :type vehtype: str
+            :param origin: network endpoint node according to simulation
+            :type origin: str
+            :param destination: network endpoint node according to simulation
+            :type destination: str
+            :param lane: vehicle lane number, defaults to 1
+            :type lane: int, optional
+            :param creation_time: time instant of creation [0,Ts], defaults to 0
+            :type creation_time: float, optional
+            :param route: route followed by the vehicle, defaults to ""
+            :type route: str, optional
+
+            :return: Vehicle id of the vehicle created >0
+            :rtype: int        
+        """
+        if origin == destination:
+            return -1
+
+        endpoints = self._sim.get_network_endpoints()
+        veh_data = self._sim.get_vehicletype_information()
+        dbTime = self._sim.time_step
+        vehid = tuple(v["id"] for v in veh_data)
+
+        if vehtype not in vehid:
+            raise SymupyVehicleCreationError("Unexisting Vehicle Class in File: ", self._sim.filename)
+
+        if (origin not in endpoints) or (destination not in endpoints):
+            raise SymupyVehicleCreationError("Unexisting Network Endpoint File: ", self._sim.filename)
+
+        vehid = self._library.SymCreateVehicleWithRouteEx(
+            origin.encode("UTF8"),
+            destination.encode("UTF8"),
+            vehtype.encode("UTF8"),
+            c_int(lane),
+            c_double(creation_time - dbTime),
+            route.encode("UTF8"),
         )
         return vehid
 
@@ -286,6 +358,90 @@ class Simulator(object):
         ## TODO: Optional
         pass
 
+    def init_total_travel_time(self):
+        """ Counter initializer for total travel time
+        """
+        # TODO: Improvement → Better organizadtion
+        self._library.SymGetTotalTravelTimeEx.restype = c_double
+
+    def init_total_travel_distance(self):
+        """ Counter initializer for total travel time
+        """
+        # TODO: Improvement → Better organizadtion
+        self._library.SymGetTotalTravelDistanceEx.restype = c_double
+
+    def get_total_travel_time(self, zone_id: str = None):
+        """ Computes the total travel time of vehicles in a MFD region
+        
+        :param zone_id: MFD sensor id, defaults to None
+        :type zone_id: str, optional
+        :return: Associated total travel time
+        """
+        # TODO: Improvement → Better organizadtion
+        if zone_id:
+            return self._library.SymGetTotalTravelTimeEx(zone_id.encode("UTF8"))
+
+        sensors = self.simulation.get_mfd_sensor_names()
+        return tuple(self._library.SymGetTotalTravelTimeEx(sensor.encode("UTF8")) for sensor in sensors)
+
+    def get_total_travel_distance(self, zone_id: str = None):
+        """ Computes the total travel distance of vehicles in a MFD region
+        
+        :param zone_id: MFD sensor id, defaults to None
+        :type zone_id: str, optional
+        :return: Associated total travel distance
+        """
+        # TODO: Improvement → Better organizadtion
+        if zone_id:
+            return self._library.SymGetTotalTravelDistanceEx(zone_id.encode("UTF8"))
+
+        sensors = self.simulation.get_mfd_sensor_names()
+        return tuple(self._library.SymGetTotalTravelDistanceEx(sensor.encode("UTF8")) for sensor in sensors)
+
+    def get_mfd_speed(self, zone_id: str = None):
+        """ Computes the total speed of vehicles in a MFD region
+        
+        :param zone_id: MFD sensor id, defaults to None
+        :type zone_id: str, optional
+        :return: speed computed as ttt/ttd
+        """
+        # TODO: Improvement → Better organizadtion
+        if zone_id:
+            d = self.get_total_travel_distance(zone_id)
+            t = self.get_total_travel_time(zone_id)
+            spd = d / t if t != 0 else 10
+            return spd
+
+        itdsttm = zip(self.get_total_travel_distance(), self.get_total_travel_time())
+        spd = []
+        for d, t in itdsttm:
+            if t != 0:
+                spd.append(d / t)
+            else:
+                spd.append(10)  # minimum speed?
+        return tuple(spd)
+
+    def add_control_probability_zone_mfd(self, access_probability: dict, minimum_distance: dict) -> None:
+        self.accrate = {}
+
+        for tp_zn_pb, tp_zn_md in zip(access_probability.items(), minimum_distance.items()):
+            sensor, accrate = tp_zn_pb
+            _, min_dst = tp_zn_md
+            links = self.simulation.get_links_in_mfd_sensor(sensor)
+            links_str = " ".join(links)
+            self.accrate[sensor] = self._library.SymAddControlZoneEx(
+                -1, c_double(accrate), c_double(min_dst), f"'{links_str}'".encode("UTF8"),
+            )
+        return self.accrate
+
+    def modify_control_probability_zone_mfd(self, access_probability: dict) -> None:
+
+        for sensor, probablity in access_probability.items():
+            self.accrate[sensor] = self._library.SymModifyControlZoneEx(
+                -1, c_double(self.accrate[sensor]), c_double(probablity)
+            )
+        return self.accrate
+
     def __enter__(self) -> None:
         """ Implementation as a context manager
             FIXME: Implement state machine ???
@@ -297,6 +453,8 @@ class Simulator(object):
         self._c_iter = None
         self._bContinue = True
         # Extra
+        self.init_total_travel_distance()
+        self.init_total_travel_time()
         self.build_dynamic_param()
         return self
 
