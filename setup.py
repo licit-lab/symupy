@@ -31,6 +31,7 @@ setup(
         "matplotlib>=3.0.0",
         "sqlalchemy>=1.3.5",
         "pandas>=0.24",
+        "scipy>=1.4.1",
     ],
     author="Andres Ladino",
     author_email="aladinoster@gmail.com",
