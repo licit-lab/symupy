@@ -94,6 +94,7 @@ dist: clean ## builds source and wheel package
 	python setup.py sdist
 	python setup.py bdist_wheel
 	ls -l dist
+	twine check dist/*
 
 develop: clean ## install developer mode
 	pip install --editable .
