@@ -1,4 +1,5 @@
 import os
+from itertools import repeat
 from ctypes import cdll, create_string_buffer, c_int, byref, c_bool, c_double
 from lxml import etree
 from datetime import datetime
@@ -166,7 +167,9 @@ class Simulator(object):
         """ load SymuVia Simulation File """
         if not hasattr(self, "_sim"):
             raise SymupyFileLoadError("File not provided", "")
-        self._library.SymLoadNetworkEx(self._sim.filename_encoded)
+        valid = self._library.SymLoadNetworkEx(self._sim.filename_encoded)
+        if not valid:
+            raise SymupyFileLoadError("Simulation could not be loaded", "")
 
     def init_simulation(self) -> None:
         """ Initializes conditions for a step by step simulation"""
@@ -290,7 +293,7 @@ class Simulator(object):
 
         endpoints = self._sim.get_network_endpoints()
         veh_data = self._sim.get_vehicletype_information()
-        dbTime = self._sim.time_step
+        dbTime = self.simulationstep
         vehid = tuple(v["id"] for v in veh_data)
 
         if vehtype not in vehid:
@@ -422,7 +425,7 @@ class Simulator(object):
         return tuple(spd)
 
     def add_control_probability_zone_mfd(self, access_probability: dict, minimum_distance: dict) -> None:
-        self.accrate = {}
+        self.accrate = dict(zip(self.simulation.get_mfd_sensor_names(), repeat(0)))
 
         for tp_zn_pb, tp_zn_md in zip(access_probability.items(), minimum_distance.items()):
             sensor, accrate = tp_zn_pb
