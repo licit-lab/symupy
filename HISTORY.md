@@ -20,3 +20,7 @@
 * Creating vehicles with routes
 * Extract indicators such as TTT, TTD and SPD for zones 
 * Makefile now tests distribution
+
+## 0.2.2 (2020-03-25)
+
+* Fix bug on vehicle time creation
