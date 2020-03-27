@@ -425,25 +425,23 @@ class Simulator(object):
         return tuple(spd)
 
     def add_control_probability_zone_mfd(self, access_probability: dict, minimum_distance: dict) -> None:
-        self.accrate = dict(zip(self.simulation.get_mfd_sensor_names(), repeat(0)))
+        self.dctidzone = {}
 
         for tp_zn_pb, tp_zn_md in zip(access_probability.items(), minimum_distance.items()):
             sensor, accrate = tp_zn_pb
             _, min_dst = tp_zn_md
             links = self.simulation.get_links_in_mfd_sensor(sensor)
             links_str = " ".join(links)
-            self.accrate[sensor] = self._library.SymAddControlZoneEx(
+            self.dctidzone[sensor] = self._library.SymAddControlZoneEx(
                 -1, c_double(accrate), c_double(min_dst), f"'{links_str}'".encode("UTF8"),
             )
-        return self.accrate
+        return self.dctidzone
 
     def modify_control_probability_zone_mfd(self, access_probability: dict) -> None:
 
         for sensor, probablity in access_probability.items():
-            self.accrate[sensor] = self._library.SymModifyControlZoneEx(
-                -1, c_double(self.accrate[sensor]), c_double(probablity)
-            )
-        return self.accrate
+            self._library.SymModifyControlZoneEx(-1, self.dctidzone[sensor], c_double(probablity))
+        return self.dctidzone
 
     def __enter__(self) -> None:
         """ Implementation as a context manager
@@ -453,7 +451,7 @@ class Simulator(object):
         self.load_network()
         self.init_simulation()
         self._n_iter = iter(self._sim.get_simulation_steps())
-        self._c_iter = None
+        self._c_iter = next(self._n_iter)
         self._bContinue = True
         # Extra
         self.init_total_travel_distance()
