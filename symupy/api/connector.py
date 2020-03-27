@@ -453,7 +453,7 @@ class Simulator(object):
         self.load_network()
         self.init_simulation()
         self._n_iter = iter(self._sim.get_simulation_steps())
-        self._c_iter = None
+        self._c_iter = next(self._n_iter)
         self._bContinue = True
         # Extra
         self.init_total_travel_distance()
