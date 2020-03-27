@@ -21,7 +21,7 @@ with open("HISTORY.md", "r") as history_file:
 
 setup(
     name="symupy",
-    version="0.2.2",
+    version="0.2.3",
     packages=find_packages(exclude=["tests*"]),
     install_requires=[
         "numpy>=1.16",
