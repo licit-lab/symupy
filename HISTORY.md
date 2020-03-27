@@ -24,3 +24,8 @@
 ## 0.2.2 (2020-03-25)
 
 * Fix bug on vehicle time creation
+
+## 0.2.3 (2020-03-27)
+
+* Fix bug entries on add/ modify control zone
+* Fix bug now `simulationtime` accessible before starting simulation
