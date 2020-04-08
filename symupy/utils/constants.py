@@ -1,3 +1,33 @@
+"""
+    This module contains a **constants** and **default** parameters. These parameters can be accessed 
+    at any time by whatever of the modules. 
+
+    Example:
+        To use the ``Constants`` import the module as::
+
+            >>> import symupy.utils.constants as ct
+            >>> ct.BUFFER_STRING # access the buffer size 
+
+
+    ============================  =================================
+     **Variable**                 **Description**
+    ----------------------------  ---------------------------------
+    ``BUFFER_STRING``              Buffer size
+    ``FIELD_DATA``                 Vehicle trajectory data
+    ``FIELD_FORMAT``               Trajectory data types
+    ``HOUR_FORMAT``                Time format
+    ``FIELD_FORMATAGG``            Format aggretations
+    ``DCT_SIMULATION_INFO```       XML Simulation information
+    ``DCT_EXPORT_INFO``            XML Export information
+    ``DCT_TRAFIC_INFO``            XML Traffic information
+    ``DCT_NETWORK_INFO``           XML Network information
+    ``DCT_SCENARIO_INFO``          XML Scenario information
+    ``TP_VEHTYPES``                Vehicle type information
+    ``TP_ACCEL``                   Vehicle acceleration boundaries
+    ============================  =================================
+
+"""
+
 from datetime import date, datetime, timedelta
 from numpy import array, float64, int32
 
