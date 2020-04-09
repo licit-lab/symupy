@@ -137,4 +137,4 @@ test_output
 
 ### Package ### 
 # Automatic generation by docs 
-docs/source/symupy.*
+# docs/source/symupy.*
