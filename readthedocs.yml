@@ -11,5 +11,5 @@ python:
       extra_requirements:
         - docs
     - method: setuptools
-      path: symupy
+      path: .
     # install docs requirements
