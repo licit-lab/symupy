@@ -1,166 +1,103 @@
+""" 
+**Connector Module**
+
+This module details the implementation of a ``Simulator`` object in charge of handling the connection between the traffic simulator and this interface. The connection with the traffic simulator is handled by an object called ``Connector`` which establishes a messaging protocol with the traffic simulator. 
+
+Example:
+    To use the ``Simulator`` declare in a string the ``path`` to the simulator ::
+
+        >>> path = "path/to/simulator.so"
+        >>> simulator = Simulator(path) 
+
+Other parameters can also be send to the simulator in order to provide other configurations:
+
+Example: 
+    To send make increase the *buffer size* to a specific size:
+
+        >>> simulator = Simulator(path, bufferSize = 1000000)
+    
+    To increase change the flag that traces the flow:
+
+        >>> simulator = Simulator(path, traceFlow = True)
+
+
+"""
+
+# ============================================================================
+# STANDARD  IMPORTS
+# ============================================================================
+
 import os
 from itertools import repeat
 from ctypes import cdll, create_string_buffer, c_int, byref, c_bool, c_double
-from lxml import etree
-from datetime import datetime
 
-from symupy.utils import SymupyLoadLibraryError
-from symupy.utils import SymupyFileLoadError
-from symupy.utils import SymupyVehicleCreationError
-from symupy.utils import SymupyDriveVehicleError
-from symupy.utils import SimulatorRequest
-from symupy.utils import SymupyWarning
+import typing
+from typing import Union
+
+# ============================================================================
+# INTERNAL IMPORTS
+# ============================================================================
+
+# Error Handling
+from symupy.utils.exceptions import (
+    SymupyLoadLibraryError,
+    SymupyFileLoadError,
+    SymupyVehicleCreationError,
+    SymupyDriveVehicleError,
+    SymupyWarning,
+)
+
+#
+from symupy.api.scenario import Simulation
+from symupy.utils import SimulatorRequest, Configurator
+
 from symupy.utils import timer_func, printer_time
 from symupy.utils import constants as ct
 
 from symupy.components import V2INetwork, V2VNetwork
 from symupy.components import Vehicle
 
-import typing
-from typing import Union
+# ============================================================================
+# CLASS AND DEFINITIONS
+# ============================================================================
 
+# V2X Connectivity
 NetworkType = Union[V2INetwork, V2VNetwork]
 
 
-class Simulation(object):
-    def __init__(self, file_name: str) -> None:
-        if os.path.exists(file_name):
-            self._file_name = file_name
-            self.load_xml_tree()
-        else:
-            raise SymupyFileLoadError("File not found", file_name)
-
-    def __repr__(self):
-        return f"{self.__class__.__name__}({self.filename})"
-
-    def load_xml_tree(self) -> None:
-        """ Load XML file_name
-        """
-        # TODO: Add validation with DTD
-        tree = etree.parse(self._file_name)
-        root = tree.getroot()
-        self._xml_tree = root
-
-    @property
-    def xmltree(self):
-        return self._xml_tree
-
-    @xmltree.setter
-    def xmltree(self, rootxml):
-        self._xml_tree = rootxml
-
-    def get_simulation_parameters(self) -> tuple:
-        """ Get simulation parameters
-
-        :return: tuple with XML dictionary containing parameters
-        :rtype: tuple
-        """
-        branch_tree = "SIMULATIONS"
-        sim_params = self.xmltree.xpath(branch_tree)[0].getchildren()
-        return tuple(par.attrib for par in sim_params)
-
-    def get_vehicletype_information(self) -> tuple:
-        """ Get the vehicle parameters
-
-        :return: tuple of dictionaries containing vehicle parameters
-        :rtype: tuple
-        """
-        branch_tree = "TRAFICS/TRAFIC/TYPES_DE_VEHICULE"
-        vehicle_types = self.xmltree.xpath(branch_tree)[0].getchildren()
-        return tuple(v.attrib for v in vehicle_types)
-
-    def get_network_endpoints(self) -> tuple:
-        """ Get networks endpoint names
-
-        :return: tuple containing endpoint names
-        :rtype: tuple
-        """
-        branch_tree = "TRAFICS/TRAFIC/EXTREMITES"
-        end_points = self.xmltree.xpath(branch_tree)[0].getchildren()
-        return tuple(ep.attrib["id"] for ep in end_points)
-
-    def get_network_links(self) -> tuple:
-        """ Get network link names
-
-        :return: tuple containing link names 
-        :rtype: tuple
-        """
-        branch_tree = "TRAFICS/TRAFIC/TRONCONS"
-        links = self.xmltree.xpath(branch_tree)[0].getchildren()
-        return tuple(ep.attrib["id"] for ep in links)
-
-    def get_simulation_steps(self, simid: int = 0) -> range:
-        """Get simulation steps for an simulation. specify the simulation id  via an integer value
-
-        :param simid: simulation id , defaults to 0
-        :type simid: int, optional
-        :return:
-        :rtype: range
-        """
-        t1 = datetime.strptime(self.get_simulation_parameters()[simid].get("debut"), ct.HOUR_FORMAT)
-        t2 = datetime.strptime(self.get_simulation_parameters()[simid].get("fin"), ct.HOUR_FORMAT)
-        t = t2 - t1
-        n = t.seconds / float(self.get_simulation_parameters()[simid].get("pasdetemps"))
-        return range(int(n))
-
-    def get_mfd_sensor_names(self) -> tuple:
-        """ Get MFD sensors defined for a specific simulation
-        
-        :return: tuple of MFD sensors in the network
-        :rtype: tuple
-        """
-        branch_tree = "TRAFICS/TRAFIC/PARAMETRAGE_CAPTEURS/CAPTEURS"
-        sensors = self.xmltree.xpath(branch_tree)[0].getchildren()
-        return tuple(sn.attrib["id"] for sn in sensors)
-
-    def get_links_in_mfd_sensor(self, sensor_id: str) -> tuple:
-        """ Get links associated to a particular MFD sensor for a specific simulation
-        
-        :param sensor_id: Sensor id
-        :type sensor_id: str
-        :return: tuple of strings with links covered by the sensor
-        :rtype: tuple
-        """
-        branch_tree = "TRAFICS/TRAFIC/PARAMETRAGE_CAPTEURS/CAPTEURS"
-        sensors = self.xmltree.xpath(branch_tree)[0].getchildren()
-        try:
-            sensor_element = sensors[self.get_mfd_sensor_names().index(sensor_id)]
-            links = sensor_element.getchildren()[0].getchildren()
-            return tuple(lk.attrib["id"] for lk in links)
-        except:
-            return ()
-
-    def __contains__(self, value: tuple) -> bool:
-        # REVIEW: Implement? in method? maybe useful
-        raise NotImplementedError
-
-    @property
-    def filename(self):
-        return self._file_name
-
-    @property
-    def filename_encoded(self):
-        return self._file_name.encode("UTF8")
-
-    @property
-    def time_step(self):
-        return float(self.get_simulation_parameters()[0].get("pasdetemps"))
-
-
 class Simulator(object):
-    def __init__(self, path: str) -> None:
-        self._path = path
+    """ This object describes is a connector manager for the interface between the traffic simulator and the 
+    
+        :param object: [description]
+        :type object: [type]
+        :raises SymupyLoadLibraryError: Error raised whenever the SymuVia library is not found
+        :raises SymupyFileLoadError: Error raised whenever the provided path for an scenario cannot be loaded into the Simulator
+        :raises SymupyVehicleCreationError: Error raised when a vehicle cannot be created
+        :raises SymupyDriveVehicleError: Error rased when a vehicle state cannot be imposed
+        :raises NotImplementedError: Not implemented functionality 
+        :return: [description]
+        :rtype: Simulator
+    """
+
+    def __init__(self, libraryPath: str = "", **kwargs) -> None:
+        self.initialize_configurator(libraryPath=libraryPath, **kwargs)
         self._net = []
 
     def __repr__(self):
-        return f"{self.__class__.__name__}({self.libraryname})"
+        return f"{self.__class__.__name__}({self.libraryPath})"
+
+    def initialize_configurator(self, pathSimulator: str = "", **kwargs) -> None:
+        """ 
+           This method initialize a ``Configurator`` class that contains a small summary setup to launch a simulation
+        """
+        self._config = Configurator(libraryPath=pathSimulator, **kwargs)
 
     def load_symuvia(self) -> None:
         """ load SymuVia shared library """
         try:
-            lib_symuvia = cdll.LoadLibrary(self._path)
+            lib_symuvia = cdll.LoadLibrary(self.libraryPath)
         except OSError:
-            raise SymupyLoadLibraryError("Library not found", self._path)
+            raise SymupyLoadLibraryError("Library not found", self.libraryPath)
         self._library = lib_symuvia
 
     def load_network(self) -> None:
@@ -212,6 +149,9 @@ class Simulator(object):
     def request_answer(self):
         """Request simulator answer and maps the data locally
         """
+        if self._config.stepLaunchMode == "lite":
+            self._bContinue = self._library.SymRunNextStepLiteEx(self._b_trace, byref(self._b_end))
+            return
         self._bContinue = self._library.SymRunNextStepEx(self._s_response, self._b_trace, byref(self._b_end))
         self.state.parse_data(self.s_response_dec)
 
@@ -488,8 +428,8 @@ class Simulator(object):
         return self.state.data_query
 
     @property
-    def libraryname(self) -> str:
-        return self._path
+    def libraryPath(self) -> str:
+        return self._config.libraryPath
 
     @property
     def simulation(self) -> Simulation:

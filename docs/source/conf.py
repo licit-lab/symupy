@@ -126,9 +126,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass
 # [howto, manual, or own class]).
-latex_documents = [
-    (master_doc, "symupy.tex", "SymuVia Python API", "Andres Ladino", "manual")
-]
+latex_documents = [(master_doc, "symupy.tex", "SymuVia Python API", "Andres Ladino", "manual")]
 
 
 # -- Options for manual page output ------------------------------------
@@ -154,3 +152,6 @@ texinfo_documents = [
         "Miscellaneous",
     )
 ]
+
+# -- A random example -----------------------------------------------------
+autosummary_generate = True

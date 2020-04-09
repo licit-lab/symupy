@@ -6,9 +6,11 @@
 Welcome to Symupy's documentation!
 ==================================
 
+This is the documentation for the package use. For more details please visit the Module_. Contents 
+
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Contents
 
    README.md
 
@@ -18,11 +20,18 @@ Welcome to Symupy's documentation!
 
    getting_started/intro.md
 
+.. _Module:
 .. toctree::
    :maxdepth: 1
-   :caption: Module
+   :caption: Module 
 
    modules.rst
+   
+.. toctree::
+   :maxdepth: 1
+   :caption: Contributing   
+
+   about.rst
    
 .. toctree::
    :maxdepth: 1
