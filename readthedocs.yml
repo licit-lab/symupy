@@ -5,11 +5,11 @@ sphinx:
 python:
   version: 3.7
   install:
-    - requirements: docs/requirements.txt
+    - requirements: requirements_dev.txt
     - method: pip
       path: .
       extra_requirements:
         - docs
     - method: setuptools
-      path: package
+      path: symupy
     # install docs requirements
