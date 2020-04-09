@@ -2,10 +2,10 @@
 
 # Symupy
 
-[![Documentation Status](https://readthedocs.org/projects/symupy/badge/?version=stable)](https://symupy.readthedocs.io/en/stable/?badge=stable)
+[![Documentation Status](https://readthedocs.org/projects/symupy/badge/?version=stable)](https://symupy.readthedocs.io/en/stable/?badge=stable) [![PyPI version](https://badge.fury.io/py/symupy.svg)](https://badge.fury.io/py/symupy)
 
 
-A Python API to control and manipulate SymuVia
+A Python API to control and interact with SymuVia. Please find more information in the [documentation](https://symupy.readthedocs.io/en/latest/)
 
 ## Overview 
 
