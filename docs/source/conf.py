@@ -16,6 +16,8 @@ import sys
 sys.path.insert(0, os.path.abspath("."))
 # sys.path.insert(0, os.path.abspath("../../symupy/"))
 
+print("DEBUG:: os.cwd")
+print(os.getcwd())
 
 print("DEBUG:: sys.path")
 print("================")
