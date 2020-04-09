@@ -29,3 +29,10 @@
 
 * Fix bug entries on add/ modify control zone
 * Fix bug now `simulationtime` accessible before starting simulation
+
+## 0.2.4 (2020-04-09)
+
+* A basic state machine has been implemented to handle simulation status
+* Now [documentation](https://symupy.readthedocs.io/en/latest/) is available 
+* A configurator has been added to handle execution of the functions 
+  `SymRunNextStepLiteEx` and `SymRunNextStepEx`
