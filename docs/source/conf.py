@@ -17,6 +17,25 @@ sys.path.insert(0, os.path.abspath("."))
 # sys.path.insert(0, os.path.abspath("../../symupy/"))
 
 
+print("DEBUG:: sys.path")
+print("================")
+for item in sys.path:
+    print(item)
+
+here = os.path.abspath(os.path.dirname(__file__))
+repo_root = os.path.dirname(os.path.dirname(here))
+sys.path.insert(0, repo_root)
+
+print("repo_root")
+print("=====================")
+print(repo_root)
+
+# DEBUG for post insert on RTD
+print("DEBUG:: Post insert to sys.path")
+print("===============================")
+for item in sys.path:
+    print(item)
+
 # -- Project information -----------------------------------------------------
 
 project = "Symupy"
