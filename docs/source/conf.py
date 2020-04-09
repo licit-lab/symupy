@@ -10,9 +10,11 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import os
+import sys
+
+sys.path.insert(0, os.path.abspath("."))
+# sys.path.insert(0, os.path.abspath("../../symupy/"))
 
 
 # -- Project information -----------------------------------------------------
@@ -21,12 +23,10 @@ project = "Symupy"
 copyright = "2020, Andres Ladino"
 author = "Andres Ladino"
 
-import os
-import sys
+# import os
+# import sys
 import sphinx_rtd_theme
 
-
-sys.path.insert(0, os.path.abspath("../../symupy/"))
 
 import symupy
 
