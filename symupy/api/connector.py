@@ -241,7 +241,7 @@ class Simulator(object):
         """
         endpoints = self._sim.get_network_endpoints()
         veh_data = self._sim.get_vehicletype_information()
-        dbTime = self._sim.time_step
+        dbTime = self._sim.sampling_time
         vehid = tuple(v["id"] for v in veh_data)
         if vehtype not in vehid:
             raise SymupyVehicleCreationError("Unexisting Vehicle Class in File: ", self._sim.filename)
@@ -467,56 +467,109 @@ class Simulator(object):
         """Construct parameters for vehicle dynamics
         """
         self.__dct_par = {
-            "time_step": self.simulation.time_step,
+            "time_step": self.simulation.sampling_time,
             "engine_tau": ct.ENGINE_CONSTANT,
         }
 
     @property
     def s_response_dec(self):
-        """ Obtains instantaneous data from simulator
+        """ 
+            Obtains instantaneous data from simulator
 
-        :return: last query from simulator
-        :rtype: str
+            :return: last query from simulator
+            :rtype: str
         """
         return self._s_response.value.decode("UTF8")
 
     @property
     def do_next(self) -> bool:
+        """
+            Returns true if the simulation shold continue
+        
+            :return: True if next step continues
+            :rtype: bool
+        """
         return self._bContinue
 
     @property
     def get_request(self) -> dict:
+        """
+            Returns the query received from the simulator
+        
+            :return: Request from the simulator
+            :rtype: dict
+        """
         return self.state.data_query
 
     @property
     def libraryPath(self) -> str:
+        """ 
+            Simulator library path
+        
+        :return: Absolute path
+        :rtype: str
+        """
         return self._config.libraryPath
 
     @property
     def simulation(self) -> Simulation:
+        """
+            Simulation scenario 
+        
+            :return: Object describing senario under simulation
+            :rtype: Simulation
+        """
         return self._sim
 
     @property
-    def casename(self) -> str:
+    def scenariofilename(self) -> str:
+        """ 
+            Scenario filenamme
+        
+            :return: Absolute path towards the XML input for SymuVia
+            :rtype: str
+        """
         return self.simulation.filename
 
     @property
     def simulationstep(self) -> str:
+        """ 
+            Current simulation step.
+
+            Example:
+                You can use the time step to control actions 
+
+                >>> with simulator as s:
+                ...     while s.do_next()
+                ...         if s.simulationstep>0:
+                ...             print(s.simulationtimestep)
+        
+            :return: current simulation iteration
+            :rtype: str
+        """
         return self._c_iter
 
     @property
-    def time_step(self) -> float:
-        return self.simulation.time_step
-
-    @property
     def sampling_time(self) -> float:
-        return self.simulation.time_step
+        """ 
+            Simulation sampling time 
+        
+            :return: sampling time from XML file
+            :rtype: float
+        """
+        return self.simulation.sampling_time
 
     @classmethod
     def from_path(cls, filename_path, simuvia_path):
         """ Alternative constructor for the Simulator 
 
-            Simulator.from_path(file,lib)
+            Example:
+                To use this alternative constructor ``Simulator`` declare in a string the ``path`` to the simulator ::
+
+                    >>> path = "path/to/simulator.so"
+                    >>> scenario = "path/to/scenario.xml"
+                    >>> simulator = Simulator.from_path(path,scenario) 
+
         """
         case = Simulation(filename_path)
         sim = cls(simuvia_path)
