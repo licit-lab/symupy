@@ -66,16 +66,46 @@ NetworkType = Union[V2INetwork, V2VNetwork]
 
 
 class Simulator(object):
-    """ This object describes is a connector manager for the interface between the traffic simulator and the 
+    """ 
     
-        :param object: [description]
-        :type object: [type]
-        :raises SymupyLoadLibraryError: Error raised whenever the SymuVia library is not found
-        :raises SymupyFileLoadError: Error raised whenever the provided path for an scenario cannot be loaded into the Simulator
-        :raises SymupyVehicleCreationError: Error raised when a vehicle cannot be created
-        :raises SymupyDriveVehicleError: Error rased when a vehicle state cannot be imposed
-        :raises NotImplementedError: Not implemented functionality 
-        :return: [description]
+        This object describes is a connector manager for the interface between the    traffic simulator and the 
+
+        Args:
+            libraryPath (str): 
+                Absolute path towards the simulator library
+
+            bufferSize (int): 
+                Size of the buffer for message for data received from simulator
+
+            writeXML (bool): 
+                Flag to turn on writting the XML output
+
+            traceFlow (bool):
+                Flag to determine tracing or not the flow / trajectories
+
+            totalSteps (int):
+                Define the number of iterations of a simulation 
+
+            stepLaunchMode (str):
+                Determine to way to launch the ``RunStepEx``. Options ``lite``/``full``
+
+        :raises SymupyLoadLibraryError: 
+            Error raised whenever the SymuVia library is not found
+
+        :raises SymupyFileLoadError: 
+            Error raised whenever the provided path for an scenario cannot be loaded into the Simulator
+
+        :raises SymupyVehicleCreationError: 
+            Error raised when a vehicle cannot be created
+
+        :raises SymupyDriveVehicleError: 
+            Error rased when a vehicle state cannot be imposed
+
+        :raises NotImplementedError: 
+            Not implemented functionality 
+
+        :return: Simulator manager object 
+
         :rtype: Simulator
     """
 
@@ -365,6 +395,14 @@ class Simulator(object):
         return tuple(spd)
 
     def add_control_probability_zone_mfd(self, access_probability: dict, minimum_distance: dict) -> None:
+        """
+            Add a probability to control the access to a specific zone within the network
+        
+            :param access_probability: Key (zone name) Value (probability of access)
+            :type access_probability: dict
+            :param minimum_distance: Key (zone name) Value (distance before entering the zone to activate policy)
+            :type minimum_distance: dict
+        """
         self.dctidzone = {}
 
         for tp_zn_pb, tp_zn_md in zip(access_probability.items(), minimum_distance.items()):
@@ -378,6 +416,12 @@ class Simulator(object):
         return self.dctidzone
 
     def modify_control_probability_zone_mfd(self, access_probability: dict) -> None:
+        """
+            Modifies a probability to control the access to a specific zone within the network
+        
+            :param access_probability: Key (zone name) Value (probability of access)
+            :type access_probability: dict
+        """
 
         for sensor, probablity in access_probability.items():
             self._library.SymModifyControlZoneEx(-1, self.dctidzone[sensor], c_double(probablity))
