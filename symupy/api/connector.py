@@ -109,18 +109,35 @@ class Simulator(object):
         :rtype: Simulator
     """
 
-    def __init__(self, libraryPath: str = "", **kwargs) -> None:
-        self.initialize_configurator(libraryPath=libraryPath, **kwargs)
+    def __init__(
+        self,
+        libraryPath: str = "",
+        bufferSize: int = ct.BUFFER_STRING,
+        writeXML: bool = True,
+        traceFlow: bool = False,
+        totalSteps: int = 0,
+        stepLaunchMode: str = "lite",
+        **kwargs,
+    ) -> None:
+        self.initialize_configurator(
+            bufferSize=bufferSize,
+            writeXML=writeXML,
+            traceFlow=traceFlow,
+            libraryPath=libraryPath,
+            totalSteps=totalSteps,
+            stepLaunchMode=stepLaunchMode,
+            **kwargs,
+        )
         self._net = []
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self.libraryPath})"
 
-    def initialize_configurator(self, pathSimulator: str = "", **kwargs) -> None:
+    def initialize_configurator(self, **kwargs) -> None:
         """ 
            This method initialize a ``Configurator`` class that contains a small summary setup to launch a simulation
         """
-        self._config = Configurator(libraryPath=pathSimulator, **kwargs)
+        self._config = Configurator(**kwargs)
 
     def load_symuvia(self) -> None:
         """ load SymuVia shared library """
