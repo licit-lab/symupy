@@ -36,3 +36,8 @@
 * Now [documentation](https://symupy.readthedocs.io/en/latest/) is available 
 * A configurator has been added to handle execution of the functions 
   `SymRunNextStepLiteEx` and `SymRunNextStepEx`
+
+## 0.2.5 (2020-04-10)
+
+* Fixes an error when creating an instance of `Simulator`
+* Adds documentation to the `Simulator` class
