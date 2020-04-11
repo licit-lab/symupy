@@ -467,7 +467,7 @@ class Simulator(object):
         """Construct parameters for vehicle dynamics
         """
         self.__dct_par = {
-            "time_step": self.simulation.sampling_time,
+            "time_step": self.simulation.time_step,
             "engine_tau": ct.ENGINE_CONSTANT,
         }
 
