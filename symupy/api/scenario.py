@@ -137,13 +137,18 @@ class Simulation(object):
         # REVIEW: Implement? in method? maybe useful
         raise NotImplementedError
 
-    @property
-    def filename(self):
+    def filename(self, encoding: str = None):
+        """ 
+            This method returns the value of encoding of the simulation scenario under consideration
+        
+            :param encoding: enconder UTF8, defaults to None
+            :type encoding: string, optional
+            :return: Full path of scenario
+            :rtype: string
+        """
+        if encoding == "UTF8":
+            return self._file_name.encode(encoding)
         return self._file_name
-
-    @property
-    def filename_encoded(self):
-        return self._file_name.encode("UTF8")
 
     @property
     def time_step(self):

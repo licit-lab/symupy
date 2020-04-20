@@ -145,24 +145,21 @@ class Simulator(object):
             lib_symuvia = cdll.LoadLibrary(self.libraryPath)
         except OSError:
             raise SymupyLoadLibraryError("Library not found", self.libraryPath)
-        self._library = lib_symuvia
+        self.__library = lib_symuvia
 
     def load_network(self) -> None:
         """ load SymuVia Simulation File """
         if not hasattr(self, "_sim"):
             raise SymupyFileLoadError("File not provided", "")
-        valid = self._library.SymLoadNetworkEx(self._sim.filename_encoded)
+        valid = self.__library.SymLoadNetworkEx(self.scenarioFilename("UTF8"))
         if not valid:
             raise SymupyFileLoadError("Simulation could not be loaded", "")
 
     def init_simulation(self) -> None:
         """ Initializes conditions for a step by step simulation"""
         # Pointers
-        self._s_response = create_string_buffer(ct.BUFFER_STRING)
         self._b_end = c_int()
-        self._b_trace = c_bool(False)
-        # self._b_force = c_int(1)
-        self.state = SimulatorRequest()
+        self.request = SimulatorRequest()
 
     @timer_func
     def run_simulation(self, sim_object: Simulation = "") -> None:
@@ -178,7 +175,7 @@ class Simulator(object):
             self.register_simulation(sim_object)
 
         self.load_symuvia()
-        self._library.SymRunEx(self._sim.filename_encoded)
+        self.__library.SymRunEx(self._sim.scenarioFilename("UTF8"))
 
     def register_simulation(self, sim_object: Simulation) -> None:
         """Register simulation file within the simulator
@@ -196,11 +193,11 @@ class Simulator(object):
     def request_answer(self):
         """Request simulator answer and maps the data locally
         """
-        if self._config.stepLaunchMode == "lite":
-            self._bContinue = self._library.SymRunNextStepLiteEx(self._b_trace, byref(self._b_end))
+        if self.stepLaunchMode == "lite":
+            self._bContinue = self.__library.SymRunNextStepLiteEx(self.writeXML, byref(self._b_end))
             return
-        self._bContinue = self._library.SymRunNextStepEx(self._s_response, self._b_trace, byref(self._b_end))
-        self.state.parse_data(self.s_response_dec)
+        self._bContinue = self.__library.SymRunNextStepEx(self.bufferString, self.writeXML, byref(self._b_end))
+        self.request.parse_data(self.bufferString)
 
     # @printer_time
     def run_step(self) -> int:
@@ -249,7 +246,7 @@ class Simulator(object):
         if (origin not in endpoints) or (destination not in endpoints):
             raise SymupyVehicleCreationError("Unexisting Network Endpoint File: ", self._sim.filename)
 
-        vehid = self._library.SymCreateVehicleEx(
+        vehid = self.__library.SymCreateVehicleEx(
             vehtype.encode("UTF8"), origin.encode("UTF8"), destination.encode("UTF8"), c_int(lane), c_double(dbTime),
         )
         return vehid
@@ -289,7 +286,7 @@ class Simulator(object):
         if (origin not in endpoints) or (destination not in endpoints):
             raise SymupyVehicleCreationError("Unexisting Network Endpoint File: ", self._sim.filename)
 
-        vehid = self._library.SymCreateVehicleWithRouteEx(
+        vehid = self.__library.SymCreateVehicleWithRouteEx(
             origin.encode("UTF8"),
             destination.encode("UTF8"),
             vehtype.encode("UTF8"),
@@ -317,13 +314,13 @@ class Simulator(object):
         links = self._sim.get_network_links()
 
         if not destination:
-            destination = self.state.query_vehicle_link(str(vehid))[0]
+            destination = self.request.query_vehicle_link(str(vehid))[0]
 
         if destination not in links:
             raise SymupyDriveVehicleError("Unexisting Network Endpoint File: ", self._sim.filename)
 
         # TODO: Validate that position do not overpass the max pos
-        dr_state = self._library.SymDriveVehicleEx(
+        dr_state = self.__library.SymDriveVehicleEx(
             c_int(vehid), destination.encode("UTF8"), c_int(lane), c_double(new_pos), 1
         )
         self.request_answer()
@@ -331,7 +328,7 @@ class Simulator(object):
 
     def drive_vehicle_with_control(self, vehcontrol, vehid: int, destination: str = None, lane: str = 1):
         # TODO: Basic prototyping
-        vehcontrol.set_current_state(self.state)
+        vehcontrol.set_current_state(self.request)
         new_pos = vehcontrol.new_position
         return self.drive_vehicle(vehid, new_pos, destination, lane)
 
@@ -352,13 +349,13 @@ class Simulator(object):
         """ Counter initializer for total travel time
         """
         # TODO: Improvement → Better organizadtion
-        self._library.SymGetTotalTravelTimeEx.restype = c_double
+        self.__library.SymGetTotalTravelTimeEx.restype = c_double
 
     def init_total_travel_distance(self):
         """ Counter initializer for total travel time
         """
         # TODO: Improvement → Better organizadtion
-        self._library.SymGetTotalTravelDistanceEx.restype = c_double
+        self.__library.SymGetTotalTravelDistanceEx.restype = c_double
 
     def get_total_travel_time(self, zone_id: str = None):
         """ Computes the total travel time of vehicles in a MFD region
@@ -369,10 +366,10 @@ class Simulator(object):
         """
         # TODO: Improvement → Better organizadtion
         if zone_id:
-            return self._library.SymGetTotalTravelTimeEx(zone_id.encode("UTF8"))
+            return self.__library.SymGetTotalTravelTimeEx(zone_id.encode("UTF8"))
 
         sensors = self.simulation.get_mfd_sensor_names()
-        return tuple(self._library.SymGetTotalTravelTimeEx(sensor.encode("UTF8")) for sensor in sensors)
+        return tuple(self.__library.SymGetTotalTravelTimeEx(sensor.encode("UTF8")) for sensor in sensors)
 
     def get_total_travel_distance(self, zone_id: str = None):
         """ Computes the total travel distance of vehicles in a MFD region
@@ -383,10 +380,10 @@ class Simulator(object):
         """
         # TODO: Improvement → Better organizadtion
         if zone_id:
-            return self._library.SymGetTotalTravelDistanceEx(zone_id.encode("UTF8"))
+            return self.__library.SymGetTotalTravelDistanceEx(zone_id.encode("UTF8"))
 
         sensors = self.simulation.get_mfd_sensor_names()
-        return tuple(self._library.SymGetTotalTravelDistanceEx(sensor.encode("UTF8")) for sensor in sensors)
+        return tuple(self.__library.SymGetTotalTravelDistanceEx(sensor.encode("UTF8")) for sensor in sensors)
 
     def get_mfd_speed(self, zone_id: str = None):
         """ Computes the total speed of vehicles in a MFD region
@@ -427,7 +424,7 @@ class Simulator(object):
             _, min_dst = tp_zn_md
             links = self.simulation.get_links_in_mfd_sensor(sensor)
             links_str = " ".join(links)
-            self.dctidzone[sensor] = self._library.SymAddControlZoneEx(
+            self.dctidzone[sensor] = self.__library.SymAddControlZoneEx(
                 -1, c_double(accrate), c_double(min_dst), f"'{links_str}'".encode("UTF8"),
             )
         return self.dctidzone
@@ -441,7 +438,7 @@ class Simulator(object):
         """
 
         for sensor, probablity in access_probability.items():
-            self._library.SymModifyControlZoneEx(-1, self.dctidzone[sensor], c_double(probablity))
+            self.__library.SymModifyControlZoneEx(-1, self.dctidzone[sensor], c_double(probablity))
         return self.dctidzone
 
     def __enter__(self) -> None:
@@ -479,7 +476,7 @@ class Simulator(object):
             :return: last query from simulator
             :rtype: str
         """
-        return self._s_response.value.decode("UTF8")
+        return self.bufferString.value.decode("UTF8")
 
     @property
     def do_next(self) -> bool:
@@ -499,17 +496,7 @@ class Simulator(object):
             :return: Request from the simulator
             :rtype: dict
         """
-        return self.state.data_query
-
-    @property
-    def libraryPath(self) -> str:
-        """ 
-            Simulator library path
-        
-        :return: Absolute path
-        :rtype: str
-        """
-        return self._config.libraryPath
+        return self.request.data_query
 
     @property
     def simulation(self) -> Simulation:
@@ -522,14 +509,14 @@ class Simulator(object):
         return self._sim
 
     @property
-    def scenariofilename(self) -> str:
+    def scenarioFilename(self, encoding=None) -> str:
         """ 
             Scenario filenamme
         
             :return: Absolute path towards the XML input for SymuVia
             :rtype: str
         """
-        return self.simulation.filename
+        return self.simulation.filename(encoding)
 
     @property
     def simulationstep(self) -> str:
