@@ -48,8 +48,9 @@ from symupy.utils.exceptions import (
 )
 
 #
-from symupy.api.scenario import Simulation
+from .scenario import Simulation
 from symupy.utils import SimulatorRequest, Configurator
+from symupy.logic import RuntimeDevice
 
 from symupy.utils import timer_func, printer_time
 from symupy.utils import constants as ct
@@ -65,7 +66,7 @@ from symupy.components import Vehicle
 NetworkType = Union[V2INetwork, V2VNetwork]
 
 
-class Simulator(object):
+class Simulator(Configurator, RuntimeDevice):
     """ 
     
         This object describes is a connector manager for the interface between the    traffic simulator and the 
@@ -119,7 +120,7 @@ class Simulator(object):
         stepLaunchMode: str = "lite",
         **kwargs,
     ) -> None:
-        self.initialize_configurator(
+        super(Simulator, self).__init__(
             bufferSize=bufferSize,
             writeXML=writeXML,
             traceFlow=traceFlow,
@@ -133,11 +134,9 @@ class Simulator(object):
     def __repr__(self):
         return f"{self.__class__.__name__}({self.libraryPath})"
 
-    def initialize_configurator(self, **kwargs) -> None:
-        """ 
-           This method initialize a ``Configurator`` class that contains a small summary setup to launch a simulation
-        """
-        self._config = Configurator(**kwargs)
+    # ============================================================================
+    # CLASS AND DEFINITIONS
+    # ============================================================================
 
     def load_symuvia(self) -> None:
         """ load SymuVia shared library """
@@ -155,12 +154,6 @@ class Simulator(object):
         if not valid:
             raise SymupyFileLoadError("Simulation could not be loaded", "")
 
-    def init_simulation(self) -> None:
-        """ Initializes conditions for a step by step simulation"""
-        # Pointers
-        self._b_end = c_int()
-        self.request = SimulatorRequest()
-
     @timer_func
     def run_simulation(self, sim_object: Simulation = "") -> None:
         """ Run simulation in a single shot
@@ -175,17 +168,16 @@ class Simulator(object):
             self.register_simulation(sim_object)
 
         self.load_symuvia()
-        self.__library.SymRunEx(self._sim.scenarioFilename("UTF8"))
+        self.__library.SymRunEx(self.scenarioFilename("UTF8"))
 
-    def register_simulation(self, sim_object: Simulation) -> None:
-        """Register simulation file within the simulator
-
-        :param sim_object: Simulation scenario to register
-        :type sim_object: Simulation
-        :return: No value is returned
-        :rtype: None
+    def register_simulation(self, scenarioPath: str) -> None:
         """
-        self._sim = sim_object
+            Register simulation file within the simulator
+
+            :param scenarioPath: Path to scenario 
+            :type scenarioPath: str
+        """
+        self._sim = Simulation(scenarioPath)
 
     def register_network(self, network: NetworkType) -> None:
         self._net.append(network)
@@ -238,14 +230,17 @@ class Simulator(object):
         """
         endpoints = self._sim.get_network_endpoints()
         veh_data = self._sim.get_vehicletype_information()
-        dbTime = self._sim.sampling_time
+        dbTime = self.simulationstep
         vehid = tuple(v["id"] for v in veh_data)
+
+        # Consistency checks
         if vehtype not in vehid:
             raise SymupyVehicleCreationError("Unexisting Vehicle Class in File: ", self._sim.filename)
 
         if (origin not in endpoints) or (destination not in endpoints):
             raise SymupyVehicleCreationError("Unexisting Network Endpoint File: ", self._sim.filename)
 
+        # Vehicle creation
         vehid = self.__library.SymCreateVehicleEx(
             vehtype.encode("UTF8"), origin.encode("UTF8"), destination.encode("UTF8"), c_int(lane), c_double(dbTime),
         )
@@ -280,12 +275,14 @@ class Simulator(object):
         dbTime = self.simulationstep
         vehid = tuple(v["id"] for v in veh_data)
 
+        # Consistency checks
         if vehtype not in vehid:
             raise SymupyVehicleCreationError("Unexisting Vehicle Class in File: ", self._sim.filename)
 
         if (origin not in endpoints) or (destination not in endpoints):
             raise SymupyVehicleCreationError("Unexisting Network Endpoint File: ", self._sim.filename)
 
+        # Vehicle creation
         vehid = self.__library.SymCreateVehicleWithRouteEx(
             origin.encode("UTF8"),
             destination.encode("UTF8"),
@@ -442,19 +439,26 @@ class Simulator(object):
         return self.dctidzone
 
     def __enter__(self) -> None:
-        """ Implementation as a context manager
-            FIXME: Implement state machine ???
         """
-        self.load_symuvia()
-        self.load_network()
-        self.init_simulation()
-        self._n_iter = iter(self._sim.get_simulation_steps())
-        self._c_iter = next(self._n_iter)
-        self._bContinue = True
+            This method initializes the usage of the ``Simulator`` class as a context manager. 
+
+            The protocol followed in order to perform the full connection is as follows 
+
+        """
+
+        self.reset_state()
+
+        # Compliance situation
+        self.__performCompliance()
+
+        # Connect to platform
+        self.__performConnect()
+
+        # Variable initialization
+        self.__performInitialize()
+
         # Extra
-        self.init_total_travel_distance()
-        self.init_total_travel_time()
-        self.build_dynamic_param()
+
         return self
 
     def __exit__(self, type, value, traceback) -> bool:
@@ -467,6 +471,71 @@ class Simulator(object):
             "time_step": self.simulation.time_step,
             "engine_tau": ct.ENGINE_CONSTANT,
         }
+
+    # ============================================================================
+    # STATE MACHINE
+    # ============================================================================
+
+    def __performCompliance(self) -> None:
+        """
+            Perform compliance check
+        """
+        self.next_state(True)
+
+    def __performConnect(self) -> None:
+        """
+            Perform simulation connection
+        """
+        self.load_symuvia()
+        self.load_network()
+        self.next_state(True)
+
+    def __performInitialize(self) -> None:
+        """
+            Perform simulation initialization
+        """
+        self._b_end = c_int()
+        self.request = SimulatorRequest()
+        self._n_iter = iter(self._sim.get_simulation_steps())
+        self._c_iter = next(self._n_iter)
+        self._bContinue = True
+
+        self.init_total_travel_distance()
+        self.init_total_travel_time()
+        self.build_dynamic_param()
+
+        self.next_state(self.do_next)
+
+    def __performPreRoutine(self) -> None:
+        """
+            Perform simulator preroutine
+        """
+        self.next_state(self.do_next)
+
+    def __performQuery(self) -> None:
+        """
+            Perform simulator Query
+        """
+        self.next_state(self.do_next)
+
+    def __performControl(self) -> None:
+        """
+            Perform simulator Control
+        """
+        self.next_state(self.do_next)
+
+    # ============================================================================
+    # ATTRIBUTES
+    # ============================================================================
+
+    def scenarioFilename(self, encoding=None) -> str:
+        """ 
+            Scenario filenamme
+        
+            :return: Absolute path towards the XML input for SymuVia
+            :rtype: str
+        """
+        return self.simulation.filename(encoding)
 
     @property
     def s_response_dec(self):
@@ -509,16 +578,6 @@ class Simulator(object):
         return self._sim
 
     @property
-    def scenarioFilename(self, encoding=None) -> str:
-        """ 
-            Scenario filenamme
-        
-            :return: Absolute path towards the XML input for SymuVia
-            :rtype: str
-        """
-        return self.simulation.filename(encoding)
-
-    @property
     def simulationstep(self) -> str:
         """ 
             Current simulation step.
@@ -545,6 +604,10 @@ class Simulator(object):
             :rtype: float
         """
         return self.simulation.sampling_time
+
+    # ============================================================================
+    # CONSTRUCTORS
+    # ============================================================================
 
     @classmethod
     def from_path(cls, filename_path, simuvia_path):
