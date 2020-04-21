@@ -1,29 +1,29 @@
-symupy.state package
+symupy.logic package
 ====================
 
 Submodules
 ----------
 
-symupy.state.base module
+symupy.logic.base module
 ------------------------
 
-.. automodule:: symupy.state.base
+.. automodule:: symupy.logic.base
    :members:
    :undoc-members:
    :show-inheritance:
 
-symupy.state.runtime module
+symupy.logic.runtime module
 ---------------------------
 
-.. automodule:: symupy.state.runtime
+.. automodule:: symupy.logic.runtime
    :members:
    :undoc-members:
    :show-inheritance:
 
-symupy.state.states module
+symupy.logic.states module
 --------------------------
 
-.. automodule:: symupy.state.states
+.. automodule:: symupy.logic.states
    :members:
    :undoc-members:
    :show-inheritance:
@@ -32,7 +32,7 @@ symupy.state.states module
 Module contents
 ---------------
 
-.. automodule:: symupy.state
+.. automodule:: symupy.logic
    :members:
    :undoc-members:
    :show-inheritance:

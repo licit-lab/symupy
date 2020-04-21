@@ -8,7 +8,7 @@ Subpackages
 
    symupy.api
    symupy.components
-   symupy.state
+   symupy.logic
    symupy.utils
 
 Module contents
