@@ -12,8 +12,8 @@ class State(object):
         This class defines a state object which provides basic functionalities for individual states within the state machine. 
     """
 
-    def __init__(self):
-        print("State:", str(self))
+    # def __init__(self):
+    #     print("State:", str(self))
 
     def on_event(self, event):
         """

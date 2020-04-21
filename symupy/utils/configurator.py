@@ -1,6 +1,12 @@
 """
     This module contains a ``Configurator`` object. The configurator is an object that stores *parameters* that can be relevant to make the evolution of a simulation. The objective is to introduce flexibility when configuring the the simulator platform and the runtime execution possibilities offered by exposed functions from the c library of SymuVia
 """
+# ============================================================================
+# STANDARD  IMPORTS
+# ============================================================================
+
+from ctypes import cdll, create_string_buffer, c_int, byref, c_bool, c_double
+import click
 
 # ============================================================================
 # INTERNAL IMPORTS
@@ -13,7 +19,7 @@ import symupy.utils.constants as CT
 # ============================================================================
 
 
-class Configurator(object):
+class Configurator:
     """ Configurator class for containing specific simulator parameters
     
         Example:
@@ -53,12 +59,14 @@ class Configurator(object):
             :return: Configurator object with simulation parameters
             :rtype: Configurator
         """
-        self.bufferSize = bufferSize
-        self.writeXML = writeXML
+        click.echo("Configurator: Initialization")
+        self.bufferString = create_string_buffer(bufferSize)
+        self.writeXML = c_bool(writeXML)
         self.traceFlow = traceFlow
         self.libraryPath = libraryPath
         self.totalSteps = totalSteps
         self.stepLaunchMode = stepLaunchMode
+        super(Configurator, self).__init__()
 
     def __repr__(self):
         data_dct = ", ".join(f"{k}={v}" for k, v in self.__dict__.items())

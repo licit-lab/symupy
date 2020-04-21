@@ -22,8 +22,8 @@ class Compliance(State):
     The state which declares an status to check file compliance .
     """
 
-    def on_event(self, event: str, configurator) -> None:
-        if event == "connect":
+    def on_event(self, event: str) -> None:
+        if event == "Connect":
             return Connect()
 
         return self
@@ -34,8 +34,8 @@ class Connect(State):
     The state which declares the creation of a connection with the simulator
     """
 
-    def on_event(self, event: str, configurator):
-        if event == "initialize":
+    def on_event(self, event: str):
+        if event == "Initialize":
             return Initialize()
 
         return self
@@ -46,8 +46,8 @@ class Initialize(State):
     The state which initializes values for the scenario simulation
     """
 
-    def on_event(self, event: str, configurator):
-        if event == "preroutine":
+    def on_event(self, event: str):
+        if event == "PreRoutine":
             return PreRoutine()
 
         return self
@@ -58,8 +58,8 @@ class PreRoutine(State):
     The state which performs task previous to the interaction with the simulator
     """
 
-    def on_event(self, event: str, configurator):
-        if event == "query":
+    def on_event(self, event: str):
+        if event == "Query":
             return Query()
 
         return self
@@ -70,8 +70,8 @@ class Query(State):
     The state which retrieves information from the simulator
     """
 
-    def on_event(self, event: str, configurator):
-        if event == "control":
+    def on_event(self, event: str):
+        if event == "Control":
             return Control()
 
         return self
@@ -82,8 +82,8 @@ class Control(State):
     The state which computes the control decision  
     """
 
-    def on_event(self, event: str, configurator):
-        if event == "push":
+    def on_event(self, event: str):
+        if event == "Push":
             return Push()
 
         return self
@@ -94,8 +94,8 @@ class Push(State):
     The state which pushes data back to the simulator
     """
 
-    def on_event(self, event: str, configurator):
-        if event == "postroutine":
+    def on_event(self, event: str):
+        if event == "PostRoutine":
             return PostRoutine()
 
         return self
@@ -106,10 +106,10 @@ class PostRoutine(State):
     The state which logs information or compute step indicators 
     """
 
-    def on_event(self, event: str, configurator):
-        if event == "preroutine":
+    def on_event(self, event: str):
+        if event == "PreRoutine":
             return PreRoutine()
-        elif event == "terminate":
+        elif event == "Terminate":
             return Terminate()
 
         return self
@@ -120,7 +120,7 @@ class Terminate(State):
     The state which declares the end of a simulation
     """
 
-    def on_event(self, event: str, configurator):
+    def on_event(self, event: str):
         return self
 
 
