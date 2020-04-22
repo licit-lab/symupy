@@ -41,3 +41,11 @@
 
 * Fixes an error when creating an instance of `Simulator`
 * Adds documentation to the `Simulator` class
+
+## 0.3.0 (2020-04-22)
+
+* Now a configurator can be declared at the declaration of a Simulator via multiple parameters
+* You can launch a simulation by passing a `string` to `run_simulation` method or `register_simulation` method
+* State machine has been internally implemented. Some Fixes are required in order to 
+* Filenames are now handled by the scenario. 
+* Simulation ends now by calling the method `SymUnloadCurrentNetworkEx`
