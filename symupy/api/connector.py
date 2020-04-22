@@ -462,6 +462,7 @@ class Simulator(Configurator, RuntimeDevice):
         return self
 
     def __exit__(self, type, value, traceback) -> bool:
+        self.__library.SymUnloadCurrentNetworkEx()
         return False
 
     def build_dynamic_param(self):
