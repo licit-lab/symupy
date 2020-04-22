@@ -235,10 +235,10 @@ class Simulator(Configurator, RuntimeDevice):
 
         # Consistency checks
         if vehtype not in vehid:
-            raise SymupyVehicleCreationError("Unexisting Vehicle Class in File: ", self._sim.filename)
+            raise SymupyVehicleCreationError("Unexisting Vehicle Class in File: ", self.scenarioFilename())
 
         if (origin not in endpoints) or (destination not in endpoints):
-            raise SymupyVehicleCreationError("Unexisting Network Endpoint File: ", self._sim.filename)
+            raise SymupyVehicleCreationError("Unexisting Network Endpoint File: ", self.scenarioFilename())
 
         # Vehicle creation
         vehid = self.__library.SymCreateVehicleEx(
@@ -277,10 +277,10 @@ class Simulator(Configurator, RuntimeDevice):
 
         # Consistency checks
         if vehtype not in vehid:
-            raise SymupyVehicleCreationError("Unexisting Vehicle Class in File: ", self._sim.filename)
+            raise SymupyVehicleCreationError("Unexisting Vehicle Class in File: ", self.scenarioFilename())
 
         if (origin not in endpoints) or (destination not in endpoints):
-            raise SymupyVehicleCreationError("Unexisting Network Endpoint File: ", self._sim.filename)
+            raise SymupyVehicleCreationError("Unexisting Network Endpoint File: ", self.scenarioFilename())
 
         # Vehicle creation
         vehid = self.__library.SymCreateVehicleWithRouteEx(
@@ -314,7 +314,7 @@ class Simulator(Configurator, RuntimeDevice):
             destination = self.request.query_vehicle_link(str(vehid))[0]
 
         if destination not in links:
-            raise SymupyDriveVehicleError("Unexisting Network Endpoint File: ", self._sim.filename)
+            raise SymupyDriveVehicleError("Unexisting Network Endpoint File: ", self.scenarioFilename())
 
         # TODO: Validate that position do not overpass the max pos
         dr_state = self.__library.SymDriveVehicleEx(
