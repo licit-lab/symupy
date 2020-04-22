@@ -30,6 +30,7 @@ Example:
 import os
 from itertools import repeat
 from ctypes import cdll, create_string_buffer, c_int, byref, c_bool, c_double
+import click
 
 import typing
 from typing import Union
@@ -463,6 +464,7 @@ class Simulator(Configurator, RuntimeDevice):
 
     def __exit__(self, type, value, traceback) -> bool:
         self.__library.SymUnloadCurrentNetworkEx()
+        click.echo("Runtime: End")
         return False
 
     def build_dynamic_param(self):
