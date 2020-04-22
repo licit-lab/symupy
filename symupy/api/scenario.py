@@ -34,7 +34,7 @@ class Simulation(object):
             raise SymupyFileLoadError("File not found", file_name)
 
     def __repr__(self):
-        return f"{self.__class__.__name__}({self.filename})"
+        return f"{self.__class__.__name__}({self.filename()})"
 
     def load_xml_tree(self) -> None:
         """ Load XML file_name
