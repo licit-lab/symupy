@@ -54,7 +54,7 @@ from symupy.utils import SimulatorRequest, Configurator
 from symupy.logic import RuntimeDevice
 
 from symupy.utils import timer_func, printer_time
-from symupy.utils import constants as ct
+from symupy.utils import constants as CT
 
 from symupy.components import V2INetwork, V2VNetwork
 from symupy.components import Vehicle
@@ -114,7 +114,7 @@ class Simulator(Configurator, RuntimeDevice):
     def __init__(
         self,
         libraryPath: str = "",
-        bufferSize: int = ct.BUFFER_STRING,
+        bufferSize: int = CT.BUFFER_STRING,
         writeXML: bool = True,
         traceFlow: bool = False,
         totalSteps: int = 0,
@@ -136,7 +136,7 @@ class Simulator(Configurator, RuntimeDevice):
         return f"{self.__class__.__name__}({self.libraryPath})"
 
     # ============================================================================
-    # CLASS AND DEFINITIONS
+    # LOADING METHODS
     # ============================================================================
 
     def load_symuvia(self) -> None:
@@ -472,7 +472,7 @@ class Simulator(Configurator, RuntimeDevice):
         """
         self.__dct_par = {
             "time_step": self.simulation.time_step,
-            "engine_tau": ct.ENGINE_CONSTANT,
+            "engine_tau": CT.ENGINE_CONSTANT,
         }
 
     # ============================================================================
