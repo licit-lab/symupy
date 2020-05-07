@@ -437,6 +437,7 @@ class Simulator(Configurator, RuntimeDevice):
 
         for sensor, probablity in access_probability.items():
             self.__library.SymModifyControlZoneEx(-1, self.dctidzone[sensor], c_double(probablity))
+        self.__library.SymApplyControlZonesEx(-1)
         return self.dctidzone
 
     def __enter__(self) -> None:
