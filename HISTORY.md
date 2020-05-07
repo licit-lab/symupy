@@ -49,3 +49,7 @@
 * State machine has been internally implemented. Some Fixes are required in order to 
 * Filenames are now handled by the scenario. 
 * Simulation ends now by calling the method `SymUnloadCurrentNetworkEx`
+
+## 0.3.1 (2020-04-22)
+
+* Fix bug of Network Control Zone by introducing `SymApplyControlZonesEx`
