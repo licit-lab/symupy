@@ -53,3 +53,7 @@
 ## 0.3.1 (2020-04-22)
 
 * Fix bug of Network Control Zone by introducing `SymApplyControlZonesEx`
+
+## 0.3.2 (2020-05-23)
+
+* Fix bug of Network Add Control Zone.
