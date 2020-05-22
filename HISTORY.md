@@ -57,3 +57,7 @@
 ## 0.3.2 (2020-05-23)
 
 * Fix bug of Network Add Control Zone.
+  
+## 0.3.3 (2020-05-23)
+
+* Now `get_total_travel_distance/get_total_travel_time` support list of sensors 
