@@ -355,7 +355,7 @@ class Simulator(Configurator, RuntimeDevice):
         # TODO: Improvement → Better organizadtion
         self.__library.SymGetTotalTravelDistanceEx.restype = c_double
 
-    def get_total_travel_time(self, zone_id: str = None):
+    def get_total_travel_time(self, sensors_mfd: list = []):
         """ Computes the total travel time of vehicles in a MFD region
         
         :param zone_id: MFD sensor id, defaults to None
@@ -363,41 +363,45 @@ class Simulator(Configurator, RuntimeDevice):
         :return: Associated total travel time
         """
         # TODO: Improvement → Better organizadtion
-        if zone_id:
-            return self.__library.SymGetTotalTravelTimeEx(zone_id.encode("UTF8"))
+        if isinstance(sensors_mfd, str):
+            return self.__library.SymGetTotalTravelTimeEx(sensors_mfd.encode("UTF8"))
 
-        sensors = self.simulation.get_mfd_sensor_names()
-        return tuple(self.__library.SymGetTotalTravelTimeEx(sensor.encode("UTF8")) for sensor in sensors)
+        if not sensors_mfd:
+            sensors_mfd = self.simulation.get_mfd_sensor_names()
 
-    def get_total_travel_distance(self, zone_id: str = None):
+        return tuple(self.__library.SymGetTotalTravelTimeEx(sensor.encode("UTF8")) for sensor in sensors_mfd)
+
+    def get_total_travel_distance(self, sensors_mfd: list = []):
         """ Computes the total travel distance of vehicles in a MFD region
         
-        :param zone_id: MFD sensor id, defaults to None
-        :type zone_id: str, optional
+        :param sensors_mfd: MFD sensor ids, defaults to None
+        :type sensors_mfd: list, optional
         :return: Associated total travel distance
         """
         # TODO: Improvement → Better organizadtion
-        if zone_id:
-            return self.__library.SymGetTotalTravelDistanceEx(zone_id.encode("UTF8"))
+        if isinstance(sensors_mfd, str):
+            return self.__library.SymGetTotalTravelDistanceEx(sensors_mfd.encode("UTF8"))
 
-        sensors = self.simulation.get_mfd_sensor_names()
-        return tuple(self.__library.SymGetTotalTravelDistanceEx(sensor.encode("UTF8")) for sensor in sensors)
+        if not sensors_mfd:
+            sensors_mfd = self.simulation.get_mfd_sensor_names()
 
-    def get_mfd_speed(self, zone_id: str = None):
+        return tuple(self.__library.SymGetTotalTravelDistanceEx(sensor.encode("UTF8")) for sensor in sensors_mfd)
+
+    def get_mfd_speed(self, sensors_mfd: list = []):
         """ Computes the total speed of vehicles in a MFD region
         
-        :param zone_id: MFD sensor id, defaults to None
-        :type zone_id: str, optional
+        :param sensors_mfd: MFD sensor ids, defaults to None
+        :type sensors_mfd: list, optional
         :return: speed computed as ttt/ttd
         """
         # TODO: Improvement → Better organizadtion
-        if zone_id:
-            d = self.get_total_travel_distance(zone_id)
-            t = self.get_total_travel_time(zone_id)
+        if isinstance(sensors_mfd, str):
+            d = self.get_total_travel_distance(sensors_mfd)
+            t = self.get_total_travel_time(sensors_mfd)
             spd = d / t if t != 0 else 10
             return spd
 
-        itdsttm = zip(self.get_total_travel_distance(), self.get_total_travel_time())
+        itdsttm = zip(self.get_total_travel_distance(sensors_mfd), self.get_total_travel_time(sensors_mfd))
         spd = []
         for d, t in itdsttm:
             if t != 0:
