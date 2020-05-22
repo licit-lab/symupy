@@ -423,8 +423,10 @@ class Simulator(Configurator, RuntimeDevice):
             links = self.simulation.get_links_in_mfd_sensor(sensor)
             links_str = " ".join(links)
             self.dctidzone[sensor] = self.__library.SymAddControlZoneEx(
-                -1, c_double(accrate), c_double(min_dst), f"'{links_str}'".encode("UTF8"),
+                -1, c_double(accrate), c_double(min_dst), f"{links_str}".encode("UTF8"),
             )
+        # Apply set control
+        self.__library.SymApplyControlZonesEx(-1)
         return self.dctidzone
 
     def modify_control_probability_zone_mfd(self, access_probability: dict) -> None:
@@ -437,6 +439,7 @@ class Simulator(Configurator, RuntimeDevice):
 
         for sensor, probablity in access_probability.items():
             self.__library.SymModifyControlZoneEx(-1, self.dctidzone[sensor], c_double(probablity))
+        # Apply set control
         self.__library.SymApplyControlZonesEx(-1)
         return self.dctidzone
 
