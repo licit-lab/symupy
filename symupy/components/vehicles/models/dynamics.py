@@ -1,8 +1,8 @@
 import typing
 import numpy as np
-from symupy.utils import constants as ct
+from symupy.utils import constants as CT
 
-PAR = {"time_step": ct.DCT_SIMULATION_INFO, "engine_tau": ct.ENGINE_CONSTANT}
+PAR = {"time_step": CT.DCT_SIMULATION_INFO, "engine_tau": CT.ENGINE_CONSTANT}
 
 
 def dynamic_3rd_ego(state: np.array, control: np.array, parameters=PAR) -> np.array:
@@ -21,7 +21,7 @@ def dynamic_2nd_ego(state: np.array, control: np.array, parameters=PAR) -> np.ar
 
 
 class VehicleDynamic(object):
-    def __init__(self, time_step=ct.TIME_STEP, veh_dyn=dynamic_2nd_ego) -> None:
+    def __init__(self, time_step=CT.TIME_STEP, veh_dyn=dynamic_2nd_ego) -> None:
         self.time_step = time_step
         self.veh_dyn = veh_dyn
         self.prev_state = np.array([])
