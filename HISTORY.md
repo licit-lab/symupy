@@ -61,3 +61,7 @@
 ## 0.3.3 (2020-05-23)
 
 * Now `get_total_travel_distance/get_total_travel_time` support list of sensors 
+
+## 0.3.4 (2020-06-04)
+
+* Fix bug retrieve text from simulator request 
