@@ -28,8 +28,47 @@
 
 """
 
+# ============================================================================
+# STANDARD  IMPORTS
+# ============================================================================
+
 from datetime import date, datetime, timedelta
+import os
 from numpy import array, float64, int32
+
+# ============================================================================
+# CLASS AND DEFINITIONS
+# ============================================================================
+
+# Default simulator per platform
+
+# *****************************************************************************
+# DEFAULT PATHS TO FIND SIMULATOR PLATFORMS
+# *****************************************************************************
+
+# DEFAULT_LIB_OSX = "/Users/ladino/Documents/03-Code/02-Python/libraries/symupy/lib/osx-64/libSymuVia.dylib"
+
+DEFAULT_LIB_OSX = "/Users/andresladino/Documents/01-Code/04-Platforms/dev-symuvia/build/lib/libSymuVia.dylib"
+
+DEFAULT_LIB_LINUX = "/home/build-symuvia/build/symuvia/libSymuVia.so"
+
+DEFAULT_LIB_WINDOWS = "Vissim.Vissim-64.10"
+
+
+# *****************************************************************************
+# DEFAULT SIMULATOR/ OS ASSOCIATION
+# *****************************************************************************
+
+
+DCT_SIMULATORS = {"Darwin": "symuvia", "Linux": "symuvia", "Windows": "vissim"}
+
+# Feasible Simulator/Platform Paths/Libs
+
+DCT_DEFAULT_PATHS = {
+    ("symuvia", "Darwin"): os.environ.get("SYMUVIALIB", DEFAULT_LIB_OSX),
+    ("symuvia", "Linux"): os.environ.get("SYMUVIALIB", DEFAULT_LIB_LINUX),
+    ("vissim", "Windows"): os.environ.get("SYMUVIALIB", DEFAULT_LIB_WINDOWS),
+}
 
 # *****************************************************************************
 # CONNECTOR
@@ -130,12 +169,7 @@ DCT_EXPORT_INFO = {
 }
 
 # TAFFIC INFORMATION
-DCT_TRAFIC_INFO = {
-    "id": "trafID",
-    "accbornee": "true",
-    "coeffrelax": "4",
-    "chgtvoie_ghost": "false",
-}
+DCT_TRAFIC_INFO = {"id": "trafID", "accbornee": "true", "coeffrelax": "4", "chgtvoie_ghost": "false"}
 
 # NETWORK INFORMATION
 DCT_NETWORK_INFO = {"id": "resID"}
@@ -151,16 +185,9 @@ DCT_SCENARIO_INFO = {
 }
 
 
-TP_VEHTYPES = (
-    {"id": "HDV", "w": "-5", "kx": "0.12", "vx": "25"},
-    {"id": "CAV", "w": "-5", "kx": "0.12", "vx": "25"},
-)
+TP_VEHTYPES = ({"id": "HDV", "w": "-5", "kx": "0.12", "vx": "25"}, {"id": "CAV", "w": "-5", "kx": "0.12", "vx": "25"})
 
-TP_ACCEL = (
-    {"ax": "1.5", "vit_sup": "5.8"},
-    {"ax": "1", "vit_sup": "8"},
-    {"ax": "0.5", "vit_sup": "infini"},
-)
+TP_ACCEL = ({"ax": "1.5", "vit_sup": "5.8"}, {"ax": "1", "vit_sup": "8"}, {"ax": "0.5", "vit_sup": "infini"})
 
 # *****************************************************************************
 # DATA CONTROL
@@ -171,3 +198,6 @@ BUFFER_CONTROL = 10  # Amount of control samples stored in memory
 # DATA VEHICLE DYNAMICS
 # *****************************************************************************
 ENGINE_CONSTANT = 0.2
+
+if __name__ == "__main__":
+    print(os.environ.get("SYMUVIALIB"))
