@@ -32,6 +32,7 @@ setup(
         "sqlalchemy>=1.3.5",
         "pandas>=0.24",
         "scipy>=1.4.1",
+        "click>=7.0",
     ],
     author="Andres Ladino",
     author_email="aladinoster@gmail.com",
