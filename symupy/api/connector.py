@@ -147,13 +147,31 @@ class Simulator(Configurator, RuntimeDevice):
             raise SymupyLoadLibraryError("Library not found", self.libraryPath)
         self.__library = lib_symuvia
 
-    def load_network(self) -> None:
+    def load_network(self) -> int:
         """ load SymuVia Simulation File """
         if not hasattr(self, "_sim"):
             raise SymupyFileLoadError("File not provided", "")
         valid = self.__library.SymLoadNetworkEx(self.scenarioFilename("UTF8"))
         if not valid:
             raise SymupyFileLoadError("Simulation could not be loaded", "")
+        return valid
+
+    def register_simulation(self, scenarioPath: str) -> None:
+        """
+            Register simulation file within the simulator
+
+            :param scenarioPath: Path to scenario 
+            :type scenarioPath: str
+        """
+        self._sim = Simulation(scenarioPath)
+
+    def register_network(self, network: NetworkType) -> None:
+        # TODO: Impleement this connection. This is for V2V
+        self._net.append(network)
+
+    # ============================================================================
+    # RUNTIME METHODS
+    # ============================================================================
 
     @timer_func
     def run_simulation(self, sim_object: Simulation = "") -> None:
@@ -171,17 +189,15 @@ class Simulator(Configurator, RuntimeDevice):
         self.load_symuvia()
         self.__library.SymRunEx(self.scenarioFilename("UTF8"))
 
-    def register_simulation(self, scenarioPath: str) -> None:
-        """
-            Register simulation file within the simulator
+    def run(self, sim_object: Simulation = "") -> None:
+        """ Alias metho to run simulation
+            Args:
+                sim_object (Simulation): Valid simulation scenario
 
-            :param scenarioPath: Path to scenario 
-            :type scenarioPath: str
+            Returns:
+                None: No returns provided, only internal updates
         """
-        self._sim = Simulation(scenarioPath)
-
-    def register_network(self, network: NetworkType) -> None:
-        self._net.append(network)
+        self.run_simulation(sim_object)
 
     def request_answer(self):
         """Request simulator answer and maps the data locally
@@ -632,7 +648,6 @@ class Simulator(Configurator, RuntimeDevice):
                     >>> simulator = Simulator.from_path(path,scenario) 
 
         """
-        case = Simulation(filename_path)
         sim = cls(simuvia_path)
-        sim.register_simulation(case)
+        sim.register_simulation(filename_path)
         return sim

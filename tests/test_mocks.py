@@ -42,17 +42,6 @@ def bottleneck_002():
 
 
 # ============================================================================
-# GENERAL API
-# ============================================================================
-
-
-def test_load_symuvia_via_api(symuvia_library_path):
-    sim_instance = Simulator(symuvia_library_path)
-    sim_instance.load_symuvia()
-    assert sim_instance.libraryPath == symuvia_library_path
-
-
-# ============================================================================
 # BOTTLENECK 001
 # ============================================================================
 
