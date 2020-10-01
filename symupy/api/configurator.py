@@ -19,7 +19,7 @@ import symupy.utils.constants as CT
 # ============================================================================
 
 
-class SymuviaConfigurator:
+class Configurator:
     """ Configurator class for containing specific simulator parameters
 
         Example:
@@ -36,11 +36,11 @@ class SymuviaConfigurator:
     def __init__(
         self,
         bufferSize: int = CT.BUFFER_STRING,
-        writeXML: bool = True,
-        traceFlow: bool = False,
+        writeXML: bool = CT.WRITE_XML,
+        traceFlow: bool = CT.TRACE_FLOW,
         libraryPath: str = "",
-        totalSteps: int = 0,
-        stepLaunchMode: str = "lite",
+        totalSteps: int = CT.SIMULATION_STEPS,
+        stepLaunchMode: str = CT.LAUNCH_MODE,
     ) -> None:
         """ Configurator class for containing specific simulator parameter
 
@@ -66,7 +66,7 @@ class SymuviaConfigurator:
         self.libraryPath = libraryPath
         self.totalSteps = totalSteps
         self.stepLaunchMode = stepLaunchMode
-        super(SymuviaConfigurator, self).__init__()
+        super(Configurator, self).__init__()
 
     def __repr__(self):
         data_dct = ", ".join(f"{k}={v}" for k, v in self.__dict__.items())

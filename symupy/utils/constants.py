@@ -78,7 +78,10 @@ DCT_DEFAULT_PATHS = {
 # *****************************************************************************
 
 BUFFER_STRING = 1000000
-
+WRITE_XML = False
+TRACE_FLOW = False
+LAUNCH_MODE = "lite"
+SIMULATION_STEPS = 0
 
 FIELD_DATA = {
     "@abs": "abscisa",
