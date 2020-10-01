@@ -1,6 +1,4 @@
 """ 
-    **Connector Module**
-
     This module details the implementation of a ``Simulator`` object in charge of handling the connection between the traffic simulator and this interface. The connection with the traffic simulator is handled by an object called ``Connector`` which establishes a messaging protocol with the traffic simulator. 
 
     Example:
@@ -20,8 +18,6 @@
         To increase change the flag that traces the flow:
 
             >>> simulator = Simulator(traceFlow = True)
-
-
 """
 
 # ============================================================================
