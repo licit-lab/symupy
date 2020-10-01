@@ -9,13 +9,15 @@ import os
 import unittest
 import platform
 import pytest
+from ctypes import create_string_buffer
 
 # ============================================================================
 # INTERNAL IMPORTS
 # ============================================================================
 
-from symupy.api import Simulation, Simulator
-from symupy.utils.constants import DCT_DEFAULT_PATHS
+from symupy.api import Simulation, Simulator, Configurator
+import symupy.utils.constants as CT
+from symupy.utils.constants import TRACE_FLOW
 
 # ============================================================================
 # TESTS AND DEFINITIONS
@@ -24,7 +26,7 @@ from symupy.utils.constants import DCT_DEFAULT_PATHS
 
 @pytest.fixture
 def symuvia_library_path():
-    return DCT_DEFAULT_PATHS[("symuvia", platform.system())]
+    return CT.DCT_DEFAULT_PATHS[("symuvia", platform.system())]
 
 
 @pytest.fixture
@@ -46,10 +48,25 @@ def bottleneck_002():
 # ============================================================================
 
 
+def test_load_default_symuvia_via_api(symuvia_library_path):
+    simulator = Simulator()
+    assert simulator.libraryPath == symuvia_library_path
+
+
 def test_load_symuvia_via_api(symuvia_library_path):
-    sim_instance = Simulator(symuvia_library_path)
-    sim_instance.load_symuvia()
-    assert sim_instance.libraryPath == symuvia_library_path
+    simulator = Simulator(libraryPath=symuvia_library_path)
+    simulator.load_symuvia()
+    assert simulator.libraryPath == symuvia_library_path
+
+
+def test_configurator_constructor(symuvia_library_path):
+    config = Configurator()
+    # Checks default parameters
+    assert len(config.bufferString) == CT.BUFFER_STRING
+    assert config.libraryPath == symuvia_library_path
+    assert config.traceFlow == CT.TRACE_FLOW
+    assert config.totalSteps == CT.TOTAL_SIMULATION_STEPS
+    assert config.stepLaunchMode == CT.LAUNCH_MODE
 
 
 # ============================================================================
@@ -62,21 +79,29 @@ def test_load_bottleneck_001(bottleneck_001):
     assert sim_case.filename() == bottleneck_001
 
 
-def test_constructor_bottleneck_001(bottleneck_001, symuvia_library_path):
-    sim_instance = Simulator.from_path(bottleneck_001, symuvia_library_path)
-    sim_instance.load_symuvia()
-    valid = sim_instance.load_network()
+def test_default_load_constructor_bottleneck_001(bottleneck_001):
+    simulator = Simulator()
+    simulator.register_simulation(bottleneck_001)
+    simulator.load_symuvia()
+    valid = simulator.load_network()
+    assert valid == 1
+
+
+def test_load_constructor_bottleneck_001(bottleneck_001, symuvia_library_path):
+    simulator = Simulator.from_path(bottleneck_001, symuvia_library_path)
+    simulator.load_symuvia()
+    valid = simulator.load_network()
     assert valid == 1
 
 
 def test_run_bottleneck_001(bottleneck_001, symuvia_library_path):
-    sim_instance = Simulator.from_path(bottleneck_001, symuvia_library_path)
-    sim_instance.run()
+    simulator = Simulator.from_path(bottleneck_001, symuvia_library_path)
+    simulator.run()
 
 
 def test_runbystep_bottleneck_001(bottleneck_001, symuvia_library_path):
-    sim_instance = Simulator.from_path(bottleneck_001, symuvia_library_path)
-    with sim_instance as s:
+    simulator = Simulator.from_path(bottleneck_001, symuvia_library_path)
+    with simulator as s:
         while s.do_next:
             s.run_step()
         assert s.do_next == False
@@ -92,7 +117,15 @@ def test_load_bottleneck_002(bottleneck_002):
     assert sim_case.filename() == bottleneck_002
 
 
-def test_constructor_bottleneck_002(bottleneck_002, symuvia_library_path):
+def test_default_load_constructor_bottleneck_001(bottleneck_001):
+    simulator = Simulator()
+    simulator.register_simulation(bottleneck_001)
+    simulator.load_symuvia()
+    valid = simulator.load_network()
+    assert valid == 1
+
+
+def test_load_constructor_bottleneck_002(bottleneck_002, symuvia_library_path):
     sim_instance = Simulator.from_path(bottleneck_002, symuvia_library_path)
     sim_instance.load_symuvia()
     valid = sim_instance.load_network()
