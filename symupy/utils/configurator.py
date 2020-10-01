@@ -62,21 +62,26 @@ class Configurator:
         stepLaunchMode: str = CT.LAUNCH_MODE,
     ) -> None:
         """ Configurator class for containing specific simulator parameter
-        
-            :param bufferSize: Provide an integer for buffer, defaults to CT.BUFFER_STRING
-            :type bufferSize: int, optional
-            :param writeXML: Flag to write XML file, defaults to True
-            :type writeXML: bool, optional
-            :param traceFlow: Flag to trace Flow / Traces, defaults to False
-            :type traceFlow: bool, optional
-            :param libraryPath: Stores the path of a traffic simulator, defaults to ""
-            :type libraryPath: str, optional
-            :param totalSteps: total number of simulation steps, defaults to 0
-            :type totalSteps: int, optional
-            :param stepLaunchMode: lite / full, defaults to "lite"
-            :type stepLaunchMode: str, optional
-            :return: Configurator object with simulation parameters
-            :rtype: Configurator
+
+            Args:
+
+            bufferSize (int): 
+                Size of the buffer for message for data received from simulator
+
+            writeXML (bool): 
+                Flag to turn on writting the XML output
+
+            traceFlow (bool):
+                Flag to determine tracing or not the flow / trajectories
+
+            libraryPath (str): 
+                Absolute path towards the simulator library
+
+            totalSteps (int):
+                Define the number of iterations of a simulation 
+
+            stepLaunchMode (str):
+                Determine to way to launch the ``RunStepEx``. Options ``lite``/``full``
         """
         click.echo("Configurator: Initialization")
         self.bufferString = create_string_buffer(bufferSize)
