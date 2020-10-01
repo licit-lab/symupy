@@ -1,25 +1,25 @@
 """ 
-**Connector Module**
+    **Connector Module**
 
-This module details the implementation of a ``Simulator`` object in charge of handling the connection between the traffic simulator and this interface. The connection with the traffic simulator is handled by an object called ``Connector`` which establishes a messaging protocol with the traffic simulator. 
+    This module details the implementation of a ``Simulator`` object in charge of handling the connection between the traffic simulator and this interface. The connection with the traffic simulator is handled by an object called ``Connector`` which establishes a messaging protocol with the traffic simulator. 
 
-Example:
-    To use the ``Simulator`` declare in a string the ``path`` to the simulator ::
+    Example:
+        To use the ``Simulator`` declare in a string the ``path`` to the simulator ::
 
             >>> from symupy.api import Simulator
             >>> path_symuvia = "path/to/libSymuyVia.dylib"
             >>> simulator = Simulator(libraryPath=path_symuvia)
 
-Other parameters can also be send to the simulator in order to provide other configurations:
+    Other parameters can also be send to the simulator in order to provide other configurations:
 
-Example: 
-    To send make increase the *buffer size* to a specific size:
+    Example: 
+        To send make increase the *buffer size* to a specific size:
+            
+            >>> simulator = Simulator(bufferSize = 1000000)
         
-        >>> simulator = Simulator(bufferSize = 1000000)
-    
-    To increase change the flag that traces the flow:
+        To increase change the flag that traces the flow:
 
-        >>> simulator = Simulator(traceFlow = True)
+            >>> simulator = Simulator(traceFlow = True)
 
 
 """
@@ -91,7 +91,7 @@ class Simulator(Configurator, RuntimeDevice):
                 >>> path_symuvia = "path/to/libSymuyVia.dylib"
                 >>> simulator = Simulator(libraryPath=path_symuvia)
     
-        This object describes is a configurator manager for the interface between the traffic simulator and the python interface. For more details on the optinal keyword parameters please refer to :py:class:`~symupy.api.configurator.Configurator` class in :py:module:`symupy.api.configurator` module
+        This object describes is a configurator manager for the interface between the traffic simulator and the python interface. For more details on the optinal keyword parameters please refer to :py:class:`~symupy.utils.configurator.Configurator` class.
 
         :raises SymupyLoadLibraryError: 
             Error raised whenever the SymuVia library is not found
@@ -162,11 +162,11 @@ class Simulator(Configurator, RuntimeDevice):
     def run_simulation(self, sim_object: Simulation = "") -> None:
         """ Run simulation in a single shot
 
-        Args:
-            sim_object (Simulation): Valid simulation scenario
+            Args:
+                sim_object (Simulation): Valid simulation scenario
 
-        Returns:
-            None: No returns provided, only internal updates
+            Returns:
+                None: No returns provided, only internal updates
         """
         if sim_object:
             self.register_simulation(sim_object)
