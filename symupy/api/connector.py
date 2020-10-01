@@ -529,6 +529,15 @@ class Simulator(Configurator, RuntimeDevice):
         """
         self.next_state(self.do_next)
 
+    def _set_manual_initialization(self) -> None:
+        """
+            This method is a way to set manual initialization of the simulator
+            for testing purposes. (Internal use)
+        """
+        self.__performCompliance()
+        self.__performConnect()
+        self.__performInitialize()
+
     # ============================================================================
     # ATTRIBUTES
     # ============================================================================
@@ -615,7 +624,7 @@ class Simulator(Configurator, RuntimeDevice):
     # ============================================================================
 
     @classmethod
-    def from_path(cls, filename_path, simuvia_path):
+    def from_path(cls, filename_path, symuvia_path):
         """ Alternative constructor for the Simulator 
 
             Example:
@@ -626,6 +635,6 @@ class Simulator(Configurator, RuntimeDevice):
                     >>> simulator = Simulator.from_path(path,scenario) 
 
         """
-        sim = cls(libraryPath=simuvia_path)
+        sim = cls(libraryPath=symuvia_path)
         sim.register_simulation(filename_path)
         return sim

@@ -94,6 +94,61 @@ def test_runbystep_bottleneck_001(bottleneck_001, symuvia_library_path):
         assert s.do_next == False
 
 
+def test_create_vehicle_bottleneck_001(bottleneck_001, symuvia_library_path):
+    symuvia = Simulator.from_path(bottleneck_001, symuvia_library_path)
+
+    symuvia._set_manual_initialization()
+    veh_id = symuvia.create_vehicle("VL", "Ext_In", "Ext_Out")
+
+    assert veh_id == 0
+
+
+def test_create_drive_vehicle_bottleneck_001(bottleneck_001, symuvia_library_path):
+    symuvia = Simulator(libraryPath=symuvia_library_path, stepLaunchMode="full")
+    symuvia.register_simulation(bottleneck_001)
+
+    with symuvia as s:
+        while s.do_next:
+            s.request_answer()  # Initialize
+            s.request_answer()  # Vehicle 0
+
+            # Vehicle instantiation
+            veh_id = s.create_vehicle("VL", "Ext_In", "Ext_Out")
+            force_driven = s.request.is_vehicle_driven("1")
+            s.request_answer()  
+            
+            # Data retrieveal
+            drive_status = s.drive_vehicle(veh_id, 20.0, "Zone_001")
+            force_driven = s.request.is_vehicle_driven("1")
+            position = s.request.query_vehicle_position("1")[0]
+            
+            s.stop_step()
+
+        assert force_driven == True
+        assert veh_id >= 0
+        assert drive_status == 4
+        assert float(position) == pytest.approx(20.0)
+
+
+def test_drive_vehicle_bottleneck_001(bottleneck_001, symuvia_library_path):
+    symuvia = Simulator(libraryPath=symuvia_library_path, stepLaunchMode="full")
+    symuvia.register_simulation(bottleneck_001)
+
+    with symuvia as s:
+        while s.do_next:
+            s.run_step()
+            if s.request.is_vehicle_in_network("0"):
+                drive_status = s.drive_vehicle(0, 1.0)
+                force_driven = s.request.is_vehicle_driven("0")
+                position = s.request.query_vehicle_position("0")[0]
+                s.stop_step()
+            else:
+                continue
+        assert force_driven == True
+        assert drive_status == 6
+        assert float(position) == pytest.approx(1.0)
+
+
 # ============================================================================
 # BOTTLENECK 002
 # ============================================================================
