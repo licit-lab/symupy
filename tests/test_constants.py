@@ -21,7 +21,6 @@ import pytest
 # ============================================================================
 
 from symupy.utils.constants import DCT_DEFAULT_PATHS
-from symupy.api import Simulation, Simulator
 
 # ============================================================================
 # TESTS AND DEFINITIONS
