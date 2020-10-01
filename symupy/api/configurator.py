@@ -7,6 +7,7 @@
 
 from ctypes import cdll, create_string_buffer, c_int, byref, c_bool, c_double
 import click
+import platform
 
 # ============================================================================
 # INTERNAL IMPORTS
@@ -38,8 +39,8 @@ class Configurator:
         bufferSize: int = CT.BUFFER_STRING,
         writeXML: bool = CT.WRITE_XML,
         traceFlow: bool = CT.TRACE_FLOW,
-        libraryPath: str = "",
-        totalSteps: int = CT.SIMULATION_STEPS,
+        libraryPath: str = CT.DCT_DEFAULT_PATHS[("symuvia", platform.system())],
+        totalSteps: int = CT.TOTAL_SIMULATION_STEPS,
         stepLaunchMode: str = CT.LAUNCH_MODE,
     ) -> None:
         """ Configurator class for containing specific simulator parameter
