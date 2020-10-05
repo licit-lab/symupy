@@ -1,26 +1,23 @@
 """ 
-**Connector Module**
+    This module details the implementation of a ``Simulator`` object in charge of handling the connection between the traffic simulator and this interface. The connection with the traffic simulator is handled by an object called ``Connector`` which establishes a messaging protocol with the traffic simulator. 
 
-This module details the implementation of a ``Simulator`` object in charge of handling the connection between the traffic simulator and this interface. The connection with the traffic simulator is handled by an object called ``Connector`` which establishes a messaging protocol with the traffic simulator. 
+    Example:
+        To use the ``Simulator`` declare in a string the ``path`` to the simulator ::
 
-Example:
-    To use the ``Simulator`` declare in a string the ``path`` to the simulator ::
+            >>> from symupy.api import Simulator
+            >>> path_symuvia = "path/to/libSymuyVia.dylib"
+            >>> simulator = Simulator(libraryPath=path_symuvia)
 
-        >>> path = "path/to/simulator.so"
-        >>> simulator = Simulator(path) 
+    Other parameters can also be send to the simulator in order to provide other configurations:
 
-Other parameters can also be send to the simulator in order to provide other configurations:
+    Example: 
+        To send make increase the *buffer size* to a specific size:
+            
+            >>> simulator = Simulator(bufferSize = 1000000)
+        
+        To increase change the flag that traces the flow:
 
-Example: 
-    To send make increase the *buffer size* to a specific size:
-
-        >>> simulator = Simulator(path, bufferSize = 1000000)
-    
-    To increase change the flag that traces the flow:
-
-        >>> simulator = Simulator(path, traceFlow = True)
-
-
+            >>> simulator = Simulator(traceFlow = True)
 """
 
 # ============================================================================
@@ -31,6 +28,7 @@ import os
 from itertools import repeat
 from ctypes import cdll, create_string_buffer, c_int, byref, c_bool, c_double
 import click
+import platform
 
 import typing
 from typing import Union
@@ -69,27 +67,27 @@ NetworkType = Union[V2INetwork, V2VNetwork]
 
 class Simulator(Configurator, RuntimeDevice):
     """ 
+        Simulator class for containing object to connect and  command a simulation in SymuVia
+
+        Example:
+            Call of the default simulator ::
+
+                >>> from symupy.api import Simulator
+                >>> simulator = Simulator()
+
+        :return: Symuvia simulator object with simulation parameters
+        :rtype: Simulator
+
+        You may also pass suplementary parameters to the object by specifying keys in the call: 
+
+        Example: 
+            To use the ``Simulator`` declare in a string the ``path`` to the simulator ::
+
+                >>> from symupy.api import Simulator
+                >>> path_symuvia = "path/to/libSymuyVia.dylib"
+                >>> simulator = Simulator(libraryPath=path_symuvia)
     
-        This object describes is a connector manager for the interface between the    traffic simulator and the 
-
-        Args:
-            libraryPath (str): 
-                Absolute path towards the simulator library
-
-            bufferSize (int): 
-                Size of the buffer for message for data received from simulator
-
-            writeXML (bool): 
-                Flag to turn on writting the XML output
-
-            traceFlow (bool):
-                Flag to determine tracing or not the flow / trajectories
-
-            totalSteps (int):
-                Define the number of iterations of a simulation 
-
-            stepLaunchMode (str):
-                Determine to way to launch the ``RunStepEx``. Options ``lite``/``full``
+        This object describes is a configurator manager for the interface between the traffic simulator and the python interface. For more details on the optinal keyword parameters please refer to :py:class:`~symupy.utils.configurator.Configurator` class.
 
         :raises SymupyLoadLibraryError: 
             Error raised whenever the SymuVia library is not found
@@ -111,25 +109,8 @@ class Simulator(Configurator, RuntimeDevice):
         :rtype: Simulator
     """
 
-    def __init__(
-        self,
-        libraryPath: str = "",
-        bufferSize: int = CT.BUFFER_STRING,
-        writeXML: bool = True,
-        traceFlow: bool = False,
-        totalSteps: int = 0,
-        stepLaunchMode: str = "lite",
-        **kwargs,
-    ) -> None:
-        super(Simulator, self).__init__(
-            bufferSize=bufferSize,
-            writeXML=writeXML,
-            traceFlow=traceFlow,
-            libraryPath=libraryPath,
-            totalSteps=totalSteps,
-            stepLaunchMode=stepLaunchMode,
-            **kwargs,
-        )
+    def __init__(self, **kwargs) -> None:
+        super(Simulator, self).__init__(**kwargs)
         self._net = []
 
     def __repr__(self):
@@ -147,29 +128,14 @@ class Simulator(Configurator, RuntimeDevice):
             raise SymupyLoadLibraryError("Library not found", self.libraryPath)
         self.__library = lib_symuvia
 
-    def load_network(self) -> None:
+    def load_network(self) -> int:
         """ load SymuVia Simulation File """
         if not hasattr(self, "_sim"):
             raise SymupyFileLoadError("File not provided", "")
         valid = self.__library.SymLoadNetworkEx(self.scenarioFilename("UTF8"))
         if not valid:
             raise SymupyFileLoadError("Simulation could not be loaded", "")
-
-    @timer_func
-    def run_simulation(self, sim_object: Simulation = "") -> None:
-        """ Run simulation in a single shot
-
-        Args:
-            sim_object (Simulation): Valid simulation scenario
-
-        Returns:
-            None: No returns provided, only internal updates
-        """
-        if sim_object:
-            self.register_simulation(sim_object)
-
-        self.load_symuvia()
-        self.__library.SymRunEx(self.scenarioFilename("UTF8"))
+        return valid
 
     def register_simulation(self, scenarioPath: str) -> None:
         """
@@ -181,7 +147,38 @@ class Simulator(Configurator, RuntimeDevice):
         self._sim = Simulation(scenarioPath)
 
     def register_network(self, network: NetworkType) -> None:
+        # TODO: Impleement this connection. This is for V2V
         self._net.append(network)
+
+    # ============================================================================
+    # RUNTIME METHODS
+    # ============================================================================
+
+    @timer_func
+    def run_simulation(self, sim_object: Simulation = "") -> None:
+        """ Run simulation in a single shot
+
+            Args:
+                sim_object (Simulation): Valid simulation scenario
+
+            Returns:
+                None: No returns provided, only internal updates
+        """
+        if sim_object:
+            self.register_simulation(sim_object)
+
+        self.load_symuvia()
+        self.__library.SymRunEx(self.scenarioFilename("UTF8"))
+
+    def run(self, sim_object: Simulation = "") -> None:
+        """ Alias metho to run simulation
+            Args:
+                sim_object (Simulation): Valid simulation scenario
+
+            Returns:
+                None: No returns provided, only internal updates
+        """
+        self.run_simulation(sim_object)
 
     def request_answer(self):
         """Request simulator answer and maps the data locally
@@ -243,7 +240,7 @@ class Simulator(Configurator, RuntimeDevice):
 
         # Vehicle creation
         vehid = self.__library.SymCreateVehicleEx(
-            vehtype.encode("UTF8"), origin.encode("UTF8"), destination.encode("UTF8"), c_int(lane), c_double(dbTime),
+            vehtype.encode("UTF8"), origin.encode("UTF8"), destination.encode("UTF8"), c_int(lane), c_double(dbTime)
         )
         return vehid
 
@@ -427,7 +424,7 @@ class Simulator(Configurator, RuntimeDevice):
             links = self.simulation.get_links_in_mfd_sensor(sensor)
             links_str = " ".join(links)
             self.dctidzone[sensor] = self.__library.SymAddControlZoneEx(
-                -1, c_double(accrate), c_double(min_dst), f"{links_str}".encode("UTF8"),
+                -1, c_double(accrate), c_double(min_dst), f"{links_str}".encode("UTF8")
             )
         # Apply set control
         self.__library.SymApplyControlZonesEx(-1)
@@ -478,10 +475,7 @@ class Simulator(Configurator, RuntimeDevice):
     def build_dynamic_param(self):
         """Construct parameters for vehicle dynamics
         """
-        self.__dct_par = {
-            "time_step": self.simulation.time_step,
-            "engine_tau": CT.ENGINE_CONSTANT,
-        }
+        self.__dct_par = {"time_step": self.simulation.time_step, "engine_tau": CT.ENGINE_CONSTANT}
 
     # ============================================================================
     # STATE MACHINE
@@ -534,6 +528,15 @@ class Simulator(Configurator, RuntimeDevice):
             Perform simulator Control
         """
         self.next_state(self.do_next)
+
+    def _set_manual_initialization(self) -> None:
+        """
+            This method is a way to set manual initialization of the simulator
+            for testing purposes. (Internal use)
+        """
+        self.__performCompliance()
+        self.__performConnect()
+        self.__performInitialize()
 
     # ============================================================================
     # ATTRIBUTES
@@ -621,7 +624,7 @@ class Simulator(Configurator, RuntimeDevice):
     # ============================================================================
 
     @classmethod
-    def from_path(cls, filename_path, simuvia_path):
+    def from_path(cls, filename_path, symuvia_path):
         """ Alternative constructor for the Simulator 
 
             Example:
@@ -632,7 +635,6 @@ class Simulator(Configurator, RuntimeDevice):
                     >>> simulator = Simulator.from_path(path,scenario) 
 
         """
-        case = Simulation(filename_path)
-        sim = cls(simuvia_path)
-        sim.register_simulation(case)
+        sim = cls(libraryPath=symuvia_path)
+        sim.register_simulation(filename_path)
         return sim
