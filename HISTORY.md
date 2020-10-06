@@ -70,3 +70,7 @@
 
 * The API is in process to be cleaned. 
 * Tests are now launched in pytest 
+
+## 0.4.1 (2020-10-06)
+
+* Adding basic tutorials
