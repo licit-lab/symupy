@@ -1,20 +1,21 @@
-"""
-    This module contains a **constants** and **default** parameters. These parameters can be accessed 
-    at any time by whatever of the modules. 
+"""This module contains a **constants** and **default** parameters.
+
+    These parameters can be accessed at any time by whatever of the
+    modules.
 
     Example:
         To use the ``Constants`` import the module as::
 
             >>> import symupy.utils.constants as ct
-            >>> ct.BUFFER_STRING # access the buffer size 
+            >>> ct.BUFFER_STRING # access the buffer size
 
 
     ============================  =================================
      **Variable**                 **Description**
     ----------------------------  ---------------------------------
     ``BUFFER_STRING``              Buffer size
-    ``DEFAULT_LIB_OSX``            Default OS X library path 
-    ``DEFAULT_LIB_LINUX``          Default Linux library path      
+    ``DEFAULT_LIB_OSX``            Default OS X library path
+    ``DEFAULT_LIB_LINUX``          Default Linux library path
     ``FIELD_DATA``                 Vehicle trajectory data
     ``FIELD_FORMAT``               Trajectory data types
     ``HOUR_FORMAT``                Time format
@@ -33,11 +34,10 @@
 # =============================================================================
 # STANDARD  IMPORTS
 # =============================================================================
-
-from datetime import date, datetime, timedelta
-from decouple import config, UndefinedValueError
-import platform
 import os
+from datetime import date, datetime, timedelta
+import platform
+from decouple import config, UndefinedValueError
 from numpy import array, float64, int32
 
 # =============================================================================
@@ -62,12 +62,24 @@ if platform.system() == "Darwin":
     try:
         DEFAULT_LIB_OSX = config("DEFAULT_LIB_OSX")
     except UndefinedValueError:
-        DEFAULT_LIB_OSX = "/Users/andresladino/Documents/01-Code/04-Platforms/dev-symuvia/build/lib/libSymuVia.dylib"
+        DEFAULT_LIB_OSX = os.path.join(
+            "Users",
+            "andresladino",
+            "Documents",
+            "01-Code",
+            "04-Platforms",
+            "dev-symuvia",
+            "build",
+            "lib",
+            "libSymuVia.dylib",
+        )
 elif platform.system() == "Linux":
     try:
         DEFAULT_LIB_LINUX = config("DEFAULT_LIB_LINUX")
     except UndefinedValueError:
-        DEFAULT_LIB_LINUX = "/home/build-symuvia/build/symuvia/libSymuVia.so"
+        DEFAULT_LIB_LINUX = os.path.join(
+            "home", "build-symuvia", "build", "symuvia", "libSymuVia.so"
+        )
 elif platform.system() == "Windows":
     try:
         DEFAULT_LIB_WINDOWS = config("DEFAULT_LIB_WINDOWS")
@@ -130,20 +142,20 @@ FIELD_FORMAT = {
     "@z": float,
 }
 
-FLOAT_SELECT = float64
-INT_SELECT = int32
+FLOATFORMAT = float64
+INTFORMAT = int32
 
 FIELD_FORMATAGG = {
-    "abscisa": (array, FLOAT_SELECT),
-    "acceleration": (array, FLOAT_SELECT),
-    "distance": (array, FLOAT_SELECT),
-    "vehid": (array, INT_SELECT),
-    "ordinate": (array, FLOAT_SELECT),
+    "abscisa": (array, FLOATFORMAT),
+    "acceleration": (array, FLOATFORMAT),
+    "distance": (array, FLOATFORMAT),
+    "vehid": (array, INTFORMAT),
+    "ordinate": (array, FLOATFORMAT),
     "link": (list, None),
     "vehtype": (list, None),
-    "speed": (array, FLOAT_SELECT),
-    "lane": (array, INT_SELECT),
-    "elevation": (array, FLOAT_SELECT),
+    "speed": (array, FLOATFORMAT),
+    "lane": (array, INTFORMAT),
+    "elevation": (array, FLOATFORMAT),
 }
 
 # =============================================================================
@@ -154,18 +166,18 @@ FIELD_FORMATAGG = {
 HOUR_FORMAT = "%H:%M:%S"
 DELTA_TIME = timedelta(minutes=1)
 TIME_STEP = timedelta(seconds=1).total_seconds()
-today = date.today().strftime("%Y-%m-%d")
-st_time = datetime.now()
-ed_time = st_time + DELTA_TIME
-st_time_str = st_time.strftime("%H:%M:%S")
-ed_time_str = ed_time.strftime("%H:%M:%S")
+TODAY = date.today().strftime("%Y-%m-%d")
+ST_TIME = datetime.now()
+ED_TIME = ST_TIME + DELTA_TIME
+ST_TIME_STR = ST_TIME.strftime("%H:%M:%S")
+ED_TIME_STR = ED_TIME.strftime("%H:%M:%S")
 
 # SIMULATION INFORMATION
 DCT_SIMULATION_INFO = {
     "id": "simID",
     "pasdetemps": f"{TIME_STEP}",
-    "debut": f"st_time_str",
-    "fin": f"ed_time_str",
+    "debut": f"ST_TIME_STR",
+    "fin": f"ED_TIME_STR",
     "loipoursuite": "exacte",
     "comportementflux": "iti",
     "date": f"today",
