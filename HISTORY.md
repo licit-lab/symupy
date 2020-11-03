@@ -66,7 +66,11 @@
 
 * Fix bug retrieve text from simulator request 
 
-## 0.3.5 (2020-10-05)
+## 0.4.0 (2020-10-05)
 
 * The API is in process to be cleaned. 
 * Tests are now launched in pytest 
+
+## 0.4.1 (2020-10-06)
+
+* Adding basic tutorials

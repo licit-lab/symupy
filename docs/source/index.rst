@@ -20,6 +20,12 @@ This is the documentation for the package use. For more details please visit the
 
    getting_started/intro.md
 
+.. toctree::
+   :maxdepth: 1
+   :caption: Tutorials
+
+   tutorials/1_run_simulation.md
+
 .. _Module:
 .. toctree::
    :maxdepth: 1
