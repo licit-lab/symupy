@@ -33,6 +33,7 @@ setup(
         "pandas>=0.24",
         "scipy>=1.4.1",
         "click>=7.0",
+        "python-decouple>=3.3",
     ],
     author="Andres Ladino",
     author_email="aladinoster@gmail.com",

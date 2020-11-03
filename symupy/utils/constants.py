@@ -35,8 +35,17 @@
 # ============================================================================
 
 from datetime import date, datetime, timedelta
+from decouple import config, UndefinedValueError
+import platform
 import os
 from numpy import array, float64, int32
+
+# ============================================================================
+# INTERNAL IMPORTS
+# ============================================================================
+
+from .exceptions import SymupyError
+
 
 # ============================================================================
 # CLASS AND DEFINITIONS
@@ -47,26 +56,38 @@ from numpy import array, float64, int32
 # *****************************************************************************
 # DEFAULT PATHS TO FIND SIMULATOR PLATFORMS
 # *****************************************************************************
+DEFAULT_LIB_LINUX = DEFAULT_LIB_OSX = DEFAULT_LIB_WINDOWS = ""
 
-DEFAULT_LIB_OSX = "/Users/andresladino/Documents/01-Code/04-Platforms/dev-symuvia/build/lib/libSymuVia.dylib"
-
-DEFAULT_LIB_LINUX = "/home/build-symuvia/build/symuvia/libSymuVia.so"
-
-DEFAULT_LIB_WINDOWS = "/home/build-symuvia/build/symuvia/libSymuVia.dll"
+if platform.system() == "Darwin":
+    try:
+        DEFAULT_LIB_OSX = config("DEFAULT_LIB_OSX")
+    except UndefinedValueError:
+        DEFAULT_LIB_OSX = "/Users/andresladino/Documents/01-Code/04-Platforms/dev-symuvia/build/lib/libSymuVia.dylib"
+elif platform.system() == "Linux":
+    try:
+        DEFAULT_LIB_LINUX = config("DEFAULT_LIB_LINUX")
+    except UndefinedValueError:
+        DEFAULT_LIB_LINUX = "/home/build-symuvia/build/symuvia/libSymuVia.so"
+elif platform.system() == "Windows":
+    try:
+        DEFAULT_LIB_WINDOWS = config("DEFAULT_LIB_WINDOWS")
+    except UndefinedValueError:
+        DEFAULT_LIB_WINDOWS = ""
+else:
+    raise SymupyError("Platform could not be determined")
 
 # *****************************************************************************
 # DEFAULT SIMULATOR/ OS ASSOCIATION
 # *****************************************************************************
-
 
 DCT_SIMULATORS = {"Darwin": "symuvia", "Linux": "symuvia", "Windows": "symuvia"}
 
 # Feasible Simulator/Platform Paths/Libs
 
 DCT_DEFAULT_PATHS = {
-    ("symuvia", "Darwin"): os.environ.get("SYMUVIALIB", DEFAULT_LIB_OSX),
-    ("symuvia", "Linux"): os.environ.get("SYMUVIALIB", DEFAULT_LIB_LINUX),
-    ("symuvia", "Windows"): os.environ.get("SYMUVIALIB", DEFAULT_LIB_WINDOWS),
+    ("symuvia", "Darwin"): DEFAULT_LIB_OSX,
+    ("symuvia", "Linux"): DEFAULT_LIB_LINUX,
+    ("symuvia", "Windows"): DEFAULT_LIB_WINDOWS,
 }
 
 # *****************************************************************************
