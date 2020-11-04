@@ -39,12 +39,13 @@ from datetime import date, datetime, timedelta
 import platform
 from decouple import config, UndefinedValueError
 from numpy import array, float64, int32
+from pathlib import Path
 
 # =============================================================================
 # INTERNAL IMPORTS
 # =============================================================================
 
-from .exceptions import SymupyError
+from .exceptions import SymupyError, SymupyWarning
 
 
 # =============================================================================
@@ -56,35 +57,50 @@ from .exceptions import SymupyError
 # =============================================================================
 # DEFAULT PATHS TO FIND SIMULATOR PLATFORMS
 # =============================================================================
-DEFAULT_LIB_LINUX = DEFAULT_LIB_OSX = DEFAULT_LIB_WINDOWS = ""
+DEFAULT_LIB_LINUX = os.path.join(
+    "/", "home", "symudev", "build", "lib", "libSymuVia.so"
+)
+
+DEFAULT_LIB_OSX = os.path.join(
+    "/",
+    "Users",
+    "ladino",
+    "Documents",
+    "01-Platforms",
+    "01-SymuVia",
+    "06-Source",
+    "symudev",
+    "build",
+    "lib",
+    "libSymuVia.dylib",
+)
+
+DEFAULT_LIB_WINDOWS = ""
 
 if platform.system() == "Darwin":
     try:
-        DEFAULT_PATH_SYMUVIA = config("DEFAULT_LIB_OSX")
+        if Path(DEFAULT_LIB_OSX).exists():
+            DEFAULT_PATH_SYMUVIA = DEFAULT_LIB_OSX
+        else:
+            DEFAULT_PATH_SYMUVIA = config("DEFAULT_LIB_OSX")
     except UndefinedValueError:
-        DEFAULT_PATH_SYMUVIA = os.path.join(
-            "Users",
-            "andresladino",
-            "Documents",
-            "01-Code",
-            "04-Platforms",
-            "dev-symuvia",
-            "build",
-            "lib",
-            "libSymuVia.dylib",
-        )
+        SymupyWarning("No Simulator could be defined")
+        DEFAULT_PATH_SYMUVIA = None
 elif platform.system() == "Linux":
     try:
-        DEFAULT_PATH_SYMUVIA = config("DEFAULT_LIB_LINUX")
+        if Path(DEFAULT_LIB_OSX).exists():
+            DEFAULT_PATH_SYMUVIA = DEFAULT_LIB_LINUX
+        else:
+            DEFAULT_PATH_SYMUVIA = config("DEFAULT_LIB_LINUX")
     except UndefinedValueError:
-        DEFAULT_PATH_SYMUVIA = os.path.join(
-            "home", "build-symuvia", "build", "symuvia", "libSymuVia.so"
-        )
+        SymupyWarning("No Simulator could be defined")
+        DEFAULT_PATH_SYMUVIA = None
 elif platform.system() == "Windows":
     try:
         DEFAULT_PATH_SYMUVIA = config("DEFAULT_LIB_WINDOWS")
     except UndefinedValueError:
-        DEFAULT_PATH_SYMUVIA = ""
+        SymupyWarning("No Simulator could be defined")
+        DEFAULT_PATH_SYMUVIA = None
 else:
     raise SymupyError("Platform could not be determined")
 
