@@ -60,9 +60,9 @@ DEFAULT_LIB_LINUX = DEFAULT_LIB_OSX = DEFAULT_LIB_WINDOWS = ""
 
 if platform.system() == "Darwin":
     try:
-        DEFAULT_LIB_OSX = config("DEFAULT_LIB_OSX")
+        DEFAULT_PATH_SYMUVIA = config("DEFAULT_LIB_OSX")
     except UndefinedValueError:
-        DEFAULT_LIB_OSX = os.path.join(
+        DEFAULT_PATH_SYMUVIA = os.path.join(
             "Users",
             "andresladino",
             "Documents",
@@ -75,32 +75,22 @@ if platform.system() == "Darwin":
         )
 elif platform.system() == "Linux":
     try:
-        DEFAULT_LIB_LINUX = config("DEFAULT_LIB_LINUX")
+        DEFAULT_PATH_SYMUVIA = config("DEFAULT_LIB_LINUX")
     except UndefinedValueError:
-        DEFAULT_LIB_LINUX = os.path.join(
+        DEFAULT_PATH_SYMUVIA = os.path.join(
             "home", "build-symuvia", "build", "symuvia", "libSymuVia.so"
         )
 elif platform.system() == "Windows":
     try:
-        DEFAULT_LIB_WINDOWS = config("DEFAULT_LIB_WINDOWS")
+        DEFAULT_PATH_SYMUVIA = config("DEFAULT_LIB_WINDOWS")
     except UndefinedValueError:
-        DEFAULT_LIB_WINDOWS = ""
+        DEFAULT_PATH_SYMUVIA = ""
 else:
     raise SymupyError("Platform could not be determined")
 
 # =============================================================================
 # DEFAULT SIMULATOR/ OS ASSOCIATION
 # =============================================================================
-
-DCT_SIMULATORS = {"Darwin": "symuvia", "Linux": "symuvia", "Windows": "symuvia"}
-
-# Feasible Simulator/Platform Paths/Libs
-
-DCT_DEFAULT_PATHS = {
-    ("symuvia", "Darwin"): DEFAULT_LIB_OSX,
-    ("symuvia", "Linux"): DEFAULT_LIB_LINUX,
-    ("symuvia", "Windows"): DEFAULT_LIB_WINDOWS,
-}
 
 # =============================================================================
 # DATA SYMUVIA
