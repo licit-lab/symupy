@@ -85,7 +85,7 @@ if platform.system() == "Darwin":
             DEFAULT_PATH_SYMUVIA = config("DEFAULT_LIB_OSX")
     except UndefinedValueError:
         SymupyWarning("No Simulator could be defined")
-        DEFAULT_PATH_SYMUVIA = None
+        DEFAULT_PATH_SYMUVIA = ""
 elif platform.system() == "Linux":
     try:
         if Path(DEFAULT_LIB_OSX).exists():
@@ -94,13 +94,13 @@ elif platform.system() == "Linux":
             DEFAULT_PATH_SYMUVIA = config("DEFAULT_LIB_LINUX")
     except UndefinedValueError:
         SymupyWarning("No Simulator could be defined")
-        DEFAULT_PATH_SYMUVIA = None
+        DEFAULT_PATH_SYMUVIA = ""
 elif platform.system() == "Windows":
     try:
         DEFAULT_PATH_SYMUVIA = config("DEFAULT_LIB_WINDOWS")
     except UndefinedValueError:
         SymupyWarning("No Simulator could be defined")
-        DEFAULT_PATH_SYMUVIA = None
+        DEFAULT_PATH_SYMUVIA = ""
 else:
     raise SymupyError("Platform could not be determined")
 

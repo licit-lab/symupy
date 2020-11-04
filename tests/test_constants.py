@@ -46,5 +46,6 @@ def test_detection_default_symupy(env_path_default):
         DEFAULT_LIB_LINUX,
         DEFAULT_LIB_WINDOWS,
         DEFAULT_LIB_OSX,
+        DEFAULT_PATH_SYMUVIA,
     )
     assert Path(env_path_default).exists()
