@@ -6,7 +6,7 @@
 
             >>> from symupy.api import Simulator
             >>> path_symuvia = "path/to/libSymuyVia.dylib"
-            >>> simulator = Simulator(libraryPath=path_symuvia)
+            >>> simulator = Simulator(library_path=path_symuvia)
 
     Other parameters can also be send to the simulator in order to provide other configurations:
 
@@ -17,7 +17,7 @@
         
         To increase change the flag that traces the flow:
 
-            >>> simulator = Simulator(traceFlow = True)
+            >>> simulator = Simulator(trace_flow = True)
 """
 
 # ============================================================================
@@ -85,7 +85,7 @@ class Simulator(Configurator, RuntimeDevice):
 
                 >>> from symupy.api import Simulator
                 >>> path_symuvia = "path/to/libSymuyVia.dylib"
-                >>> simulator = Simulator(libraryPath=path_symuvia)
+                >>> simulator = Simulator(library_path=path_symuvia)
     
         This object describes is a configurator manager for the interface between the traffic simulator and the python interface. For more details on the optinal keyword parameters please refer to :py:class:`~symupy.utils.configurator.Configurator` class.
 

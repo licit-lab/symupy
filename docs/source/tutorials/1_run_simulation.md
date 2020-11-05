@@ -25,9 +25,9 @@ simulator.run()
 You can also use your own simulator. In this case you may also enable other flags
 
 ```{python}
-simulator = Simulator(libraryPath = path_simulator, 
-                      traceFlow = True, # Export trajectory
-                      writeXML = True, # Write output XML
+simulator = Simulator(library_path = path_simulator, 
+                      trace_flow = True, # Export trajectory
+                      write_xml = True, # Write output XML
                     )
 simulator.register_simulation(path_simulation)
 simulator.run()
