@@ -10,16 +10,14 @@
 # STANDARD  IMPORTS
 # ============================================================================
 
-from symupy.utils.constants import DCT_DEFAULT_PATHS
-
+from ctypes import cdll
+import pytest
 
 # ============================================================================
 # INTERNAL IMPORTS
 # ============================================================================
 
-import platform
-import pytest
-from ctypes import cdll
+from symupy.utils.constants import DEFAULT_PATH_SYMUVIA
 
 # ============================================================================
 # TESTS AND DEFINITIONS
@@ -28,7 +26,7 @@ from ctypes import cdll
 
 @pytest.fixture
 def symuvia_library_path():
-    return DCT_DEFAULT_PATHS[("symuvia", platform.system())]
+    return DEFAULT_PATH_SYMUVIA
 
 
 def test_loadlibrary(symuvia_library_path):

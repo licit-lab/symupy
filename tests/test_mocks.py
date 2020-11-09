@@ -6,8 +6,6 @@
 # ============================================================================
 
 import os
-import unittest
-import platform
 import pytest
 
 # ============================================================================
@@ -15,7 +13,7 @@ import pytest
 # ============================================================================
 
 from symupy.api import Simulation, Simulator
-from symupy.utils.constants import DCT_DEFAULT_PATHS
+from symupy.utils.constants import DEFAULT_PATH_SYMUVIA
 
 # ============================================================================
 # TESTS AND DEFINITIONS
@@ -24,7 +22,7 @@ from symupy.utils.constants import DCT_DEFAULT_PATHS
 
 @pytest.fixture
 def symuvia_library_path():
-    return DCT_DEFAULT_PATHS[("symuvia", platform.system())]
+    return DEFAULT_PATH_SYMUVIA
 
 
 @pytest.fixture

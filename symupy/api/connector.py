@@ -6,7 +6,7 @@
 
             >>> from symupy.api import Simulator
             >>> path_symuvia = "path/to/libSymuyVia.dylib"
-            >>> simulator = Simulator(libraryPath=path_symuvia)
+            >>> simulator = Simulator(library_path=path_symuvia)
 
     Other parameters can also be send to the simulator in order to provide other configurations:
 
@@ -17,7 +17,7 @@
         
         To increase change the flag that traces the flow:
 
-            >>> simulator = Simulator(traceFlow = True)
+            >>> simulator = Simulator(trace_flow = True)
 """
 
 # ============================================================================
@@ -85,7 +85,7 @@ class Simulator(Configurator, RuntimeDevice):
 
                 >>> from symupy.api import Simulator
                 >>> path_symuvia = "path/to/libSymuyVia.dylib"
-                >>> simulator = Simulator(libraryPath=path_symuvia)
+                >>> simulator = Simulator(library_path=path_symuvia)
     
         This object describes is a configurator manager for the interface between the traffic simulator and the python interface. For more details on the optinal keyword parameters please refer to :py:class:`~symupy.utils.configurator.Configurator` class.
 
@@ -110,11 +110,12 @@ class Simulator(Configurator, RuntimeDevice):
     """
 
     def __init__(self, **kwargs) -> None:
-        super(Simulator, self).__init__(**kwargs)
+        Configurator.__init__(self, **kwargs)
+        RuntimeDevice.__init__(self)
         self._net = []
 
     def __repr__(self):
-        return f"{self.__class__.__name__}({self.libraryPath})"
+        return f"{self.__class__.__name__}({self.library_path})"
 
     # ============================================================================
     # LOADING METHODS
@@ -123,9 +124,9 @@ class Simulator(Configurator, RuntimeDevice):
     def load_symuvia(self) -> None:
         """ load SymuVia shared library """
         try:
-            lib_symuvia = cdll.LoadLibrary(self.libraryPath)
+            lib_symuvia = cdll.LoadLibrary(self.library_path)
         except OSError:
-            raise SymupyLoadLibraryError("Library not found", self.libraryPath)
+            raise SymupyLoadLibraryError("Library not found", self.library_path)
         self.__library = lib_symuvia
 
     def load_network(self) -> int:
@@ -183,11 +184,15 @@ class Simulator(Configurator, RuntimeDevice):
     def request_answer(self):
         """Request simulator answer and maps the data locally
         """
-        if self.stepLaunchMode == "lite":
-            self._bContinue = self.__library.SymRunNextStepLiteEx(self.writeXML, byref(self._b_end))
+        if self.step_launch_mode == "lite":
+            self._bContinue = self.__library.SymRunNextStepLiteEx(
+                self.write_xml, byref(self._b_end)
+            )
             return
-        self._bContinue = self.__library.SymRunNextStepEx(self.bufferString, self.writeXML, byref(self._b_end))
-        self.request.parse_data(self.bufferString)
+        self._bContinue = self.__library.SymRunNextStepEx(
+            self.buffer_string, self.write_xml, byref(self._b_end)
+        )
+        self.request.parse_data(self.buffer_string)
 
     # @printer_time
     def run_step(self) -> int:
@@ -209,7 +214,14 @@ class Simulator(Configurator, RuntimeDevice):
         """
         self._bContinue = False
 
-    def create_vehicle(self, vehtype: str, origin: str, destination: str, lane: int = 1, simid: int = 0) -> int:
+    def create_vehicle(
+        self,
+        vehtype: str,
+        origin: str,
+        destination: str,
+        lane: int = 1,
+        simid: int = 0,
+    ) -> int:
         """Creates a vehicle within the network
 
         :param vehtype: vehicle type according to simulation definitions
@@ -233,19 +245,33 @@ class Simulator(Configurator, RuntimeDevice):
 
         # Consistency checks
         if vehtype not in vehid:
-            raise SymupyVehicleCreationError("Unexisting Vehicle Class in File: ", self.scenarioFilename())
+            raise SymupyVehicleCreationError(
+                "Unexisting Vehicle Class in File: ", self.scenarioFilename()
+            )
 
         if (origin not in endpoints) or (destination not in endpoints):
-            raise SymupyVehicleCreationError("Unexisting Network Endpoint File: ", self.scenarioFilename())
+            raise SymupyVehicleCreationError(
+                "Unexisting Network Endpoint File: ", self.scenarioFilename()
+            )
 
         # Vehicle creation
         vehid = self.__library.SymCreateVehicleEx(
-            vehtype.encode("UTF8"), origin.encode("UTF8"), destination.encode("UTF8"), c_int(lane), c_double(dbTime)
+            vehtype.encode("UTF8"),
+            origin.encode("UTF8"),
+            destination.encode("UTF8"),
+            c_int(lane),
+            c_double(dbTime),
         )
         return vehid
 
     def create_vehicle_with_route(
-        self, vehtype: str, origin: str, destination: str, lane: int = 1, creation_time: float = 0, route: str = ""
+        self,
+        vehtype: str,
+        origin: str,
+        destination: str,
+        lane: int = 1,
+        creation_time: float = 0,
+        route: str = "",
     ) -> int:
         """ Creates a vehicle with a specific route
         
@@ -275,10 +301,14 @@ class Simulator(Configurator, RuntimeDevice):
 
         # Consistency checks
         if vehtype not in vehid:
-            raise SymupyVehicleCreationError("Unexisting Vehicle Class in File: ", self.scenarioFilename())
+            raise SymupyVehicleCreationError(
+                "Unexisting Vehicle Class in File: ", self.scenarioFilename()
+            )
 
         if (origin not in endpoints) or (destination not in endpoints):
-            raise SymupyVehicleCreationError("Unexisting Network Endpoint File: ", self.scenarioFilename())
+            raise SymupyVehicleCreationError(
+                "Unexisting Network Endpoint File: ", self.scenarioFilename()
+            )
 
         # Vehicle creation
         vehid = self.__library.SymCreateVehicleWithRouteEx(
@@ -291,7 +321,9 @@ class Simulator(Configurator, RuntimeDevice):
         )
         return vehid
 
-    def drive_vehicle(self, vehid: int, new_pos: float, destination: str = None, lane: str = 1) -> None:
+    def drive_vehicle(
+        self, vehid: int, new_pos: float, destination: str = None, lane: str = 1
+    ) -> None:
         """Drives a vehicle to a specific position
 
         :param vehid: vehicle id to drive 
@@ -312,16 +344,24 @@ class Simulator(Configurator, RuntimeDevice):
             destination = self.request.query_vehicle_link(str(vehid))[0]
 
         if destination not in links:
-            raise SymupyDriveVehicleError("Unexisting Network Endpoint File: ", self.scenarioFilename())
+            raise SymupyDriveVehicleError(
+                "Unexisting Network Endpoint File: ", self.scenarioFilename()
+            )
 
         # TODO: Validate that position do not overpass the max pos
         dr_state = self.__library.SymDriveVehicleEx(
-            c_int(vehid), destination.encode("UTF8"), c_int(lane), c_double(new_pos), 1
+            c_int(vehid),
+            destination.encode("UTF8"),
+            c_int(lane),
+            c_double(new_pos),
+            1,
         )
         self.request_answer()
         return dr_state
 
-    def drive_vehicle_with_control(self, vehcontrol, vehid: int, destination: str = None, lane: str = 1):
+    def drive_vehicle_with_control(
+        self, vehcontrol, vehid: int, destination: str = None, lane: str = 1
+    ):
         # TODO: Basic prototyping
         vehcontrol.set_current_state(self.request)
         new_pos = vehcontrol.new_position
@@ -361,12 +401,17 @@ class Simulator(Configurator, RuntimeDevice):
         """
         # TODO: Improvement → Better organizadtion
         if isinstance(sensors_mfd, str):
-            return self.__library.SymGetTotalTravelTimeEx(sensors_mfd.encode("UTF8"))
+            return self.__library.SymGetTotalTravelTimeEx(
+                sensors_mfd.encode("UTF8")
+            )
 
         if not sensors_mfd:
             sensors_mfd = self.simulation.get_mfd_sensor_names()
 
-        return tuple(self.__library.SymGetTotalTravelTimeEx(sensor.encode("UTF8")) for sensor in sensors_mfd)
+        return tuple(
+            self.__library.SymGetTotalTravelTimeEx(sensor.encode("UTF8"))
+            for sensor in sensors_mfd
+        )
 
     def get_total_travel_distance(self, sensors_mfd: list = []):
         """ Computes the total travel distance of vehicles in a MFD region
@@ -377,12 +422,17 @@ class Simulator(Configurator, RuntimeDevice):
         """
         # TODO: Improvement → Better organizadtion
         if isinstance(sensors_mfd, str):
-            return self.__library.SymGetTotalTravelDistanceEx(sensors_mfd.encode("UTF8"))
+            return self.__library.SymGetTotalTravelDistanceEx(
+                sensors_mfd.encode("UTF8")
+            )
 
         if not sensors_mfd:
             sensors_mfd = self.simulation.get_mfd_sensor_names()
 
-        return tuple(self.__library.SymGetTotalTravelDistanceEx(sensor.encode("UTF8")) for sensor in sensors_mfd)
+        return tuple(
+            self.__library.SymGetTotalTravelDistanceEx(sensor.encode("UTF8"))
+            for sensor in sensors_mfd
+        )
 
     def get_mfd_speed(self, sensors_mfd: list = []):
         """ Computes the total speed of vehicles in a MFD region
@@ -398,7 +448,10 @@ class Simulator(Configurator, RuntimeDevice):
             spd = d / t if t != 0 else 10
             return spd
 
-        itdsttm = zip(self.get_total_travel_distance(sensors_mfd), self.get_total_travel_time(sensors_mfd))
+        itdsttm = zip(
+            self.get_total_travel_distance(sensors_mfd),
+            self.get_total_travel_time(sensors_mfd),
+        )
         spd = []
         for d, t in itdsttm:
             if t != 0:
@@ -407,7 +460,9 @@ class Simulator(Configurator, RuntimeDevice):
                 spd.append(10)  # minimum speed?
         return tuple(spd)
 
-    def add_control_probability_zone_mfd(self, access_probability: dict, minimum_distance: dict) -> None:
+    def add_control_probability_zone_mfd(
+        self, access_probability: dict, minimum_distance: dict
+    ) -> None:
         """
             Add a probability to control the access to a specific zone within the network
         
@@ -418,19 +473,26 @@ class Simulator(Configurator, RuntimeDevice):
         """
         self.dctidzone = {}
 
-        for tp_zn_pb, tp_zn_md in zip(access_probability.items(), minimum_distance.items()):
+        for tp_zn_pb, tp_zn_md in zip(
+            access_probability.items(), minimum_distance.items()
+        ):
             sensor, accrate = tp_zn_pb
             _, min_dst = tp_zn_md
             links = self.simulation.get_links_in_mfd_sensor(sensor)
             links_str = " ".join(links)
             self.dctidzone[sensor] = self.__library.SymAddControlZoneEx(
-                -1, c_double(accrate), c_double(min_dst), f"{links_str}".encode("UTF8")
+                -1,
+                c_double(accrate),
+                c_double(min_dst),
+                f"{links_str}".encode("UTF8"),
             )
         # Apply set control
         self.__library.SymApplyControlZonesEx(-1)
         return self.dctidzone
 
-    def modify_control_probability_zone_mfd(self, access_probability: dict) -> None:
+    def modify_control_probability_zone_mfd(
+        self, access_probability: dict
+    ) -> None:
         """
             Modifies a probability to control the access to a specific zone within the network
         
@@ -439,7 +501,9 @@ class Simulator(Configurator, RuntimeDevice):
         """
 
         for sensor, probablity in access_probability.items():
-            self.__library.SymModifyControlZoneEx(-1, self.dctidzone[sensor], c_double(probablity))
+            self.__library.SymModifyControlZoneEx(
+                -1, self.dctidzone[sensor], c_double(probablity)
+            )
         # Apply set control
         self.__library.SymApplyControlZonesEx(-1)
         return self.dctidzone
@@ -475,7 +539,10 @@ class Simulator(Configurator, RuntimeDevice):
     def build_dynamic_param(self):
         """Construct parameters for vehicle dynamics
         """
-        self.__dct_par = {"time_step": self.simulation.time_step, "engine_tau": CT.ENGINE_CONSTANT}
+        self.__dct_par = {
+            "time_step": self.simulation.time_step,
+            "engine_tau": CT.ENGINE_CONSTANT,
+        }
 
     # ============================================================================
     # STATE MACHINE
@@ -559,7 +626,7 @@ class Simulator(Configurator, RuntimeDevice):
             :return: last query from simulator
             :rtype: str
         """
-        return self.bufferString.value.decode("UTF8")
+        return self.buffer_string.value.decode("UTF8")
 
     @property
     def do_next(self) -> bool:
@@ -635,6 +702,6 @@ class Simulator(Configurator, RuntimeDevice):
                     >>> simulator = Simulator.from_path(path,scenario) 
 
         """
-        sim = cls(libraryPath=symuvia_path)
+        sim = cls(library_path=symuvia_path)
         sim.register_simulation(filename_path)
         return sim

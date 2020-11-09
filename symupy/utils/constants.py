@@ -1,20 +1,21 @@
-"""
-    This module contains a **constants** and **default** parameters. These parameters can be accessed 
-    at any time by whatever of the modules. 
+"""This module contains a **constants** and **default** parameters.
+
+    These parameters can be accessed at any time by whatever of the
+    modules.
 
     Example:
         To use the ``Constants`` import the module as::
 
             >>> import symupy.utils.constants as ct
-            >>> ct.BUFFER_STRING # access the buffer size 
+            >>> ct.BUFFER_STRING # access the buffer size
 
 
     ============================  =================================
      **Variable**                 **Description**
     ----------------------------  ---------------------------------
     ``BUFFER_STRING``              Buffer size
-    ``DEFAULT_LIB_OSX``            Default OS X library path 
-    ``DEFAULT_LIB_LINUX``          Default Linux library path      
+    ``DEFAULT_LIB_OSX``            Default OS X library path
+    ``DEFAULT_LIB_LINUX``          Default Linux library path
     ``FIELD_DATA``                 Vehicle trajectory data
     ``FIELD_FORMAT``               Trajectory data types
     ``HOUR_FORMAT``                Time format
@@ -30,52 +31,90 @@
 
 """
 
-# ============================================================================
+# =============================================================================
 # STANDARD  IMPORTS
-# ============================================================================
-
-from datetime import date, datetime, timedelta
+# =============================================================================
 import os
+from datetime import date, datetime, timedelta
+import platform
+from decouple import config, UndefinedValueError
 from numpy import array, float64, int32
+from pathlib import Path
 
-# ============================================================================
+# =============================================================================
+# INTERNAL IMPORTS
+# =============================================================================
+
+from .exceptions import SymupyError, SymupyWarning
+
+
+# =============================================================================
 # CLASS AND DEFINITIONS
-# ============================================================================
+# =============================================================================
 
 # Default simulator per platform
 
-# *****************************************************************************
+# =============================================================================
 # DEFAULT PATHS TO FIND SIMULATOR PLATFORMS
-# *****************************************************************************
+# =============================================================================
+DEFAULT_LIB_LINUX = os.path.join(
+    "/", "home", "symudev", "build", "lib", "libSymuVia.so"
+)
 
-DEFAULT_LIB_OSX = "/Users/andresladino/Documents/01-Code/04-Platforms/dev-symuvia/build/lib/libSymuVia.dylib"
+DEFAULT_LIB_OSX = os.path.join(
+    "/",
+    "Users",
+    "ladino",
+    "Documents",
+    "01-Platforms",
+    "01-SymuVia",
+    "06-Source",
+    "symudev",
+    "build",
+    "lib",
+    "libSymuVia.dylib",
+)
 
-DEFAULT_LIB_LINUX = "/home/build-symuvia/build/symuvia/libSymuVia.so"
+DEFAULT_LIB_WINDOWS = ""
 
-DEFAULT_LIB_WINDOWS = "/home/build-symuvia/build/symuvia/libSymuVia.dll"
+if platform.system() == "Darwin":
+    try:
+        if Path(DEFAULT_LIB_OSX).exists():
+            DEFAULT_PATH_SYMUVIA = DEFAULT_LIB_OSX
+        else:
+            DEFAULT_PATH_SYMUVIA = config("DEFAULT_LIB_OSX")
+    except UndefinedValueError:
+        SymupyWarning("No Simulator could be defined")
+        DEFAULT_PATH_SYMUVIA = ""
+elif platform.system() == "Linux":
+    try:
+        if Path(DEFAULT_LIB_OSX).exists():
+            DEFAULT_PATH_SYMUVIA = DEFAULT_LIB_LINUX
+        else:
+            DEFAULT_PATH_SYMUVIA = config("DEFAULT_LIB_LINUX")
+    except UndefinedValueError:
+        SymupyWarning("No Simulator could be defined")
+        DEFAULT_PATH_SYMUVIA = ""
+elif platform.system() == "Windows":
+    try:
+        DEFAULT_PATH_SYMUVIA = config("DEFAULT_LIB_WINDOWS")
+    except UndefinedValueError:
+        SymupyWarning("No Simulator could be defined")
+        DEFAULT_PATH_SYMUVIA = ""
+else:
+    raise SymupyError("Platform could not be determined")
 
-# *****************************************************************************
+# =============================================================================
 # DEFAULT SIMULATOR/ OS ASSOCIATION
-# *****************************************************************************
+# =============================================================================
 
-
-DCT_SIMULATORS = {"Darwin": "symuvia", "Linux": "symuvia", "Windows": "symuvia"}
-
-# Feasible Simulator/Platform Paths/Libs
-
-DCT_DEFAULT_PATHS = {
-    ("symuvia", "Darwin"): os.environ.get("SYMUVIALIB", DEFAULT_LIB_OSX),
-    ("symuvia", "Linux"): os.environ.get("SYMUVIALIB", DEFAULT_LIB_LINUX),
-    ("symuvia", "Windows"): os.environ.get("SYMUVIALIB", DEFAULT_LIB_WINDOWS),
-}
-
-# *****************************************************************************
+# =============================================================================
 # DATA SYMUVIA
-# *****************************************************************************
+# =============================================================================
 
-# *****************************************************************************
+# =============================================================================
 # STREAM CONSTANTS
-# *****************************************************************************
+# =============================================================================
 
 BUFFER_STRING = 1000000
 WRITE_XML = False
@@ -109,42 +148,42 @@ FIELD_FORMAT = {
     "@z": float,
 }
 
-FLOAT_SELECT = float64
-INT_SELECT = int32
+FLOATFORMAT = float64
+INTFORMAT = int32
 
 FIELD_FORMATAGG = {
-    "abscisa": (array, FLOAT_SELECT),
-    "acceleration": (array, FLOAT_SELECT),
-    "distance": (array, FLOAT_SELECT),
-    "vehid": (array, INT_SELECT),
-    "ordinate": (array, FLOAT_SELECT),
+    "abscisa": (array, FLOATFORMAT),
+    "acceleration": (array, FLOATFORMAT),
+    "distance": (array, FLOATFORMAT),
+    "vehid": (array, INTFORMAT),
+    "ordinate": (array, FLOATFORMAT),
     "link": (list, None),
     "vehtype": (list, None),
-    "speed": (array, FLOAT_SELECT),
-    "lane": (array, INT_SELECT),
-    "elevation": (array, FLOAT_SELECT),
+    "speed": (array, FLOATFORMAT),
+    "lane": (array, INTFORMAT),
+    "elevation": (array, FLOATFORMAT),
 }
 
-# *****************************************************************************
+# =============================================================================
 # XML Data
-# *****************************************************************************
+# =============================================================================
 
 # DATE/TIME INFORMATION
 HOUR_FORMAT = "%H:%M:%S"
 DELTA_TIME = timedelta(minutes=1)
 TIME_STEP = timedelta(seconds=1).total_seconds()
-today = date.today().strftime("%Y-%m-%d")
-st_time = datetime.now()
-ed_time = st_time + DELTA_TIME
-st_time_str = st_time.strftime("%H:%M:%S")
-ed_time_str = ed_time.strftime("%H:%M:%S")
+TODAY = date.today().strftime("%Y-%m-%d")
+ST_TIME = datetime.now()
+ED_TIME = ST_TIME + DELTA_TIME
+ST_TIME_STR = ST_TIME.strftime("%H:%M:%S")
+ED_TIME_STR = ED_TIME.strftime("%H:%M:%S")
 
 # SIMULATION INFORMATION
 DCT_SIMULATION_INFO = {
     "id": "simID",
     "pasdetemps": f"{TIME_STEP}",
-    "debut": f"st_time_str",
-    "fin": f"ed_time_str",
+    "debut": f"ST_TIME_STR",
+    "fin": f"ED_TIME_STR",
     "loipoursuite": "exacte",
     "comportementflux": "iti",
     "date": f"today",
@@ -164,7 +203,12 @@ DCT_EXPORT_INFO = {
 }
 
 # TAFFIC INFORMATION
-DCT_TRAFIC_INFO = {"id": "trafID", "accbornee": "true", "coeffrelax": "4", "chgtvoie_ghost": "false"}
+DCT_TRAFIC_INFO = {
+    "id": "trafID",
+    "accbornee": "true",
+    "coeffrelax": "4",
+    "chgtvoie_ghost": "false",
+}
 
 # NETWORK INFORMATION
 DCT_NETWORK_INFO = {"id": "resID"}
@@ -180,27 +224,31 @@ DCT_SCENARIO_INFO = {
 }
 
 
-TP_VEHTYPES = ({"id": "HDV", "w": "-5", "kx": "0.12", "vx": "25"}, {"id": "CAV", "w": "-5", "kx": "0.12", "vx": "25"})
+TP_VEHTYPES = (
+    {"id": "HDV", "w": "-5", "kx": "0.12", "vx": "25"},
+    {"id": "CAV", "w": "-5", "kx": "0.12", "vx": "25"},
+)
 
-TP_ACCEL = ({"ax": "1.5", "vit_sup": "5.8"}, {"ax": "1", "vit_sup": "8"}, {"ax": "0.5", "vit_sup": "infini"})
+TP_ACCEL = (
+    {"ax": "1.5", "vit_sup": "5.8"},
+    {"ax": "1", "vit_sup": "8"},
+    {"ax": "0.5", "vit_sup": "infini"},
+)
 
-# *****************************************************************************
+# =============================================================================
 # CONTROL
-# *****************************************************************************
+# =============================================================================
 
 BUFFER_CONTROL = 10  # Amount of control samples stored in memory
 
-# *****************************************************************************
+# =============================================================================
 # VEHICLE DYNAMICS
-# *****************************************************************************
+# =============================================================================
 
 ENGINE_CONSTANT = 0.2
 
-# *****************************************************************************
+# =============================================================================
 # COMMUNICATION
-# *****************************************************************************
+# =============================================================================
 
 RADIOUS_ANT = 500
-
-if __name__ == "__main__":
-    print(os.environ.get("SYMUVIALIB"))
