@@ -23,7 +23,7 @@ import symupy.utils.constants as CT
 
 @pytest.fixture
 def symuvia_library_path():
-    return CT.DCT_DEFAULT_PATHS[("symuvia", platform.system())]
+    return CT.DEFAULT_PATH_SYMUVIA
 
 
 @pytest.fixture
@@ -47,13 +47,13 @@ def bottleneck_002():
 
 def test_load_default_symuvia_via_api(symuvia_library_path):
     simulator = Simulator()
-    assert simulator.libraryPath == symuvia_library_path
+    assert simulator.library_path == symuvia_library_path
 
 
 def test_load_symuvia_via_api(symuvia_library_path):
-    simulator = Simulator(libraryPath=symuvia_library_path)
+    simulator = Simulator(library_path=symuvia_library_path)
     simulator.load_symuvia()
-    assert simulator.libraryPath == symuvia_library_path
+    assert simulator.library_path == symuvia_library_path
 
 
 # ============================================================================
@@ -103,8 +103,12 @@ def test_create_vehicle_bottleneck_001(bottleneck_001, symuvia_library_path):
     assert veh_id == 0
 
 
-def test_create_drive_vehicle_bottleneck_001(bottleneck_001, symuvia_library_path):
-    symuvia = Simulator(libraryPath=symuvia_library_path, stepLaunchMode="full")
+def test_create_drive_vehicle_bottleneck_001(
+    bottleneck_001, symuvia_library_path
+):
+    symuvia = Simulator(
+        library_path=symuvia_library_path, step_launch_mode="full"
+    )
     symuvia.register_simulation(bottleneck_001)
 
     with symuvia as s:
@@ -115,13 +119,13 @@ def test_create_drive_vehicle_bottleneck_001(bottleneck_001, symuvia_library_pat
             # Vehicle instantiation
             veh_id = s.create_vehicle("VL", "Ext_In", "Ext_Out")
             force_driven = s.request.is_vehicle_driven("1")
-            s.request_answer()  
-            
+            s.request_answer()
+
             # Data retrieveal
             drive_status = s.drive_vehicle(veh_id, 20.0, "Zone_001")
             force_driven = s.request.is_vehicle_driven("1")
             position = s.request.query_vehicle_position("1")[0]
-            
+
             s.stop_step()
 
         assert force_driven == True
@@ -131,7 +135,9 @@ def test_create_drive_vehicle_bottleneck_001(bottleneck_001, symuvia_library_pat
 
 
 def test_drive_vehicle_bottleneck_001(bottleneck_001, symuvia_library_path):
-    symuvia = Simulator(libraryPath=symuvia_library_path, stepLaunchMode="full")
+    symuvia = Simulator(
+        library_path=symuvia_library_path, step_launch_mode="full"
+    )
     symuvia.register_simulation(bottleneck_001)
 
     with symuvia as s:
