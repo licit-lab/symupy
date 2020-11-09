@@ -20,7 +20,6 @@ symupy.components.networks.models.vehc\_networks module
    :undoc-members:
    :show-inheritance:
 
-
 Module contents
 ---------------
 
