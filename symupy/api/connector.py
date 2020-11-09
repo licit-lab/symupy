@@ -110,7 +110,8 @@ class Simulator(Configurator, RuntimeDevice):
     """
 
     def __init__(self, **kwargs) -> None:
-        super(Simulator, self).__init__(**kwargs)
+        Configurator.__init__(self, **kwargs)
+        RuntimeDevice.__init__(self)
         self._net = []
 
     def __repr__(self):
