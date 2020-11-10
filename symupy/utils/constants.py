@@ -123,7 +123,7 @@ LAUNCH_MODE = "lite"
 TOTAL_SIMULATION_STEPS = 0
 
 FIELD_DATA = {
-    "@abs": "abscisa",
+    "@abs": "abscissa",
     "@acc": "acceleration",
     "@dst": "distance",
     "@id": "vehid",
