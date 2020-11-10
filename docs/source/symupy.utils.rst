@@ -52,7 +52,6 @@ symupy.utils.xmlgenerator module
    :undoc-members:
    :show-inheritance:
 
-
 Module contents
 ---------------
 

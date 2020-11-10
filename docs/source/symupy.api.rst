@@ -20,7 +20,6 @@ symupy.api.scenario module
    :undoc-members:
    :show-inheritance:
 
-
 Module contents
 ---------------
 

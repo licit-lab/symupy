@@ -20,7 +20,6 @@ symupy.components.vehicles.models.vehicles module
    :undoc-members:
    :show-inheritance:
 
-
 Module contents
 ---------------
 

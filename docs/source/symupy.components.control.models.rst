@@ -12,7 +12,6 @@ symupy.components.control.models.vehicle\_control module
    :undoc-members:
    :show-inheritance:
 
-
 Module contents
 ---------------
 
