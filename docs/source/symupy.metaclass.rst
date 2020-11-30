@@ -1,21 +1,21 @@
-symupy.api package
+Metaclass package
 ==================
 
 Submodules
 ----------
 
-API Connector module
----------------------------
+Observer module
+--------------------------------
 
-.. automodule:: symupy.api.connector
+.. automodule:: symupy.metaclass.observer
    :members:
    :undoc-members:
    :show-inheritance:
 
-Scenario module
---------------------------
+Subject module
+-------------------------------
 
-.. automodule:: symupy.api.scenario
+.. automodule:: symupy.metaclass.subject
    :members:
    :undoc-members:
    :show-inheritance:
@@ -23,7 +23,7 @@ Scenario module
 Module contents
 ---------------
 
-.. automodule:: symupy.api
+.. automodule:: symupy.metaclass
    :members:
    :undoc-members:
    :show-inheritance:

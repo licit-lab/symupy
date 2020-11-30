@@ -10,6 +10,7 @@ Subpackages
    symupy.api
    symupy.components
    symupy.logic
+   symupy.metaclass
    symupy.utils
 
 Module contents
