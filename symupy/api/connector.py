@@ -172,7 +172,7 @@ class Simulator(Configurator, RuntimeDevice):
         self.load_symuvia()
         self.__library.SymRunEx(self.scenarioFilename("UTF8"))
 
-    def run(self, scenario_path: str):
+    def run(self, scenario_path: str = ""):
         """ Alias method to run simulation
 
             Args:
@@ -688,7 +688,7 @@ class Simulator(Configurator, RuntimeDevice):
             :return: Request from the simulator
             :rtype: dict
         """
-        return self.request.data_query()
+        return self.request.data_query
 
     @property
     def simulation(self) -> Simulation:
