@@ -65,6 +65,8 @@ def test_context_publisher(channels):
         s1 = Subscriber(p, channels[0])
         s2 = Subscriber(p, channels[0])
         p.dispatch(channels[0])
+        assert s1._call == 1
+        assert s2._call == 1
 
 
 def test_context_observer(channels):
@@ -72,5 +74,6 @@ def test_context_observer(channels):
         with Subscriber(p, channels[0]), Subscriber(p, channels[1]):
             p.dispatch(channels[0])
 
-def test_context_broadcast(channels):
-    
+
+def test_context_dispatch(channels):
+    pass

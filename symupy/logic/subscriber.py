@@ -8,6 +8,12 @@ This module dedicates a generic object to generate an observer pattern implement
 # STANDARD  IMPORTS
 # ============================================================================
 
+from itertools import count
+
+# ============================================================================
+# INTERNAL IMPORTS
+# ============================================================================
+
 from symupy.metaclass import AbsSubject, AbsObserver
 
 # ============================================================================
@@ -30,11 +36,14 @@ class Subscriber(AbsObserver):
     """
 
     def __init__(self, publisher, channel="default"):
+        self._counter = count(0)
+        self._call = next(self._counter)
         self._publisher = publisher
         self._channel = channel
         publisher.attach(self, channel)
 
     def update(self):
+        self._call = next(self._counter)
         self._publisher.foo()
 
     def __exit__(self, exc_type, exc_value, traceback):
