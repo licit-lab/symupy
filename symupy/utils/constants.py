@@ -40,6 +40,7 @@ import platform
 from decouple import config, UndefinedValueError
 from numpy import array, float64, int32
 from pathlib import Path
+from collections import defaultdict
 
 # =============================================================================
 # INTERNAL IMPORTS
@@ -133,6 +134,7 @@ FIELD_DATA = {
     "@vit": "speed",
     "@voie": "lane",
     "@z": "elevation",
+    "@etat_pilotage": "driven",
 }
 
 FIELD_FORMAT = {
