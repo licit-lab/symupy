@@ -126,7 +126,7 @@ class SimulatorRequest(Publisher):
                 >>> },
 
         """
-        
+
         return {
             ct.FIELD_DATA[key]: ct.FIELD_FORMAT[key](val)
             for key, val in veh_data.items()
@@ -256,7 +256,7 @@ class SimulatorRequest(Publisher):
 
         """
         veh_ids = self.vehicles_in_link(link)
-        return set(veh).issubset(set(veh_ids))
+        return set((veh,)).issubset(set(veh_ids))
 
     def is_vehicle_driven(self, vehid: str) -> bool:
         """ Returns true if the vehicle state is exposed to a driven state

@@ -332,28 +332,28 @@ def test_parse_2_vehicle_vehicles_in_link(simrequest, two_vehicle_xml):
 
 def test_parse_notrajectory_is_vehicles_in_link(simrequest, no_trajectory_xml):
     simrequest.query = no_trajectory_xml
-    b0 = simrequest.is_vehicle_in_link(0)
+    b0 = simrequest.is_vehicle_in_link(0, "Zone_001")
     assert b0 == False
 
-    b01 = simrequest.is_vehicle_in_link(0, 1)
+    b01 = simrequest.is_vehicle_in_link(1, "Zone_001")
     assert b01 == False
 
 
 def test_parse_1_vehicle_is_vehicle_in_link(simrequest, one_vehicle_xml):
     simrequest.query = one_vehicle_xml
 
-    b0 = simrequest.is_vehicle_in_link('', 0)
+    b0 = simrequest.is_vehicle_in_link(0, "Zone_001")
     assert b0 == True
 
-    b01 = simrequest.is_vehicle_in_link(0, 1)
+    b01 = simrequest.is_vehicle_in_link(1, "Zone_001")
     assert b01 == False
 
 
 def test_parse_2_vehicle_is_vehicle_in_link(simrequest, two_vehicle_xml):
     simrequest.query = two_vehicle_xml
 
-    b0 = simrequest.is_vehicle_in_link(0)
+    b0 = simrequest.is_vehicle_in_link(0, "Zone_001")
     assert b0 == True
 
-    b01 = simrequest.is_vehicle_in_link(0, 1)
+    b01 = simrequest.is_vehicle_in_link(1, "Zone_001")
     assert b01 == True
