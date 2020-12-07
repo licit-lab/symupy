@@ -97,6 +97,7 @@ def one_trajectory_vehicle_data():
             "abscissa": 25.0,
             "acceleration": 0.0,
             "distance": 25.0,
+            "driven": False,
             "elevation": 0.0,
             "lane": 1,
             "link": "Zone_001",
@@ -116,6 +117,7 @@ def two_trajectory_vehicle_data():
             "abscissa": 75.0,
             "acceleration": 0.0,
             "distance": 75.0,
+            "driven": False,
             "elevation": 0.0,
             "lane": 1,
             "link": "Zone_001",
@@ -128,6 +130,7 @@ def two_trajectory_vehicle_data():
             "abscissa": 44.12,
             "acceleration": 0.0,
             "distance": 44.12,
+            "driven": False,
             "elevation": 0.0,
             "lane": 1,
             "link": "Zone_001",
@@ -418,3 +421,25 @@ def test_parse_2_vehicle_upstream_of(simrequest, three_vehicle_xml):
 
     b0 = simrequest.vehicle_upstream_of(2)
     assert b0 == tuple()
+
+
+def test_parse_3_get_vehicle_properties(
+    simrequest, three_vehicle_xml, one_trajectory_vehicle_data
+):
+    simrequest.query = three_vehicle_xml
+
+    b0 = simrequest.get_vehicle_properties(0)
+    b1 = simrequest.get_vehicle_properties(1)
+    assert set(b0.keys()) == set(one_trajectory_vehicle_data[0].keys())
+    assert set(b1.keys()) == set(one_trajectory_vehicle_data[0].keys())
+
+
+def test_parse_2_get_vehicle_properties(
+    simrequest, two_vehicle_one_forced_xml, one_trajectory_vehicle_data
+):
+    simrequest.query = two_vehicle_one_forced_xml
+
+    b0 = simrequest.get_vehicle_properties(0)
+    b1 = simrequest.get_vehicle_properties(1)
+    assert set(b0.keys()) == set(one_trajectory_vehicle_data[0].keys())
+    assert set(b1.keys()) == set(one_trajectory_vehicle_data[0].keys())

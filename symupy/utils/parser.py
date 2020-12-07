@@ -109,7 +109,7 @@ class SimulatorRequest(Publisher):
 
 
             Example: 
-                As an example, for an input of the following style 
+                As an example, for an input of the following style ::
 
                 >>> v = OrderedDict([('@abs', '25.00'), ('@acc', '0.00'), ('@dst', '25.00'), ('@id', '0'), ('@ord', '0.00'), ('@tron', 'Zone_001'), ('@type', 'VL'), ('@vit', '25.00'), ('@voie', '1'),('@z', '0')])
                 >>> tv = SimulatorRequest.transform(v)
@@ -130,6 +130,10 @@ class SimulatorRequest(Publisher):
         """
         for key, val in veh_data.items():
             response[ct.FIELD_DATA[key]] = ct.FIELD_FORMAT[key](val)
+        lkey = "@etat_pilotage"
+        response[ct.FIELD_DATA[lkey]] = ct.FIELD_FORMAT[lkey](
+            veh_data.get(lkey)
+        )
         return dict(response)
 
     def get_vehicles_property(self, property: str) -> vdata:
@@ -166,6 +170,13 @@ class SimulatorRequest(Publisher):
                 if veh.get("vehid") in fin_ids
             )
         return self.get_vehicles_property(property)
+
+    def get_vehicle_properties(self, vehid: int) -> dict:
+        data = self.get_vehicle_data()
+        for v in data:
+            if v["vehid"] == vehid:
+                return v
+        return {}
 
     def is_vehicle_in_network(self, vehid: int, *args) -> bool:
         """ True if veh id is in the network at current state, for multiple
@@ -285,6 +296,7 @@ class SimulatorRequest(Publisher):
     @property
     def current_nbveh(self) -> int:
         return self.data_query.get("INST").get("@nbVeh")
+
 
     # def create_vehicle_list(self):
     #     """Initialize
