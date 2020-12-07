@@ -52,6 +52,20 @@ def one_vehicle_forced_xml():
 
 
 @pytest.fixture
+def two_vehicle_one_forced_xml():
+    """ Emulates a XML response for 1 vehicle forced amont 2 trajectories"""
+    STREAM = b'<INST nbVeh="1" val="3.00"><CREATIONS><CREATION entree="Ext_In" id="2" sortie="Ext_Out" type="VL"/></CREATIONS><SORTIES/><TRAJS><TRAJ abs="50.00" acc="0.00" dst="50.00" etat_pilotage="force (ecoulement respecte)" id="0" ord="0.00" tron="Zone_001" type="VL" vit="25.00" voie="1" z="0.00"/><TRAJ abs="19.12" acc="0.00" dst="19.12" id="1" ord="0.00" tron="Zone_001" type="VL" vit="25.00" voie="1" z="0.00"/></TRAJS><STREAMS/><LINKS/><SGTS/><FEUX/><ENTREES><ENTREE id="Ext_In" nb_veh_en_attente="1"/></ENTREES><REGULATIONS/></INST>'
+    return STREAM
+
+
+@pytest.fixture
+def three_vehicle_xml():
+    """ Emulate a XML response for 3 vehicle trajectories"""
+    STREAM = b'<INST nbVeh="3" val="6.00"><CREATIONS/><SORTIES/><TRAJS><TRAJ abs="125.00" acc="0.00" dst="125.00" id="0" ord="0.00" tron="Zone_001" type="VL" vit="25.00" voie="1" z="0.00"/><TRAJ abs="94.12" acc="0.00" dst="94.12" id="1" ord="0.00" tron="Zone_001" type="VL" vit="25.00" voie="1" z="0.00"/><TRAJ abs="50.00" acc="0.00" dst="50.00" id="2" ord="0.00" tron="Zone_001" type="VL" vit="25.00" voie="1" z="0.00"/></TRAJS><STREAMS/><LINKS/><SGTS/><FEUX/><ENTREES><ENTREE id="Ext_In" nb_veh_en_attente="0"/></ENTREES><REGULATIONS/></INST>'
+    return STREAM
+
+
+@pytest.fixture
 def no_trajectory_dct(no_trajectory_xml):
     """ Dictionary expected answer """
     return parse(no_trajectory_xml)
@@ -380,8 +394,11 @@ def test_parse_2_vehicle_is_vehicle_driven(simrequest, two_vehicle_xml):
     assert b0 == False
 
 
-def test_parse_2_vehicle_downstream_of(simrequest, two_vehicle_xml):
-    simrequest.query = two_vehicle_xml
+def test_parse_2_vehicle_downstream_of(simrequest, three_vehicle_xml):
+    simrequest.query = three_vehicle_xml
+
+    b0 = simrequest.vehicle_downstream_of(2)
+    assert b0 == (0, 1)
 
     b0 = simrequest.vehicle_downstream_of(1)
     assert b0 == (0,)
@@ -390,11 +407,14 @@ def test_parse_2_vehicle_downstream_of(simrequest, two_vehicle_xml):
     assert b0 == tuple()
 
 
-def test_parse_2_vehicle_upstream_of(simrequest, two_vehicle_xml):
-    simrequest.query = two_vehicle_xml
+def test_parse_2_vehicle_upstream_of(simrequest, three_vehicle_xml):
+    simrequest.query = three_vehicle_xml
 
     b0 = simrequest.vehicle_upstream_of(0)
-    assert b0 == (1,)
+    assert b0 == (1, 2)
 
     b0 = simrequest.vehicle_upstream_of(1)
+    assert b0 == (2,)
+
+    b0 = simrequest.vehicle_upstream_of(2)
     assert b0 == tuple()
