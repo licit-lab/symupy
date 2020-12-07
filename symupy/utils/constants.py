@@ -148,6 +148,7 @@ FIELD_FORMAT = {
     "@vit": float,
     "@voie": int,
     "@z": float,
+    "@etat_pilotage": bool,
 }
 
 FLOATFORMAT = float64

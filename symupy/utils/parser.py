@@ -14,6 +14,7 @@ from xmltodict import parse
 from xml.parsers.expat import ExpatError
 from ctypes import create_string_buffer
 from typing import Union, Dict, List, Tuple
+from collections import defaultdict
 
 # ============================================================================
 # INTERNAL IMPORTS
@@ -31,6 +32,7 @@ vtypes = Union[float, int, str]
 vdata = Tuple[vtypes]
 vmaps = Dict[str, vtypes]
 vlists = List[vmaps]
+response = defaultdict(lambda: False)
 
 
 class SimulatorRequest(Publisher):
@@ -126,11 +128,9 @@ class SimulatorRequest(Publisher):
                 >>> },
 
         """
-
-        return {
-            ct.FIELD_DATA[key]: ct.FIELD_FORMAT[key](val)
-            for key, val in veh_data.items()
-        }
+        for key, val in veh_data.items():
+            response[ct.FIELD_DATA[key]] = ct.FIELD_FORMAT[key](val)
+        return dict(response)
 
     def get_vehicles_property(self, property: str) -> vdata:
         """ Extracts a specific property and returns a tuple containing this 
@@ -167,49 +167,7 @@ class SimulatorRequest(Publisher):
             )
         return self.get_vehicles_property(property)
 
-    # def query_vehicle_link(self, vehid: str, *args) -> tuple:
-    #     """ Extracts current vehicle link information from simulators response
-
-    #     :param vehid: vehicle id multiple arguments accepted
-    #     :type vehid: str
-    #     :return: vehicle link in tuple form
-    #     :rtype: tuple
-    #     """
-    #     vehids = set((vehid, *args)) if args else vehid
-    #     vehid_pos = self.query_vehicle_data_dict("@tron", vehids)
-    #     return tuple(vehid_pos.get(veh) for veh in vehids)
-
-    # def query_vehicle_position(self, vehid: str, *args) -> tuple:
-    #     """ Extracts current vehicle distance information from simulators response
-
-    #     :param vehid: vehicle id multiple arguments accepted
-    #     :type vehid: str
-    #     :return: vehicle distance in link in tuple form
-    #     :rtype: tuple
-    #     """
-    #     vehids = set((vehid, *args)) if args else vehid
-    #     vehid_pos = self.query_vehicle_data_dict("@dst", vehids)
-    #     return tuple(vehid_pos.get(veh) for veh in vehids)
-
-    # def query_vehicle_data_dict(self, dataval: str, vehid: str, *args) -> dict:
-    #     """ Extracts and filters vehicle data from the simulators response
-
-    #         :param dataval: parameter to be extracted e.g. '@id', '@dst'
-    #         :type dataval: str
-    #         :param vehid: vehicle id, multiple arguments accepted
-    #         :type vehid: str
-    #         :return: dictionary where key is @id and value is dataval
-    #         :rtype: dict
-    #     """
-    #     vehids = set((vehid, *args)) if args else set(vehid)
-    #     data_vehs = [
-    #         (veh.get("@id"), veh.get(dataval))
-    #         for veh in self.get_vehicle_data()
-    #         if veh.get("@id") in vehids
-    #     ]
-    #     return dict(data_vehs)
-
-    def is_vehicle_in_network(self, vehid: str, *args) -> bool:
+    def is_vehicle_in_network(self, vehid: int, *args) -> bool:
         """ True if veh id is in the network at current state, for multiple
             arguments. True if all veh ids are in the network.
 
@@ -258,89 +216,67 @@ class SimulatorRequest(Publisher):
         veh_ids = self.vehicles_in_link(link)
         return set((veh,)).issubset(set(veh_ids))
 
-    def is_vehicle_driven(self, vehid: str) -> bool:
+    def is_vehicle_driven(self, vehid: int) -> bool:
         """ Returns true if the vehicle state is exposed to a driven state
 
             Args:
                 vehid (str):
                     vehicle id
+            
+            Returns: 
+                driven (bool): True if veh is driven
         """
         if self.is_vehicle_in_network(vehid):
 
             forced = tuple(
-                veh.get("@etat_pilotage") == "force (ecoulement respecte)"
+                veh.get("driven") == True
                 for veh in self.get_vehicle_data()
-                if veh.get("@id") == vehid
+                if veh.get("vehid") == vehid
             )
             return any(forced)
         return False
 
-    def vehicle_downstream_of(self, vehid: str) -> tuple:
-        """Get ids of vehicles downstream to vehid
+    def vehicle_downstream_of(self, vehid: int) -> tuple:
+        """ Get ids of vehicles downstream to vehid
 
-        :param vehid: integer describing id of reference veh
-        :type vehid: int
-        :return: tuple with ids of vehicles ahead (downstream)
-        :rtype: tuple
+            Args: 
+                vehid (str):
+                    vehicle id
+
+            Returns: 
+                vehid (tuple):
+                    vehicles downstream of vehicle id
         """
-        link = self.query_vehicle_link(vehid)[0]
-        vehpos = self.query_vehicle_position(vehid)[0]
+        link = self.filter_vehicle_property("link", vehid)[0]
+        vehpos = self.filter_vehicle_property("distance", vehid)[0]
 
-        vehids = set(self.vehicle_in_link(link))
-        neigh = vehids.difference(set(vehid))
+        vehids = set(self.vehicles_in_link(link))
+        neigh = vehids.difference(set((vehid,)))
 
-        neighpos = self.query_vehicle_position(*neigh)
+        neighpos = self.filter_vehicle_property("distance", *neigh)
 
-        return tuple(
-            nbh
-            for nbh, npos in zip(neigh, neighpos)
-            if float(npos) > float(vehpos)
-        )
+        return tuple(nbh for nbh, npos in zip(neigh, neighpos) if npos > vehpos)
 
     def vehicle_upstream_of(self, vehid: str) -> tuple:
         """Get ids of vehicles upstream to vehid
 
-        :param vehid: integer describing id of reference veh
-        :type vehid: int
-        :return: tuple with ids of vehicles behind (upstream)
-        :rtype: tuple
+            Args: 
+                vehid (str):
+                    vehicle id
+
+            Returns: 
+                vehid (tuple):
+                    vehicles upstream of vehicle id
         """
-        link = self.query_vehicle_link(vehid)[0]
-        vehpos = self.query_vehicle_position(vehid)[0]
+        link = self.filter_vehicle_property("link", vehid)[0]
+        vehpos = self.filter_vehicle_property("distance", vehid)[0]
 
-        vehids = set(self.vehicle_in_link(link))
-        neigh = vehids.difference(set(vehid))
+        vehids = set(self.vehicles_in_link(link))
+        neigh = vehids.difference(set((vehid,)))
 
-        neighpos = self.query_vehicle_position(*neigh)
+        neighpos = self.filter_vehicle_property("distance", *neigh)
 
-        return tuple(
-            nbh
-            for nbh, npos in zip(neigh, neighpos)
-            if float(npos) < float(vehpos)
-        )
-
-    def create_vehicle_list(self):
-        """Initialize 
-        """
-        if not self._vehs:
-            self._vehs = VehicleList.from_request(self.get_vehicle_data())
-            return
-
-    def update_vehicle_list(self):
-        """ Construct and or update vehicle data
-        """
-        if self._vehs:
-            self._vehs.update_list(self.get_vehicle_data())
-            return
-        self.create_vehicle_list()
-
-    def __contains__(self, elem: Vehicle) -> bool:
-        return elem in self._vehs
-
-    @property
-    def vehicles(self):
-        self.update_vehicle_list()
-        return self._vehs
+        return tuple(nbh for nbh, npos in zip(neigh, neighpos) if npos < vehpos)
 
     @property
     def current_time(self) -> str:
@@ -349,3 +285,26 @@ class SimulatorRequest(Publisher):
     @property
     def current_nbveh(self) -> int:
         return self.data_query.get("INST").get("@nbVeh")
+
+    # def create_vehicle_list(self):
+    #     """Initialize
+    #     """
+    #     if not self._vehs:
+    #         self._vehs = VehicleList.from_request(self.get_vehicle_data())
+    #         return
+
+    # def update_vehicle_list(self):
+    #     """ Construct and or update vehicle data
+    #     """
+    #     if self._vehs:
+    #         self._vehs.update_list(self.get_vehicle_data())
+    #         return
+    #     self.create_vehicle_list()
+
+    # def __contains__(self, elem: Vehicle) -> bool:
+    #     return elem in self._vehs
+
+    # @property
+    # def vehicles(self):
+    #     self.update_vehicle_list()
+    #     return self._vehs

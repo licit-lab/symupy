@@ -45,6 +45,13 @@ def two_vehicle_xml():
 
 
 @pytest.fixture
+def one_vehicle_forced_xml():
+    """ Emulates a XML response for 1 vehicle forced trajectory"""
+    STREAM = b'<INST nbVeh="1" val="3.00"><CREATIONS/><SORTIES/><TRAJS><TRAJ abs="48.00" acc="-2.00" dst="48.00" etat_pilotage="force (ecoulement respecte)" id="0" ord="0.00" tron="Zone_001" type="VL" vit="23.00" voie="1" z="0.00"/></TRAJS><STREAMS/><LINKS/><SGTS/><FEUX/><ENTREES><ENTREE id="Ext_In" nb_veh_en_attente="0"/></ENTREES><REGULATIONS/></INST>'
+    return STREAM
+
+
+@pytest.fixture
 def no_trajectory_dct(no_trajectory_xml):
     """ Dictionary expected answer """
     return parse(no_trajectory_xml)
@@ -357,3 +364,37 @@ def test_parse_2_vehicle_is_vehicle_in_link(simrequest, two_vehicle_xml):
 
     b01 = simrequest.is_vehicle_in_link(1, "Zone_001")
     assert b01 == True
+
+
+def test_parse_1_vehicle_is_vehicle_driven(simrequest, one_vehicle_forced_xml):
+    simrequest.query = one_vehicle_forced_xml
+
+    b0 = simrequest.is_vehicle_driven(0)
+    assert b0 == True
+
+
+def test_parse_2_vehicle_is_vehicle_driven(simrequest, two_vehicle_xml):
+    simrequest.query = two_vehicle_xml
+
+    b0 = simrequest.is_vehicle_driven(0)
+    assert b0 == False
+
+
+def test_parse_2_vehicle_downstream_of(simrequest, two_vehicle_xml):
+    simrequest.query = two_vehicle_xml
+
+    b0 = simrequest.vehicle_downstream_of(1)
+    assert b0 == (0,)
+
+    b0 = simrequest.vehicle_downstream_of(0)
+    assert b0 == tuple()
+
+
+def test_parse_2_vehicle_upstream_of(simrequest, two_vehicle_xml):
+    simrequest.query = two_vehicle_xml
+
+    b0 = simrequest.vehicle_upstream_of(0)
+    assert b0 == (1,)
+
+    b0 = simrequest.vehicle_upstream_of(1)
+    assert b0 == tuple()
