@@ -69,7 +69,7 @@ class Publisher(AbsSubject):
         """
         del self.get_subscribers(channel)[observer]
 
-    def dispatch(self, channel):
+    def dispatch(self, channel: str = "default"):
         """ Dispatches a message to a specific channel
 
             Args:
