@@ -1,10 +1,10 @@
-symupy.logic package
+Logic package
 ====================
 
 Submodules
 ----------
 
-symupy.logic.base module
+Base State module
 ------------------------
 
 .. automodule:: symupy.logic.base
@@ -12,7 +12,7 @@ symupy.logic.base module
    :undoc-members:
    :show-inheritance:
 
-symupy.logic.runtime module
+Runtime module
 ---------------------------
 
 .. automodule:: symupy.logic.runtime
@@ -20,7 +20,16 @@ symupy.logic.runtime module
    :undoc-members:
    :show-inheritance:
 
-symupy.logic.states module
+Sorted Frozen Set module
+-------------------------------------------
+
+.. automodule:: symupy.logic.sorted_frozen_set
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+States module
 --------------------------
 
 .. automodule:: symupy.logic.states

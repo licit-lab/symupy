@@ -1,4 +1,4 @@
-symupy.components package
+Components package
 =========================
 
 Subpackages

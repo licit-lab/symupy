@@ -1,4 +1,4 @@
-symupy.components.vehicles.models package
+Vehicle models package
 =========================================
 
 Submodules

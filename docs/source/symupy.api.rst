@@ -1,4 +1,4 @@
-symupy.api package
+API package
 ==================
 
 Submodules

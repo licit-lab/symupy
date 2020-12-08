@@ -135,7 +135,21 @@ lstvehs = List[Vehicle]
 
 
 class VehicleList(SortedFrozenSet):
-    """ Class defining a set of vehicles 
+    """ Class defining a set of vehicles. This class is based on a sorted 
+        frozen set and supports multiple operations in between sets. You can define a list based on a simluator request and the list will update automatically via a single method. 
+
+        Args: 
+            request (Publisher): Publisher of information 
+
+        Example: 
+            Define a list of vehicles to trace the requests ::
+                >>> simrequest = SimulatorRequest()
+                >>> simrequest.query = one_vehicle_xml
+                >>> vl = VehicleList(simrequest)
+                >>> simrequest.query = second_vehicle_xml
+                >>> vl.update_list() # This updates manually
+
+        The list could be eventually updated as an observer but for simplicity reasons it is kept like this. 
     """
 
     def __init__(self, request):
