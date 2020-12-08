@@ -74,3 +74,9 @@
 ## 0.4.1 (2020-10-06)
 
 * Adding basic tutorials
+
+## 0.4.2 (2020-11-09)
+
+* Refactoring configurator
+* Updating constants
+* Changing signature of connector 

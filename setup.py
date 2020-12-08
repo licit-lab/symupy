@@ -57,7 +57,7 @@ dev_requirements = [
 
 setup(
     name="symupy",
-    version="0.4.1",
+    version="0.4.2",
     description="A module for Symuvia inside Python",
     long_description=LONG_DESCRIPTION + "\n\n" + HISTORY,
     long_description_content_type="text/markdown",
