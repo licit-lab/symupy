@@ -80,3 +80,10 @@
 * Refactoring configurator
 * Updating constants
 * Changing signature of connector 
+
+## 0.5.0 (2020-12-8)
+
+* XML buffer parser has a new implementation 
+* Now you can trace vehicle data inside the connector via `connector.vehicles`
+* Observer patterns to handle vehicle list 
+* Sorted frozen sets to handle subset of vehicles
