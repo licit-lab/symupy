@@ -123,8 +123,8 @@ def test_create_drive_vehicle_bottleneck_001(
 
             # Data retrieveal
             drive_status = s.drive_vehicle(veh_id, 20.0, "Zone_001")
-            force_driven = s.request.is_vehicle_driven("1")
-            position = s.request.query_vehicle_position("1")[0]
+            force_driven = s.request.is_vehicle_driven(1)
+            position = s.request.filter_vehicle_property("distance", 1)[0]
 
             s.stop_step()
 
@@ -143,10 +143,10 @@ def test_drive_vehicle_bottleneck_001(bottleneck_001, symuvia_library_path):
     with symuvia as s:
         while s.do_next:
             s.run_step()
-            if s.request.is_vehicle_in_network("0"):
+            if s.request.is_vehicle_in_network(0):
                 drive_status = s.drive_vehicle(0, 1.0)
-                force_driven = s.request.is_vehicle_driven("0")
-                position = s.request.query_vehicle_position("0")[0]
+                force_driven = s.request.is_vehicle_driven(0)
+                position = s.request.filter_vehicle_property("distance", 0)[0]
                 s.stop_step()
             else:
                 continue

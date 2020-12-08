@@ -193,7 +193,7 @@ class Simulator(Configurator, RuntimeDevice):
         self._bContinue = self.__library.SymRunNextStepEx(
             self.buffer_string, self.write_xml, byref(self._b_end)
         )
-        # self.request.parse_data(self.buffer_string)
+        self.request.query = self.buffer_string.value
 
     @printer_time
     def run_step(self) -> int:
@@ -377,7 +377,7 @@ class Simulator(Configurator, RuntimeDevice):
         links = self._sim.get_network_links()
 
         if not destination:
-            destination = self.request.query_vehicle_link(str(vehid))[0]
+            destination = self.request.filter_vehicle_property("link", vehid)[0]
 
         if destination not in links:
             raise SymupyDriveVehicleError(
@@ -647,9 +647,9 @@ class Simulator(Configurator, RuntimeDevice):
         self.__performConnect()
         self.__performInitialize()
 
-    # ============================================================================
+    # =========================================================================
     # ATTRIBUTES
-    # ============================================================================
+    # =========================================================================
 
     def scenarioFilename(self, encoding=None) -> str:
         """ 
