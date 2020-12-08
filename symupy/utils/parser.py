@@ -61,7 +61,8 @@ class SimulatorRequest(Publisher):
     @query.setter
     def query(self, response: str):
         self._str_response = response
-        self.dispatch()
+        for c in self._channels:
+            self.dispatch(c)
 
     @property
     def data_query(self):
