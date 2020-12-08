@@ -44,7 +44,8 @@ class Subscriber(AbsObserver):
 
     def update(self):
         self._call = next(self._counter)
-        self._publisher.foo()
+        # Updates only on current channel
+        self._publisher.dispatch(self._channel)
 
     def __exit__(self, exc_type, exc_value, traceback):
         self._publisher.detach(self, self._channel)
