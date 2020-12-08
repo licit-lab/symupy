@@ -1,10 +1,11 @@
-symupy.components.vehicles package
+Vehicle Model
 ==================================
 
 Subpackages
 -----------
 
 .. toctree::
+   :maxdepth: 5
 
    symupy.components.vehicles.models
 

@@ -75,24 +75,23 @@ class Configurator:
         """ Configurator class for containing specific simulator parameter
 
             Args:
+                library_path (str):
+                    Absolute path towards the simulator library
 
-            buffer_string (int):
-                Size of the buffer for message for data received from simulator
+                bufferSize (int):
+                    Size of the buffer for message for data received from simulator
 
-            write_xml (bool):
-                Flag to turn on writting the XML output
+                write_xml (bool):
+                    Flag to turn on writting the XML output
 
-            trace_flow (bool):
-                Flag to determine tracing or not the flow / trajectories
+                trace_flow (bool):
+                    Flag to determine tracing or not the flow / trajectories
 
-            library_path (str):
-                Absolute path towards the simulator library
+                total_steps (int):
+                    Define the number of iterations of a simulation
 
-            total_steps (int):
-                Define the number of iterations of a simulation
-
-            step_launch_mode (str):
-                Determine to way to launch the ``RunStepEx``. Options ``lite``/``full``
+                step_launch_mode (str):
+                    Determine to way to launch the ``RunStepEx``. Options ``lite``/``full``
         """
         click.echo("Configurator: Initialization")
         for key, value in kwargs.items():

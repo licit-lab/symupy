@@ -40,6 +40,7 @@ import platform
 from decouple import config, UndefinedValueError
 from numpy import array, float64, int32
 from pathlib import Path
+from collections import defaultdict
 
 # =============================================================================
 # INTERNAL IMPORTS
@@ -123,7 +124,7 @@ LAUNCH_MODE = "lite"
 TOTAL_SIMULATION_STEPS = 0
 
 FIELD_DATA = {
-    "@abs": "abscisa",
+    "@abs": "abscissa",
     "@acc": "acceleration",
     "@dst": "distance",
     "@id": "vehid",
@@ -133,6 +134,7 @@ FIELD_DATA = {
     "@vit": "speed",
     "@voie": "lane",
     "@z": "elevation",
+    "@etat_pilotage": "driven",
 }
 
 FIELD_FORMAT = {
@@ -146,6 +148,7 @@ FIELD_FORMAT = {
     "@vit": float,
     "@voie": int,
     "@z": float,
+    "@etat_pilotage": bool,
 }
 
 FLOATFORMAT = float64

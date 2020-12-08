@@ -1,10 +1,10 @@
-symupy.components.vehicles.models package
+Vehicle models package
 =========================================
 
 Submodules
 ----------
 
-symupy.components.vehicles.models.dynamics module
+Dynamics module
 -------------------------------------------------
 
 .. automodule:: symupy.components.vehicles.models.dynamics
@@ -12,14 +12,13 @@ symupy.components.vehicles.models.dynamics module
    :undoc-members:
    :show-inheritance:
 
-symupy.components.vehicles.models.vehicles module
+Vehicle module
 -------------------------------------------------
 
 .. automodule:: symupy.components.vehicles.models.vehicles
    :members:
    :undoc-members:
    :show-inheritance:
-
 
 Module contents
 ---------------

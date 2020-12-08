@@ -61,6 +61,7 @@ release = symupy.__version__
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    "sphinx.ext.napoleon",
     "sphinx.ext.autodoc",
     "sphinx.ext.viewcode",
     "recommonmark",
@@ -147,7 +148,9 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass
 # [howto, manual, or own class]).
-latex_documents = [(master_doc, "symupy.tex", "SymuVia Python API", "Andres Ladino", "manual")]
+latex_documents = [
+    (master_doc, "symupy.tex", "SymuVia Python API", "Andres Ladino", "manual")
+]
 
 
 # -- Options for manual page output ------------------------------------

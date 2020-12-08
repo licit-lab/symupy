@@ -1,82 +1,134 @@
-import os
-import unittest
-from symupy.api import Simulation, Simulator
+"""
+    Unit tests for symupy.components.vehicles.models
+"""
+
+# ============================================================================
+# STANDARD  IMPORTS
+# ============================================================================
+
+import pytest
+
+# ============================================================================
+# INTERNAL IMPORTS
+# ============================================================================
+
+from symupy.utils import SimulatorRequest
 from symupy.components import Vehicle, VehicleList
-import platform
 
-# DCT_PATH = {"Darwin": "osx-64"}
-# DCT_LFN = {"Darwin": "libSymuVia.dylib"}
-# _platform = platform.system()
-# _libpath = DCT_PATH.get(_platform)
-# _libfilen = DCT_LFN.get(_platform)
+# ============================================================================
+# TESTS AND DEFINITIONS
+# ============================================================================
 
 
-# class TestBottleneck001(unittest.TestCase):
-#     def setUp(self):
-#         self.get_simulator()
-#         self.get_bottleneck_001()
-
-#     def get_simulator(self):
-#         self.libpath = ("lib", _libpath, _libfilen)
-#         self.sim_path = os.path.join(os.getcwd(), *self.libpath)
-
-#     def get_bottleneck_001(self):
-#         self.file_name = "bottleneck_001.xml"
-#         file_path = ("tests", "mocks", "bottlenecks", self.file_name)
-#         self.mocks_path = os.path.join(os.getcwd(), *file_path)
-
-#     def test_load_bottleneck_001(self):
-#         sim_case = Simulation(self.mocks_path)
-#         self.assertEqual(sim_case.filename, self.mocks_path)
-
-#     # @unittest.skip("Skipping momentary")
-#     def test_vehicle_in_network_bottleneck_001(self):
-#         sim_instance = Simulator.from_path(self.mocks_path, self.sim_path)
-#         flag = False
-#         with sim_instance as s:
-#             while s.do_next:
-#                 s.run_step()
-#                 if s.state.is_vehicle_in_network("0"):
-#                     flag = True
-
-#         self.assertTrue(flag)
+@pytest.fixture
+def simrequest():
+    return SimulatorRequest()
 
 
-# class TestBottleneck002(unittest.TestCase):
-#     def setUp(self):
-#         self.get_simulator()
-#         self.get_bottleneck_002()
-
-#     def get_simulator(self):
-#         self.libpath = ("lib", _libpath, _libfilen)
-#         self.sim_path = os.path.join(os.getcwd(), *self.libpath)
-
-#     def get_bottleneck_002(self):
-#         self.file_name = "bottleneck_002.xml"
-#         file_path = ("tests", "mocks", "bottlenecks", self.file_name)
-#         self.mocks_path = os.path.join(os.getcwd(), *file_path)
-
-#     def test_load_bottleneck_002(self):
-#         sim_case = Simulation(self.mocks_path)
-#         self.assertEqual(sim_case.filename, self.mocks_path)
-
-#     def test_vehicle_in_network_bottleneck_002(self):
-#         sim_instance = Simulator.from_path(self.mocks_path, self.sim_path)
-
-#         flag0, flag1, flag2 = False, False, False
-#         with sim_instance as s:
-#             while s.do_next:
-#                 s.run_step()
-#                 if s.state.is_vehicle_in_network("0"):
-#                     flag0 = True
-#                 if s.state.is_vehicle_in_network("1"):
-#                     flag1 = True
-#                 if s.state.is_vehicle_in_network("2"):
-#                     flag2 = True
-#         self.assertTrue(flag0)
-#         self.assertTrue(flag1)
-#         self.assertTrue(flag2)
+@pytest.fixture
+def one_vehicle_xml():
+    """ Emulates a XML response for 1 vehicle trajectory"""
+    STREAM = b'<INST nbVeh="1" val="2.00"><CREATIONS><CREATION entree="Ext_In" id="1" sortie="Ext_Out" type="VL"/></CREATIONS><SORTIES/><TRAJS><TRAJ abs="25.00" acc="0.00" dst="25.00" id="0" ord="0.00" tron="Zone_001" type="VL" vit="25.00" voie="1" z="0.00"/></TRAJS><STREAMS/><LINKS/><SGTS/><FEUX/><ENTREES><ENTREE id="Ext_In" nb_veh_en_attente="1"/></ENTREES><REGULATIONS/></INST>'
+    return STREAM
 
 
-# if __name__ == "__main__":
-#     unittest.main()
+@pytest.fixture
+def one_vehicle_forced_xml():
+    """ Emulates a XML response for 1 vehicle forced trajectory"""
+    STREAM = b'<INST nbVeh="1" val="3.00"><CREATIONS/><SORTIES/><TRAJS><TRAJ abs="48.00" acc="-2.00" dst="48.00" etat_pilotage="force (ecoulement respecte)" id="0" ord="0.00" tron="Zone_001" type="VL" vit="23.00" voie="1" z="0.00"/></TRAJS><STREAMS/><LINKS/><SGTS/><FEUX/><ENTREES><ENTREE id="Ext_In" nb_veh_en_attente="0"/></ENTREES><REGULATIONS/></INST>'
+    return STREAM
+
+
+@pytest.fixture
+def two_vehicle_one_forced_xml():
+    """ Emulates a XML response for 1 vehicle forced amont 2 trajectories"""
+    STREAM = b'<INST nbVeh="1" val="3.00"><CREATIONS><CREATION entree="Ext_In" id="2" sortie="Ext_Out" type="VL"/></CREATIONS><SORTIES/><TRAJS><TRAJ abs="50.00" acc="0.00" dst="50.00" etat_pilotage="force (ecoulement respecte)" id="0" ord="0.00" tron="Zone_001" type="VL" vit="25.00" voie="1" z="0.00"/><TRAJ abs="19.12" acc="0.00" dst="19.12" id="1" ord="0.00" tron="Zone_001" type="VL" vit="25.00" voie="1" z="0.00"/></TRAJS><STREAMS/><LINKS/><SGTS/><FEUX/><ENTREES><ENTREE id="Ext_In" nb_veh_en_attente="1"/></ENTREES><REGULATIONS/></INST>'
+    return STREAM
+
+
+@pytest.fixture
+def two_vehicle_xml():
+    """ Emulates  a XML response for 2 vehicle trajectories"""
+    STREAM = b'<INST nbVeh="2" val="4.00"><CREATIONS/><SORTIES/><TRAJS><TRAJ abs="75.00" acc="0.00" dst="75.00" id="0" ord="0.00" tron="Zone_001" type="VL" vit="25.00" voie="1" z="0.00"/><TRAJ abs="44.12" acc="0.00" dst="44.12" id="1" ord="0.00" tron="Zone_001" type="VL" vit="25.00" voie="1" z="0.00"/></TRAJS><STREAMS/><LINKS/><SGTS/><FEUX/><ENTREES><ENTREE id="Ext_In" nb_veh_en_attente="1"/></ENTREES><REGULATIONS/></INST>'
+    return STREAM
+
+
+def test_create_default_vehicle(simrequest):
+    v = Vehicle(simrequest)
+    assert v.abscissa == 0.0
+
+
+def test_create_specific_vehicle(simrequest, one_vehicle_xml):
+    simrequest.query = one_vehicle_xml
+    d = simrequest.get_vehicle_data()[0]
+    v = Vehicle(simrequest, **d)
+    assert v.distance == 25.00
+    assert v.driven == False
+
+
+def test_create_specific_driven_vehicle(simrequest, one_vehicle_forced_xml):
+    simrequest.query = one_vehicle_forced_xml
+    d = simrequest.get_vehicle_data()[0]
+    v = Vehicle(simrequest, **d)
+    assert v.distance == 48.00
+    assert v.driven == True
+
+
+def test_create_update_vehicle_state(simrequest, one_vehicle_xml):
+    v = Vehicle(simrequest)
+    assert v.distance == 0.00
+    simrequest.query = one_vehicle_xml
+    assert v.distance == 25.00
+
+
+def test_create_2_update_vehicle_states(simrequest, two_vehicle_one_forced_xml):
+    v1 = Vehicle(simrequest, vehid=0)
+    v2 = Vehicle(simrequest, vehid=1)
+    assert v1.distance == 0.0
+    assert v2.distance == 0.0
+    simrequest.query = two_vehicle_one_forced_xml
+    assert v1.distance == 50.00
+    assert v2.distance == 19.12
+
+
+def test_create_vehicle_list_empty(simrequest):
+    vl = VehicleList(simrequest)
+    assert len(vl) == 0
+
+
+def test_create_vehicle_list_1_vehicle(simrequest, one_vehicle_xml):
+    simrequest.query = one_vehicle_xml
+    vl = VehicleList(simrequest)
+    assert len(vl) == 1
+
+
+def test_create_vehicle_list_2_vehicles(simrequest, two_vehicle_one_forced_xml):
+    simrequest.query = two_vehicle_one_forced_xml
+    vl = VehicleList(simrequest)
+    assert len(vl) == 2
+
+
+def test_create_vehicle_list_1_vehicle_update(
+    simrequest, one_vehicle_xml, one_vehicle_forced_xml
+):
+    simrequest.query = one_vehicle_xml
+    vl = VehicleList(simrequest)
+    assert len(vl) == 1
+    assert vl[0].distance == 25.00
+    simrequest.query = one_vehicle_forced_xml
+    assert len(vl) == 1
+    assert vl[0].distance == 48.00
+
+
+def test_create_vehicle_list_2_vehicles_gradual_update(
+    simrequest, one_vehicle_xml, two_vehicle_xml
+):
+    simrequest.query = one_vehicle_xml
+    vl = VehicleList(simrequest)
+    assert len(vl) == 1
+    assert vl[0].distance == 25.00
+    simrequest.query = two_vehicle_xml
+    vl.update_list()
+    assert len(vl) == 2
+    assert vl[0].distance == 75.00
+    assert vl[1].distance == 44.12
