@@ -39,7 +39,6 @@ class SimulatorRequest(Publisher):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self._str_response = create_string_buffer(ct.BUFFER_STRING)
-        self._vehs = []
 
     def __repr__(self):
         return f"{self.__class__.__name__}()"
