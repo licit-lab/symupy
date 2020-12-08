@@ -61,6 +61,7 @@ class SimulatorRequest(Publisher):
     @query.setter
     def query(self, response: str):
         self._str_response = response
+        self.dispatch()
 
     @property
     def data_query(self):
