@@ -18,7 +18,7 @@ from symupy.metaclass import AbsSubject
 class Publisher(AbsSubject):
     """ This generic class model implements a general publisher pattern to
         broadcast information towards different subscribers. Subscribers are
-        intented to be objects such as vehicles or other objects that should be aware of the .
+        intented to be objects such as vehicles or other objects that should be aware of the publisher.
 
         In particular this creates a subject that can notify to a specific channel where subscribers are registered.
         
