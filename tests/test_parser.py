@@ -443,3 +443,13 @@ def test_parse_2_get_vehicle_properties(
     b1 = simrequest.get_vehicle_properties(1)
     assert set(b0.keys()) == set(one_trajectory_vehicle_data[0].keys())
     assert set(b1.keys()) == set(one_trajectory_vehicle_data[0].keys())
+
+
+def test_retrieve_time_step(simrequest, three_vehicle_xml):
+    simrequest.query = three_vehicle_xml
+    assert simrequest.current_time == 6.00
+
+
+def test_retrieve_nb_veh(simrequest, three_vehicle_xml):
+    simrequest.query = three_vehicle_xml
+    assert simrequest.current_nbveh == 3

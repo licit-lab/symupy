@@ -281,9 +281,9 @@ class SimulatorRequest(Publisher):
         return tuple(nbh for nbh, npos in zip(neigh, neighpos) if npos < vehpos)
 
     @property
-    def current_time(self) -> str:
-        return self.data_query.get("INST").get("@val")
+    def current_time(self) -> float:
+        return float(self.data_query.get("INST").get("@val"))
 
     @property
     def current_nbveh(self) -> int:
-        return self.data_query.get("INST").get("@nbVeh")
+        return int(self.data_query.get("INST").get("@nbVeh"))
