@@ -1,69 +1,123 @@
-""" This module implements a vehicle model.
+""" 
+Vehicle Model
+=============
+This module implements a vehicle model.
 
-    Vehicle model acts as an instance to modify vehicle's behaviour according to 
+Vehicle model acts as an instance to trace individual vehicle data and modify vehicle behavior according to given dynamics
 """
+
+# ============================================================================
+# STANDARD  IMPORTS
+# ============================================================================
 
 from typing import Dict, List
 from collections import OrderedDict
 import itertools
 import numpy as np
 import pandas as pd
+from dataclasses import dataclass, asdict
 
+
+# ============================================================================
+# INTERNAL IMPORTS
+# ============================================================================
+
+from symupy.logic.subscriber import Subscriber
 from symupy.utils import constants as ct
-
 from .dynamics import VehicleDynamic
+from symupy.logic.sorted_frozen_set import SortedFrozenSet
+
+# ============================================================================
+# CLASS AND DEFINITIONS
+# ============================================================================
 
 
-class Vehicle(object):
-    """Class for defining a vehicle
+@dataclass
+class Vehicle(Subscriber):
+    """ Vehicle class defined for storing data on a single vehicle: 
+
+        You need a Publisher from where the vehicle is going to take data: 
+
+        Args: 
+            request (Publisher): Parser or object publishing data
+        
+        Retunrns: 
+            vehicle (Vehicle): A Dataclass with vehicle parameters
+
+        ============================  =================================
+        **Variable**                  **Description**
+        ----------------------------  ---------------------------------
+        ``abscissa``                    Current coordinate on y axis
+        ``acceleration``                Current acceleration
+        ``distance``                    Current distance traveled on link
+        ``elevation``                   Current elevation
+        ``lane``                        Current lane
+        ``link``                        Current road vehicle is traveling
+        ``ordinate``                    Current coordinate x axis
+        ``speed``                       Current speed
+        ``vehid``                       Vehicle id
+        ``vehtype``                     Vehicle class
+        ============================  =================================
+
+        Example: 
+            This is one example on how to register a new vehicle ::
+
+            >>> req = SimulatorRequest()
+            >>> veh = Vehicle(req)
+            >>> req.dispatch() # This will update vehicle data
+
+        When having multiple vehicles please indicate the `vehid` before launching the dispatch method. This is because the vehicle object is looks for a vehicle id within the data. 
+
+        Example: 
+            This is one example on how to register two vehicles ::
+
+            >>> req = SimulatorRequest()
+            >>> veh1 = Vehicle(req, vehid=0)
+            >>> veh2 = Vehicle(req, vehid=1)
+            >>> req.dispatch() # This will update vehicle data on both vehicles
+
+
     """
 
     counter = itertools.count()
+    abscissa: float = 0.0
+    acceleration: float = 0.0
+    distance: float = 0.0
+    driven: bool = False
+    elevation: float = 0.0
+    lane: int = 1
+    link: str = "Zone_001"
+    ordinate: float = 0.0
+    speed: float = 25.0
+    vehid: int = 0
+    vehtype: str = ""
 
-    def __init__(
-        self,
-        abscisa=0.0,
-        acceleration=0.0,
-        distance=0.0,
-        vehid=0,
-        ordinate=0.0,
-        link="",
-        vehtype="",
-        speed=0.0,
-        lane=0,
-        elevation=0.0,
-        dynamic=VehicleDynamic(),
-        itinerary=[],
-    ):
+    def __init__(self, request, **kwargs):
         """ This initializer creates a Vehicle
         """
-        self.abscisa = abscisa
-        self.acceleration = acceleration
-        self.distance = distance
-        self.vehid = vehid
-        self.ordinate = ordinate
-        self.link = link
-        self.vehtype = vehtype
-        self.speed = speed
-        self.lane = lane
-        self.elevation = elevation
-        self.dynamic = dynamic
-        self.itinerary = itinerary
+        # Undefined properties
+        self.count = next(self.__class__.counter)
+        self.dynamic = VehicleDynamic()
+        self.itinerary = []
 
-    def __repr__(self):
-        data_dct = ", ".join(f"{k}:{v}" for k, v in self.__dict__.items())
-        return f"{self.__class__.__name__}({data_dct})"
+        # Optional properties
+        for key, value in kwargs.items():
+            setattr(self, key, value)
 
-    def __str__(self):
-        data_dct = ", ".join(f"{k}:{v}" for k, v in self.__dict__.items())
-        return f"{self.__class__.__name__}({data_dct})"
+        super().__init__(request)
 
-    def update_state(self, dataveh):
-        """Updates data within the structure with 
-        
-        :param dataveh: vehicle 
-        :type dataveh: Vehicle
+    def __hash__(self):
+        return hash((type(self), self.vehid))
+
+    def __eq__(self, veh):
+        if not isinstance(veh, type(self)):
+            return NotImplemented
+        return self.vehid == veh.vehid
+
+    def update(self):
+        """ Updates data from publisher 
         """
+        dataveh = self._publisher.get_vehicle_properties(self.vehid)
         self.__dict__.update(**dataveh)
 
         link = getattr(self, "link")
@@ -71,178 +125,77 @@ class Vehicle(object):
             self.itinerary.append(link)
 
     @property
-    def C(self):
-        """Output matrix"""
-        return self.__output_matrix
-
-    def activate_sensor(self, **kwargs) -> None:
-        """Define the observation matrix and observed states in the vehicle
-           
-           vehicle.activate_sensor(speed=True,position=True)
-        
-        :return: Set the observation matrix __output_matrix
-        :rtype: None
-        """
-        dct_idx = {"position": 0, "speed": 1, "acceleration": 2}
-        C = np.zeros([len(kwargs.keys()), 3])
-        for key in kwargs.keys():
-            idx = dct_idx.get(key)
-            C[idx][idx] = kwargs.get(key, 0)
-        self.__output_matrix = C
-
-    @property
-    def vector_state(self) -> np.array:
+    def x(self):
         """Vehicle state vector (x,v,a)"""
         return np.array((self.distance, self.speed, self.acceleration))
-
-    @property
-    def observed_state(self) -> np.array:
-        """ Return observed states via C@(x,v,a)"""
-        return self.C @ self.vector_state
-
-    def predict_state(self, control) -> np.array:
-        """ Return predicted states via self.dynamic"""
-        return self.dynamic(self, control)
-
-    @staticmethod
-    def format_dict(dataveh: OrderedDict) -> dict:
-        """ This function creates the dictionary 
-               {"abscisa":       float(data),
-                "acceleration":  float(data),
-                "distance":      float(data),
-                "vehid":         int(data),
-                "ordinate":      float(data),
-                "link":          str (data),
-                "vehtype":       str (data),
-                "speed":         float(data),
-                "lane":          int (data),
-                "elevation":     float(data),
-               } 
-        
-        :param dataveh: Ordered Dictionary from XML query
-        :type dataveh: OrderedDict
-        :return: Dictionary as in description
-        :rtype: [type]
-        """
-        data = {ct.FIELD_DATA[key]: ct.FIELD_FORMAT[key](val) for key, val in dataveh.items()}
-        return data
-
-    @classmethod
-    def from_response(cls, dataveh: OrderedDict):
-        """Constructor for the class from a specific dictionary
-        
-        :param dataveh: Ordered dictionary from XML query
-        :type dataveh: OrderedDict
-        :return: Vehicle object
-        :rtype: [type]
-        """
-        return cls(**Vehicle.format_dict(dataveh))
 
 
 lstordct = List[OrderedDict]
 lstvehs = List[Vehicle]
 
 
-class VehicleList(object):
-    """Class for defining a list of vehicles
+class VehicleList(SortedFrozenSet):
+    """ Class defining a set of vehicles 
     """
 
-    def __init__(self, newvehs: lstvehs):
-        self.vehicles = {}
-        for veh in newvehs:
-            self.vehicles[veh.vehid] = veh
+    def __init__(self, request):
+        self._request = request
+        data = [Vehicle(request, **v) for v in request.get_vehicle_data()]
+        super().__init__(data)
 
-    def update_list(self, current_vehs: lstordct):
-        """ Appends a new list of vehicles
-
-        :param vehlist: List of vehicles
-        :type vehlist: lstordct
+    def update_list(self):
+        """ Update vehicle data according to an update in the request.
         """
-        # Reformating data in vehicle dict
-        current_vehs = [Vehicle.format_dict(veh) for veh in current_vehs]
+        data = self + VehicleList(self._request)
+        self._items = data._items
 
-        for veh in current_vehs:
-            veh_id = veh.get("vehid")
-            if veh_id in self.vehicles.keys():
-                # Update existing vehicle
-                self.vehicles.get(veh_id).update_state(veh)
-            else:
-                # Create a new vehicle and append
-                self.vehicles[veh_id] = Vehicle(**veh)
-
-    def _get_vehicles_attribute(self, attribute: str) -> np.array:
+    def _get_vehicles_attribute(self, attribute: str) -> pd.Series:
         """ Retrieve list of parameters 
         
-        :param attribute: One of the vehicles attribute e.g. 'distance'
-        :type attribute: str
-        :return: vector of all parameters
-        :rtype: np.array
+            Args: 
+                attribute (str): One of the vehicles attribute e.g. 'distance'
+            
+            Returns 
+                dataframe (series): Returns values for a set of vehicles 
         """
-        constructor, ftype = ct.FIELD_FORMATAGG[attribute]
-        if ftype:
-            return constructor([getattr(veh, attribute) for veh in self], dtype=ftype)
-        return [getattr(veh, attribute) for veh in self]  # Case str
+        return self._to_pandas()[attribute]
 
     @property
-    def acceleration(self):
+    def acceleration(self) -> pd.Series:
+        """
+            Returns all vehicle's accelerations 
+        """
         return self._get_vehicles_attribute("acceleration")
 
     @property
-    def speed(self):
+    def speed(self) -> pd.Series:
+        """
+            Returns all vehicle's accelerations 
+        """
         return self._get_vehicles_attribute("speed")
 
     @property
-    def distance(self):
+    def distance(self) -> pd.Series:
+        """
+            Returns all vehicle's accelerations 
+        """
         return self._get_vehicles_attribute("distance")
 
     def _to_pandas(self) -> pd.DataFrame:
         """ Transforms vehicle list into a pandas for rendering purposes 
         
-        :return: Returns a table with pandas data.
-        :rtype: pd.DataFrame
-        """
+            Returns: 
+                df (DataFrame): Returns a table with pandas data.
 
-        df_print = pd.DataFrame()
-        for key, value in self.vehicles.items():
-            df_print = df_print.append(pd.DataFrame(value.__dict__, index=(key,)))
-        return df_print
+        """
+        return pd.DataFrame([asdict(v) for v in self._items])
 
     def __str__(self):
-        if not self.vehicles:
+        if not self._items:
             return "No vehicles have been registered"
-        df_to_print = self._to_pandas()
-        return str(df_to_print)
+        return str(self._to_pandas())
 
     def __repr__(self):
-        if not self.vehicles:
+        if not self._items:
             return "No vehicles have been registered"
-        df_to_print = self._to_pandas()
-        return repr(df_to_print)
-
-    def __iter__(self):
-        self.iterveh = iter(self.vehicles.values())
-        return self
-
-    def __next__(self):
-        return next(self.iterveh)
-
-    def __contains__(self, veh: Vehicle):
-        return veh.vehid in self.get_vehid
-
-    def __getitem__(self, key: int):
-        return self.vehicles[key]
-
-    @classmethod
-    def from_request(cls, vehlistdct: lstordct):
-        """Constructs a vehicle list from a list of ordered dictionaries (simulator repsonse)
-
-        :param vehlist: list containing vehicle data in ordered dict format
-        :type vehlist: list
-        :return: vehicle list containing list of vehicle data classes
-        :rtype: VehicleList
-        """
-        return cls([Vehicle.from_response(d) for d in vehlistdct])
-
-    @property
-    def get_vehid(self):
-        return [v.vehid for v in self.vehicles]
+        return repr(self._to_pandas())
