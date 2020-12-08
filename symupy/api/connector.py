@@ -50,6 +50,7 @@ from symupy.utils.exceptions import (
 from .scenario import Simulation
 from symupy.utils import SimulatorRequest, Configurator
 from symupy.logic import RuntimeDevice
+from symupy.components.vehicles import VehicleList
 
 from symupy.utils import timer_func, printer_time
 from symupy.utils import constants as CT
@@ -194,6 +195,7 @@ class Simulator(Configurator, RuntimeDevice):
             self.buffer_string, self.write_xml, byref(self._b_end)
         )
         self.request.query = self.buffer_string.value
+        self.vehicles.update_list()
 
     @printer_time
     def run_step(self) -> int:
@@ -613,6 +615,7 @@ class Simulator(Configurator, RuntimeDevice):
         self._n_iter = iter(self._sim.get_simulation_steps())
         self._c_iter = next(self._n_iter)
         self._bContinue = True
+        self.vehicles = VehicleList(self.request)
 
         self.init_total_travel_distance()
         self.init_total_travel_time()
