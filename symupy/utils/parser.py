@@ -73,16 +73,6 @@ class SimulatorRequest(Publisher):
         except AttributeError:
             return {}
 
-    # def parse_data(self, response: str = None) -> dict:
-    #     """Parses response from simulator to data
-
-    #     :param response: Simulator response
-    #     :type response: str
-    #     :return: Full simulator response
-    #     :rtype: dict
-    #     """
-    #     self._str_response = response
-
     def get_vehicle_data(self) -> vlists:
         """ Extracts vehicles information from simulators response
 
@@ -296,27 +286,3 @@ class SimulatorRequest(Publisher):
     @property
     def current_nbveh(self) -> int:
         return self.data_query.get("INST").get("@nbVeh")
-
-
-    # def create_vehicle_list(self):
-    #     """Initialize
-    #     """
-    #     if not self._vehs:
-    #         self._vehs = VehicleList.from_request(self.get_vehicle_data())
-    #         return
-
-    # def update_vehicle_list(self):
-    #     """ Construct and or update vehicle data
-    #     """
-    #     if self._vehs:
-    #         self._vehs.update_list(self.get_vehicle_data())
-    #         return
-    #     self.create_vehicle_list()
-
-    # def __contains__(self, elem: Vehicle) -> bool:
-    #     return elem in self._vehs
-
-    # @property
-    # def vehicles(self):
-    #     self.update_vehicle_list()
-    #     return self._vehs
