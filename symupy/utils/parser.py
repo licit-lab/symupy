@@ -52,6 +52,10 @@ class SimulatorRequest(Publisher):
             else "Simulation has not started"
         )
 
+    # =========================================================================
+    # MEMORY HANDLING
+    # =========================================================================
+
     @property
     def query(self):
         """String response from the simulator"""
@@ -64,7 +68,20 @@ class SimulatorRequest(Publisher):
             self.dispatch(c)
 
     @property
+    def current_time(self) -> float:
+        return float(self.data_query.get("INST").get("@val"))
+
+    @property
+    def current_nbveh(self) -> int:
+        return int(self.data_query.get("INST").get("@nbVeh"))
+
+    @property
     def data_query(self):
+        """ Direct parsing from the string buffer
+            
+            Returns:
+                simdata (OrderedDict): Simulator data parsed from XML
+        """
         try:
             dataveh = parse(self._str_response)
             # Transform ordered dictionary into new keys
@@ -73,6 +90,10 @@ class SimulatorRequest(Publisher):
             return {}
         except AttributeError:
             return {}
+
+    # =========================================================================
+    # METHODS
+    # =========================================================================
 
     def get_vehicle_data(self) -> vlists:
         """ Extracts vehicles information from simulators response
@@ -163,6 +184,11 @@ class SimulatorRequest(Publisher):
         return self.get_vehicles_property(property)
 
     def get_vehicle_properties(self, vehid: int) -> dict:
+        """ Return all properties for a given vehicle id 
+        
+            Returns: 
+                vehdata (dict): Dictionary with all vehicle properties
+        """
         data = self.get_vehicle_data()
         for v in data:
             if v["vehid"] == vehid:
@@ -279,11 +305,3 @@ class SimulatorRequest(Publisher):
         neighpos = self.filter_vehicle_property("distance", *neigh)
 
         return tuple(nbh for nbh, npos in zip(neigh, neighpos) if npos < vehpos)
-
-    @property
-    def current_time(self) -> float:
-        return float(self.data_query.get("INST").get("@val"))
-
-    @property
-    def current_nbveh(self) -> int:
-        return int(self.data_query.get("INST").get("@nbVeh"))
