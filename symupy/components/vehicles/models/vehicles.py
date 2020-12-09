@@ -11,7 +11,6 @@ Vehicle model acts as an instance to trace individual vehicle data and modify ve
 # ============================================================================
 
 from typing import Dict, List
-from collections import OrderedDict
 import itertools
 import numpy as np
 import pandas as pd
