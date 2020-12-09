@@ -130,10 +130,6 @@ class Vehicle(Subscriber):
         return np.array((self.distance, self.speed, self.acceleration))
 
 
-lstordct = List[OrderedDict]
-lstvehs = List[Vehicle]
-
-
 class VehicleList(SortedFrozenSet):
     """ Class defining a set of vehicles. This class is based on a sorted 
         frozen set and supports multiple operations in between sets. You can define a list based on a simluator request and the list will update automatically via a single method. 
