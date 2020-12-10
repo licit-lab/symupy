@@ -740,7 +740,7 @@ class Simulator(Configurator, RuntimeDevice):
     # =========================================================================
 
     @classmethod
-    def from_path(cls, filename_path, symuvia_path):
+    def from_path(cls, filename_path: str, symuvia_path: str):
         """ Alternative constructor for the Simulator 
 
             Example:
