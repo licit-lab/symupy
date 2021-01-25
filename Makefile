@@ -85,6 +85,8 @@ test: ## run tests quickly with the default Python
 docs: ## generate Sphinx HTML documentation, including API docs
 	rm -f docs/source/symupy.rst
 	rm -f docs/source/modules.rst
+	cp README.md docs/source/
+	cp CONTRIBUTING.md docs/source/contributing/
 	# rm -f docs/source/symupy.*.rst
 	sphinx-apidoc -o docs/source symupy
 	$(MAKE) -C docs clean
