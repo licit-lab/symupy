@@ -4,15 +4,14 @@ If you're reading this section, you're probably interested in contributing to Sy
 
 ## Roadmap plan
 
-A general road plan should be available as a main issue entitled `Roadmap Plan` in the [issues page](https://github.com/licit-lab/symupy/issues). This plan is intended to collect the general plan of activities within the development process. In addition this issue intends to capture the general features that will be present in future releases of the software. In general, the intention of the plan is to keep a list of pending topics to work on. These pending topics could be: new features, bugs, documentation issues. Each one of the topics listed in the general plan should be associated to the corresponding issue 
+A general road plan should be available as a main issue entitled `Roadmap Plan`. This plan is intended to collect the general plan of activities within the development process. This plan intends to capture the general features. In general the intention of the plan is to keep a list of pending topics to work on. These pending topics could be: new features, bugs, documentation issues. Each one of the topics listed in the general plan should be associated to the corresponding issue 
 
 ### Reporting problems or bugs 
 
-When reporting bugs please provide a complete description on the situation and provide information regarding the version of the system you are using, the operative system, and the steps to reproduce the bug. Please attach supporting files to enhance the bug documentation and provide more robust solutions and alternatives.
-
+When reporting bugs please provide a complete description on the situation and provide information regarding the version of the system you are using, the operative system, and the steps to reproduce the bug. Attach the corresponding files if required. 
 ### Adding new features 
 
-We are always happy to listen about new ideas and features to be introduced. Please open a new issue in the corresponding category to propose new features. 
+We are always happy to listen about new ideas on the 
 
 ## How to contribute 
 
