@@ -35,13 +35,16 @@ This is the documentation for the package use. For more details please visit the
    
 .. toctree::
    :maxdepth: 1
-   :caption: Contributing   
+   :caption: Contributing to Docs
 
    about.rst
    
 .. toctree::
    :maxdepth: 1
-   :caption: Contributing   
+   :caption: Contributing to Code
+
+   contributing/CONTRIBUTING.md
+   
 
 Indices and tables
 ==================

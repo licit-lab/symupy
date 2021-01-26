@@ -58,23 +58,12 @@ from .exceptions import SymupyError, SymupyWarning
 # =============================================================================
 # DEFAULT PATHS TO FIND SIMULATOR PLATFORMS
 # =============================================================================
-DEFAULT_LIB_LINUX = os.path.join(
-    "/", "home", "symudev", "build", "lib", "libSymuVia.so"
-)
 
-DEFAULT_LIB_OSX = os.path.join(
-    "/",
-    "Users",
-    "ladino",
-    "Documents",
-    "01-Platforms",
-    "01-SymuVia",
-    "06-Source",
-    "symudev",
-    "build",
-    "lib",
-    "libSymuVia.dylib",
-)
+DEFAULT_LIB_OSX = os.path.join(os.getenv('CONDA_PREFIX'),
+                               'lib',
+                               'libSymuVia.dylib')
+
+DEFAULT_LIB_LINUX = DEFAULT_LIB_OSX
 
 DEFAULT_LIB_WINDOWS = ""
 

@@ -1,0 +1,44 @@
+{% set setup_py = load_setup_py_data() %}
+
+package:
+    name: 'symupy'
+    version: {{ setup_py.get('version') }}
+
+source:
+    path: ../
+
+build:
+  preserve_egg_dir: True
+  number: {{ environ.get('GIT_DESCRIBE_NUMBER', 0)}}
+
+requirements:
+    build:
+        - python
+        - setuptools
+    host:
+        - python
+        - setuptools   
+    run:
+        - numpy>=1.16
+        - lxml>=4.3.3
+        - xmltodict>=0.12
+        - networkx>=2.5
+        - matplotlib>=3.0.0
+        - sqlalchemy>=1.3.5
+        - pandas>=1.0.0
+        - scipy>=1.4.1
+        - click>=7.0
+        - python-decouple>=3.3
+        - pytest
+        - coverage
+        - ipython
+        - symudev
+
+test:
+    imports: 
+        - symupy
+
+about:
+    license: {{ setup_py.get('license') }}
+    license_file: LICENSE
+    summary: {{ setup_py.get('description') }}

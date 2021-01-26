@@ -11,7 +11,6 @@ Vehicle model acts as an instance to trace individual vehicle data and modify ve
 # ============================================================================
 
 from typing import Dict, List
-from collections import OrderedDict
 import itertools
 import numpy as np
 import pandas as pd
@@ -128,10 +127,6 @@ class Vehicle(Subscriber):
     def x(self):
         """Vehicle state vector (x,v,a)"""
         return np.array((self.distance, self.speed, self.acceleration))
-
-
-lstordct = List[OrderedDict]
-lstvehs = List[Vehicle]
 
 
 class VehicleList(SortedFrozenSet):
