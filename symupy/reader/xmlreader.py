@@ -1,42 +1,56 @@
-from lxml import etree, objectify
 import numpy as np
 import os
 
 from collections import OrderedDict
 
 from symupy.components.networks import Network
+from symupy.reader.xmlparser import XMLParser
+
+from functools import cached_property
 
 class NetworkReader(object):
     def __init__(self, file, remove_comments=True):
         assert file.split('.')[-1] == 'xml'
         self._file = file
-        parser = etree.XMLParser(remove_comments=remove_comments)
-        self._tree = objectify.parse(self._file, parser=parser)
-        self._capteurs = self._tree.xpath("//ROOT_SYMUBRUIT/TRAFICS/TRAFIC/PARAMETRAGE_CAPTEURS/CAPTEURS/*")
-        self._termination_zones = self._tree.xpath("//ROOT_SYMUBRUIT/TRAFICS/TRAFIC/ZONES_DE_TERMINAISON/*")
-        self._public_transport = self._tree.xpath('//ROOT_SYMUBRUIT/RESEAUX/RESEAU/PARAMETRAGE_VEHICULES_GUIDES/LIGNES_TRANSPORT_GUIDEES/*')
-        self._id = self._tree.xpath('//ROOT_SYMUBRUIT/RESEAUX/RESEAU/@id')[0]
-        self.file_size = os.path.getsize(file)
+        self._parser = XMLParser(self._file)
+        self._id = self._parser.xpath('ROOT_SYMUBRUIT/RESEAUX/RESEAU/@id')
+
+    @cached_property
+    def _links(self):
+        return self._parser.xpath('ROOT_SYMUBRUIT/RESEAUX/RESEAU/TRONCONS')
+
+    @cached_property
+    def _sensors(self):
+        return self._parser.xpath('ROOT_SYMUBRUIT/TRAFICS/TRAFIC/PARAMETRAGE_CAPTEURS/CAPTEURS')
+
+    @cached_property
+    def _termination_zones(self):
+        return self._parser.xpath('ROOT_SYMUBRUIT/TRAFICS/TRAFIC/ZONES_DE_TERMINAISON')
+
+    @cached_property
+    def _public_transport(self):
+        return self._parser.xpath('ROOT_SYMUBRUIT/RESEAUX/RESEAU/PARAMETRAGE_VEHICULES_GUIDES/LIGNES_TRANSPORT_GUIDEES')
 
     def iter_links(self):
-        elems = self._tree.xpath('//ROOT_SYMUBRUIT/RESEAUX/RESEAU/TRONCONS')[0].iterchildren()
+        elems = self._links.iterchildrens()
         for i in elems:
-            yield i.attrib
+            yield i
 
     def get_links(self):
         iterator = self.iter_links()
         return {tr.pop('id'):tr for tr in iterator}
 
     def get_network(self):
-        troncons = self._tree.xpath('//ROOT_SYMUBRUIT/RESEAUX/RESEAU/TRONCONS')[0].iterchildren()
+        troncons = self.iter_links()
         net = Network(self._id)
         for tr in troncons:
-            net.add_link(tr.attrib['id'], tr.attrib['id_eltamont'], tr.attrib['id_eltaval'])
-            net.nodes[tr.attrib['id_eltamont']]['pos'] = np.fromstring(tr.attrib['extremite_amont'], sep=' ')
-            net.nodes[tr.attrib['id_eltaval']]['pos'] = np.fromstring(tr.attrib['extremite_aval'], sep=' ')
-            if tr.getchildren():
-                elt = tr.getchildren()[0].getchildren()
-                net.links[tr.attrib['id']]['internal_points'] = np.array([np.fromstring(e.attrib['coordonnees'], sep=' ') for e in elt if 'coordonnees' in e.keys()])
+            net.add_link(tr.attr['id'], tr.attr['id_eltamont'], tr.attr['id_eltaval'])
+            net.nodes[tr.attr['id_eltamont']]['pos'] = np.fromstring(tr.attr['extremite_amont'], sep=' ')
+            net.nodes[tr.attr['id_eltaval']]['pos'] = np.fromstring(tr.attr['extremite_aval'], sep=' ')
+            internal_points = tr.find_children_tag('POINTS_INTERNES')
+            if internal_points is not None:
+                elt = internal_points.getchildrens()
+                net.links[tr.attr['id']]['internal_points'] = np.array([np.fromstring(e.attr['coordonnees'], sep=' ') for e in elt if 'coordonnees' in e.attr.keys()])
 
         for id in self.info_sensors():
             net.add_sensor(id, list(self.iter_sensor(id)))
@@ -46,36 +60,63 @@ class NetworkReader(object):
         return net
 
     def nb_troncons(self):
-        troncons = self._tree.xpath('//ROOT_SYMUBRUIT/RESEAUX/RESEAU/TRONCONS/*')
-        size = len(troncons)
+        troncons = self._links
+        size = len(troncons.getchildrens())
         return size
 
     def info_sensors(self):
-        return {cpt.attrib['id']: cpt.tag for cpt in self._capteurs}
+        if self._sensors is not None:
+            return {cpt.attr['id']: cpt.tag for cpt in self._sensors.iterchildrens()}
+        else:
+            return dict()
 
     def iter_sensor(self, id):
-        for cpt in self._capteurs:
-            if cpt.attrib['id'] == id:
-                troncons = cpt.xpath("./TRONCONS/*")
+        if self._sensors is not None:
+            cpt = self._sensors.find_children_attr('id', id)
+            if 'troncon' in cpt.attr.keys():
+                yield cpt.attr['troncon']
+                return
+            else:
+                troncons = cpt.find_children_tag('TRONCONS').iterchildrens()
                 for tr in troncons:
-                    yield tr.attrib['id']
+                    yield tr.attr['id']
+        else:
+            yield from ()
 
     def info_termination_zones(self):
-        return [zn.attrib['id'] for zn in self._termination_zones]
+        if self._termination_zones is not None:
+            return [zn.attr['id'] for zn in self._termination_zones]
+        else:
+            return list()
 
     def iter_termination_zones(self, id):
-        for zn in self._termination_zones:
-            if zn.attrib['id'] == id:
-                troncons = zn.xpath("./TRONCONS/*")
-                for tr in troncons:
-                    yield tr.attrib['id']
+        if self._termination_zones is not None:
+            zn = self._termination_zones.find_children_attr('id', id)
+            troncons = zn.find_children_tag('TRONCONS').iterchildrens()
+            for tr in troncons:
+                yield tr.attr['id']
+        else:
+            yield from ()
 
     def info_public_transport(self):
-        return [pt.attrib['id'] for pt in self._public_transport]
+        if self._public_transport is not None:
+            return [pt.attr['id'] for pt in self._public_transport]
+        else:
+            return list()
 
     def iter_public_transport(self, id):
-        for pt in self._public_transport:
-            if pt.attrib['id'] == id:
-                troncons = pt.xpath("./TRONCONS/*")
-                for tr in troncons:
-                    yield tr.attrib['id']
+        if self._public_transport is not None:
+            pt = self._public_transport.find_children_attr('id', id)
+            troncons = pt.find_children_tag('TRONCONS').iterchildrens()
+            for tr in troncons:
+                yield tr.attr['id']
+        else:
+            yield from ()
+
+
+if __name__ == "__main__":
+    import symupy
+    import os
+    file = os.path.dirname(symupy.__file__)+'/../tests/mocks/bottlenecks/bottleneck_001.xml'
+    reader = NetworkReader('/Users/florian.gacon/Work/SymuTools/data/LafayetteV8_OS.xml')
+    network = reader.get_network()
