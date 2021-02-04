@@ -7,7 +7,7 @@ class Element():
         self.tag = re.findall('(?<=<)(\w+)(?=>|\s|\/)', line)[0]
         self.attr = {key:val for key, val in re.findall('\s(\w+)="(.*?)"', line)}
 
-        if '/' in re.findall('^<(.+)>$', line)[0]:
+        if re.findall('\/>$', line):
             self._has_childrens = False
         else:
             self._has_childrens = True
@@ -37,6 +37,9 @@ class Element():
                     line = f.readline().strip()
             else:
                 yield from ()
+
+    def getchildrens(self):
+        return list(self.iterchildrens())
 
     def find_children_tag(self, tag):
         for child in self.iterchildrens():
@@ -73,20 +76,6 @@ class XMLParser(object):
                     pos = f.tell()-len(line)
                     return Element(line.strip(), pos, self._filename)
                 line = f.readline()
-
-    def get_sensors(self):
-        return self.get_elem("PARAMETRAGE_CAPTEURS")
-
-    def get_network(self):
-        traffic = self.get_elem("RESEAU")
-        print(traffic)
-        return traffic.find_children_tag('TRONCONS')
-
-    def get_instants(self):
-        return self.get_elem("INSTANTS")
-
-    def get_vehs(self):
-        return self.get_elem("VEHS")
 
     def xpath(self, path):
         tags = path.split('/')
