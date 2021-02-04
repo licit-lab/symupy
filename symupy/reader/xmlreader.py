@@ -38,7 +38,7 @@ class NetworkReader(object):
 
     def get_links(self):
         iterator = self.iter_links()
-        return {tr.pop('id'):tr for tr in iterator}
+        return {tr.attr['id']:tr.attr for tr in iterator}
 
     def get_network(self):
         troncons = self.iter_links()
@@ -118,5 +118,5 @@ if __name__ == "__main__":
     import symupy
     import os
     file = os.path.dirname(symupy.__file__)+'/../tests/mocks/bottlenecks/bottleneck_001.xml'
-    reader = NetworkReader('/Users/florian.gacon/Work/SymuTools/data/LafayetteV8_OS.xml')
+    reader = NetworkReader(file)
     network = reader.get_network()

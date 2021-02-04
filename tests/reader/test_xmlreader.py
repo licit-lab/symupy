@@ -1,5 +1,5 @@
 """
-    Unit tests for symupy.reader.xmlparser 
+    Unit tests for symupy.reader.xmlparser
 """
 # ============================================================================
 # STANDARD  IMPORTS
@@ -29,9 +29,8 @@ def bottleneck_001():
 
 
 def test_xmlparse(bottleneck_001):
-    network = NetworkReader(bottleneck_001)
-    x = type(network.get_links())
-    network.get_links()
-    type(network.get_links())
-    network.get_links()
-    assert len(network.links) == 3
+    reader = NetworkReader(bottleneck_001)
+    links = reader.get_links()
+    assert len(links) == 1
+    network = reader.get_network()
+    assert len(network.links) == 1
