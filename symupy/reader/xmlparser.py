@@ -83,6 +83,8 @@ class XMLParser(object):
         for t in tags[1:]:
             if t[0] == '@':
                 return elem.attr[t[1:]]
+            elif elem is None:
+                return
             else:
                 elem = elem.find_children_tag(t)
         return elem
