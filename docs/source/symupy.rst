@@ -11,6 +11,7 @@ Subpackages
    symupy.components
    symupy.logic
    symupy.metaclass
+   symupy.reader
    symupy.utils
 
 Module contents
