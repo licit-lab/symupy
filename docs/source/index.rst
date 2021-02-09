@@ -24,7 +24,8 @@ This is the documentation for the package use. For more details please visit the
    :maxdepth: 1
    :caption: Tutorials
 
-   tutorials/1_run_simulation.md
+   tutorials/index_tut.rst
+
 
 .. _Module:
 .. toctree::

@@ -1,6 +1,5 @@
 from dataclasses import dataclass, field
 from typing import Any
-from collections import OrderedDict
 import numpy as np
 
 
@@ -74,11 +73,11 @@ class Network(NetworkElement):
 
     def __init__(self, id, links=list(), nodes=list(), sensors=list()):
         super().__init__(id)
-        self.links = OrderedDict()
-        self.nodes = OrderedDict()
-        self.sensors = dict()
-        self.termination_zone = dict()
-        self.networks = dict()
+        self.links = {}
+        self.nodes = {}
+        self.sensors = {}
+        self.termination_zone = {}
+        self.networks = {}
 
     def add_node(self, id, coords=None):
         self.nodes[id] = Node(id, pos=coords)
