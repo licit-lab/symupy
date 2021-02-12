@@ -32,9 +32,7 @@ class NetworkReader(object):
         return self._parser.xpath('ROOT_SYMUBRUIT/RESEAUX/RESEAU/PARAMETRAGE_VEHICULES_GUIDES/LIGNES_TRANSPORT_GUIDEES')
 
     def iter_links(self):
-        elems = self._links.iterchildrens()
-        for i in elems:
-            yield i
+        return self._links.iterchildrens()
 
     def get_links(self):
         iterator = self.iter_links()
@@ -44,9 +42,9 @@ class NetworkReader(object):
         troncons = self.iter_links()
         net = Network(self._id)
         for tr in troncons:
-            net.add_link(tr.attr['id'], tr.attr['id_eltamont'], tr.attr['id_eltaval'])
-            net.nodes[tr.attr['id_eltamont']]['pos'] = np.fromstring(tr.attr['extremite_amont'], sep=' ')
-            net.nodes[tr.attr['id_eltaval']]['pos'] = np.fromstring(tr.attr['extremite_aval'], sep=' ')
+            net.add_link(tr.attr['id'], tr.attr['id_eltamont'], tr.attr['id_eltaval'],
+                         np.fromstring(tr.attr['extremite_amont'], sep=' '),
+                         np.fromstring(tr.attr['extremite_aval'], sep=' '))
             internal_points = tr.find_children_tag('POINTS_INTERNES')
             if internal_points is not None:
                 elt = internal_points.getchildrens()
@@ -85,7 +83,7 @@ class NetworkReader(object):
 
     def info_termination_zones(self):
         if self._termination_zones is not None:
-            return [zn.attr['id'] for zn in self._termination_zones]
+            return [zn.attr['id'] for zn in self._termination_zones.iterchildrens()]
         else:
             return list()
 
@@ -118,5 +116,6 @@ if __name__ == "__main__":
     import symupy
     import os
     file = os.path.dirname(symupy.__file__)+'/../tests/mocks/bottlenecks/bottleneck_001.xml'
+    file = '/Users/florian/Work/visunet/data/Lyon63V/L63V.xml'
     reader = NetworkReader(file)
     network = reader.get_network()
