@@ -17,7 +17,7 @@ requirements:
         - setuptools
     host:
         - python
-        - setuptools   
+        - setuptools
     run:
         - numpy>=1.16
         - lxml>=4.3.3
@@ -32,10 +32,10 @@ requirements:
         - pytest
         - coverage
         - ipython
-        - symudev
+        - symuvia=1.0.0
 
 test:
-    imports: 
+    imports:
         - symupy
 
 about:
