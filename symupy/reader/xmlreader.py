@@ -116,6 +116,5 @@ if __name__ == "__main__":
     import symupy
     import os
     file = os.path.dirname(symupy.__file__)+'/../tests/mocks/bottlenecks/bottleneck_001.xml'
-    file = '/Users/florian/Work/visunet/data/Lyon63V/L63V.xml'
     reader = NetworkReader(file)
     network = reader.get_network()
