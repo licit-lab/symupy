@@ -11,7 +11,7 @@ CLASSIFIERS = [
     "Operating System :: Microsoft :: Windows",
     "Operating System :: MacOS :: MacOS X",
     "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8"    
+    "Programming Language :: Python :: 3.8"
 ]
 
 with open("README.md", "r", encoding="UTF8") as f:
@@ -31,10 +31,6 @@ requirements = [
     "scipy>=1.4.1",
     "click>=7.0",
     "python-decouple>=3.3",
-]
-
-setup_requirements = [
-    "pytest-runner",
 ]
 
 test_requirements = [
@@ -63,8 +59,8 @@ setup(
     long_description_content_type="text/markdown",
     author="Andres Ladino",
     author_email="aladinoster@gmail.com",
-    maintainer="Andres Ladino", 
-    maintainer_email="aladinoster@gmail.com", 
+    maintainer="Andres Ladino",
+    maintainer_email="aladinoster@gmail.com",
     url="https://github.com/symuvia/symupy",
     download_url="https://github.com/symuvia/symupy",
     packages=find_packages(include=["symupy","symupy.*"]),
@@ -75,7 +71,6 @@ setup(
     install_requires=requirements,
     extra_require={"dev": dev_requirements},
     python_requires=">=3.7",
-    setup_requires=setup_requirements,
     test_suite="tests",
     tests_require=test_requirements,
     zip_safe=False,
