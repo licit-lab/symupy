@@ -11,7 +11,6 @@ class NetworkElement:
 @dataclass
 class Node(NetworkElement):
     links: list = field(default_factory=list)
-    pos: np.ndarray = None
 
     def __getitem__(self, attr):
         return self.__dict__[attr]
@@ -22,7 +21,9 @@ class Node(NetworkElement):
 @dataclass
 class Link(NetworkElement):
     downstream_node: Node = None
+    downstream_coords: np.ndarray = None
     upstream_node: Node = None
+    upstream_coords: np.ndarray = None
     nb_lanes: int = 1
     authorized_mode: str = "all"
     internal_points: list = field(default_factory=list)
@@ -79,10 +80,11 @@ class Network(NetworkElement):
         self.termination_zone = {}
         self.networks = {}
 
-    def add_node(self, id, coords=None):
-        self.nodes[id] = Node(id, pos=coords)
+    def add_node(self, id):
+        self.nodes[id] = Node(id)
 
-    def add_link(self, id, upstream_node, downstream_node, nb_lanes=1, authorized_mode="all"):
+    def add_link(self, id, upstream_node, downstream_node, upstream_coords,
+                 downstream_coords, nb_lanes=1, authorized_mode="all"):
         assert id not in self.links.keys(), f"{id} is already in Network"
         if upstream_node not in self.nodes.keys():
             self.add_node(upstream_node)
@@ -92,6 +94,8 @@ class Network(NetworkElement):
         l = Link(id=id,
                  upstream_node=upstream_node,
                  downstream_node=downstream_node,
+                 upstream_coords=upstream_coords,
+                 downstream_coords=downstream_coords,
                  nb_lanes=nb_lanes,
                  authorized_mode=authorized_mode)
 
@@ -118,11 +122,11 @@ class Network(NetworkElement):
     def get_links_attributes(self, attr):
         return {k:l[attr] for k,l in self.links.items()}
 
-    def get_borders(self, id):
+    def get_borders(self, id: Link):
         return [self.nodes[self.links[id]['upstream_node']],
                 self.nodes[self.links[id]['downstream_node']]]
 
-    def get_regions(self, id):
+    def get_regions(self, id: Node):
         return [self.links[l] for l in self.nodes[id]['links']]
 
     def __repr__(self):
