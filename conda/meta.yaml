@@ -19,6 +19,7 @@ requirements:
         - python
         - setuptools
     run:
+        - python=3.9
         - numpy>=1.16
         - lxml>=4.3.3
         - xmltodict>=0.12
