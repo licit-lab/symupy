@@ -13,10 +13,10 @@ build:
 
 requirements:
     build:
-        - python
+        - python=3.9
         - setuptools
     host:
-        - python
+        - python=3.9
         - setuptools
     run:
         - python=3.9
