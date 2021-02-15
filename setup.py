@@ -10,8 +10,7 @@ CLASSIFIERS = [
     "Natural Language :: English",
     "Operating System :: Microsoft :: Windows",
     "Operating System :: MacOS :: MacOS X",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8"
+    "Programming Language :: Python :: 3.9"    
 ]
 
 with open("README.md", "r", encoding="UTF8") as f:
