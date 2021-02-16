@@ -1,4 +1,4 @@
-name: conda build
+name: Conda/Docker build & push
 
 on:
   push:
@@ -6,27 +6,59 @@ on:
       - master
 
 jobs:
-  build-linux:
+  conda-build:
     runs-on: ubuntu-latest
-    strategy:
-      max-parallel: 5
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python 3.8
+      - 
+        name: Checkout 
+        uses: actions/checkout@v2
+      - 
+        name: Set up Python 3.8
         uses: actions/setup-python@v2
         with:
           python-version: 3.8
-      - name: build
+      - 
+        name: build
         run: |
           $CONDA/bin/conda update -n base -c defaults conda
           $CONDA/bin/conda install conda-build anaconda-client conda-verify
           mkdir conda-bld
           $CONDA/bin/conda build . -c licit-lab -c conda-forge --output-folder conda-bld/
-      - name: push anaconda
+      - 
+        name: push anaconda
         run: |
           $CONDA/bin/conda convert -p osx-64 conda-bld/linux-64/symupy-* --output-dir conda-bld/
           $CONDA/bin/conda convert -p win-64 conda-bld/linux-64/symupy-* --output-dir conda-bld/
           $CONDA/bin/anaconda --token=${{ secrets.ANACONDA_TOKEN }} upload conda-bld/linux-64/symupy-* --force --user licit-lab
           $CONDA/bin/anaconda --token=${{ secrets.ANACONDA_TOKEN }} upload conda-bld/osx-64/symupy-* --force --user licit-lab
           $CONDA/bin/anaconda --token=${{ secrets.ANACONDA_TOKEN }} upload conda-bld/win-64/symupy-* --force --user licit-lab
+
+  main:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - 
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - 
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      -
+        name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.CR_PAT }}
+      - 
+        name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          file: docker/Dockerfile
+          push: true
+          tags: user/app:v1.0.0
+      - 
+        name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
