@@ -21,7 +21,7 @@ from collections import defaultdict
 # ============================================================================
 
 from symupy.logic.publisher import Publisher
-from symupy.components import Vehicle, VehicleList
+from symupy.components.vehicles import Vehicle, VehicleList
 import symupy.utils.constants as ct
 
 # ============================================================================
