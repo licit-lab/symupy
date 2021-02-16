@@ -87,3 +87,8 @@
 * Now you can trace vehicle data inside the connector via `connector.vehicles`
 * Observer patterns to handle vehicle list 
 * Sorted frozen sets to handle subset of vehicles
+
+## 0.5.1 (2021-02-15)
+
+* Now detection of symuvia is based on default installation of symuvia (via conda)
+* Pining python version

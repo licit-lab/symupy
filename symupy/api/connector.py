@@ -55,15 +55,15 @@ from symupy.components.vehicles import VehicleList
 from symupy.utils import timer_func, printer_time
 from symupy.utils import constants as CT
 
-from symupy.components import V2INetwork, V2VNetwork
-from symupy.components import Vehicle
+# from symupy.components import V2INetwork, V2VNetwork
+from symupy.components.vehicles import Vehicle
 
 # ============================================================================
 # CLASS AND DEFINITIONS
 # ============================================================================
 
 # V2X Connectivity
-NetworkType = Union[V2INetwork, V2VNetwork]
+# NetworkType = Union[V2INetwork, V2VNetwork]
 
 TupleFloat = Union[float, tuple]
 
@@ -151,9 +151,9 @@ class Simulator(Configurator, RuntimeDevice):
         """
         self._sim = Simulation(scenario_path)
 
-    def register_network(self, network: NetworkType):
-        # TODO: Impleement this connection. This is for V2V
-        self._net.append(network)
+    # def register_network(self, network: NetworkType):
+    #     # TODO: Impleement this connection. This is for V2V
+    #     self._net.append(network)
 
     # =========================================================================
     # RUNTIME METHODS
@@ -409,14 +409,14 @@ class Simulator(Configurator, RuntimeDevice):
         ## TODO: Implement this
         raise NotImplementedError
 
-    def log_vehicle_in_network(self, veh: Vehicle, network: NetworkType):
-        # veh = Vehicle(vehid)
-        ## TODO: Finish
-        network.register_vehicle(veh)
+    # def log_vehicle_in_network(self, veh: Vehicle, network: NetworkType):
+    #     # veh = Vehicle(vehid)
+    #     ## TODO: Finish
+    #     network.register_vehicle(veh)
 
-    def log_vehid_in_network(self, vehid: str, network: NetworkType):
-        ## TODO: Optional
-        pass
+    # def log_vehid_in_network(self, vehid: str, network: NetworkType):
+    #     ## TODO: Optional
+    #     pass
 
     def init_total_travel_time(self):
         """ Counter initializer for total travel time

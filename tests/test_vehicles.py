@@ -13,7 +13,7 @@ import pytest
 # ============================================================================
 
 from symupy.utils import SimulatorRequest
-from symupy.components import Vehicle, VehicleList
+from symupy.components.vehicles import Vehicle, VehicleList
 
 # ============================================================================
 # TESTS AND DEFINITIONS

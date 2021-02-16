@@ -29,7 +29,6 @@ jobs:
         name: push anaconda
         run: |
           $CONDA/bin/conda convert -p osx-64 conda-bld/linux-64/symupy-* --output-dir conda-bld/
-          $CONDA/bin/conda convert -p win-64 conda-bld/linux-64/symupy-* --output-dir conda-bld/
           $CONDA/bin/anaconda --token=${{ secrets.ANACONDA_TOKEN }} upload conda-bld/linux-64/symupy-* --force --user licit-lab
           $CONDA/bin/anaconda --token=${{ secrets.ANACONDA_TOKEN }} upload conda-bld/osx-64/symupy-* --force --user licit-lab
           $CONDA/bin/anaconda --token=${{ secrets.ANACONDA_TOKEN }} upload conda-bld/win-64/symupy-* --force --user licit-lab

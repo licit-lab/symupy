@@ -59,13 +59,17 @@ from .exceptions import SymupyError, SymupyWarning
 # DEFAULT PATHS TO FIND SIMULATOR PLATFORMS
 # =============================================================================
 
-DEFAULT_LIB_OSX = os.path.join(os.getenv('CONDA_PREFIX'),
-                               'lib',
-                               'libSymuVia.dylib')
+DEFAULT_LIB_OSX = os.path.join(
+    os.getenv("CONDA_PREFIX"), "lib", "libSymuVia.dylib"
+)
 
-DEFAULT_LIB_LINUX = DEFAULT_LIB_OSX
+DEFAULT_LIB_LINUX = os.path.join(
+    os.getenv("CONDA_PREFIX"), "lib", "libSymuVia.so"
+)
 
-DEFAULT_LIB_WINDOWS = ""
+DEFAULT_LIB_WINDOWS = os.path.join(
+    os.getenv("CONDA_PREFIX"), "lib", "libSymuVia.dll"
+)
 
 if platform.system() == "Darwin":
     try:
@@ -78,7 +82,7 @@ if platform.system() == "Darwin":
         DEFAULT_PATH_SYMUVIA = ""
 elif platform.system() == "Linux":
     try:
-        if Path(DEFAULT_LIB_OSX).exists():
+        if Path(DEFAULT_LIB_LINUX).exists():
             DEFAULT_PATH_SYMUVIA = DEFAULT_LIB_LINUX
         else:
             DEFAULT_PATH_SYMUVIA = config("DEFAULT_LIB_LINUX")
