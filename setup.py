@@ -10,8 +10,7 @@ CLASSIFIERS = [
     "Natural Language :: English",
     "Operating System :: Microsoft :: Windows",
     "Operating System :: MacOS :: MacOS X",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8"
+    "Programming Language :: Python :: 3.9"    
 ]
 
 with open("README.md", "r", encoding="UTF8") as f:
@@ -53,7 +52,7 @@ dev_requirements = [
 
 setup(
     name="symupy",
-    version="0.5.0",
+    version="0.5.1",
     description="A module for Symuvia inside Python",
     long_description=LONG_DESCRIPTION + "\n\n" + HISTORY,
     long_description_content_type="text/markdown",
