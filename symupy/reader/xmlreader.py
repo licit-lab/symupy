@@ -18,7 +18,6 @@ class NetworkReader(object):
     @cached_property
     def _links(self):
         return self._parser.xpath('ROOT_SYMUBRUIT/RESEAUX/RESEAU/TRONCONS')
-
     @cached_property
     def _sensors(self):
         return self._parser.xpath('ROOT_SYMUBRUIT/TRAFICS/TRAFIC/PARAMETRAGE_CAPTEURS/CAPTEURS')
@@ -34,6 +33,10 @@ class NetworkReader(object):
     @cached_property
     def _repartiteur(self):
         return self._parser.xpath('ROOT_SYMUBRUIT/RESEAUX/RESEAU/CONNEXIONS/REPARTITEURS')
+
+    @cached_property
+    def _parking(self):
+        return self._parser.xpath('ROOT_SYMUBRUIT/TRAFICS/TRAFIC/PARKINGS')
 
     @cached_property
     def _carrefourfeux(self):
@@ -61,6 +64,7 @@ class NetworkReader(object):
         [net.add_node(rep.attr['id'], 'REPARTITEUR') for rep in self._repartiteur.iterchildrens()]
         [net.add_node(gir.attr['id'], 'GIRATOIRE') for gir in self._giratoire.iterchildrens()]
         [net.add_node(ext.attr['id'], 'EXTREMITE') for ext in self._extremity.iterchildrens()]
+        [net.add_node(prk.attr['id'], 'PARKING') for prk in self._parking.iterchildrens()]
 
         for tr in troncons:
             net.add_link(tr.attr['id'], tr.attr['id_eltamont'], tr.attr['id_eltaval'],
