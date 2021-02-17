@@ -31,6 +31,22 @@ class NetworkReader(object):
     def _public_transport(self):
         return self._parser.xpath('ROOT_SYMUBRUIT/RESEAUX/RESEAU/PARAMETRAGE_VEHICULES_GUIDES/LIGNES_TRANSPORT_GUIDEES')
 
+    @cached_property
+    def _repartiteur(self):
+        return self._parser.xpath('ROOT_SYMUBRUIT/RESEAUX/RESEAU/CONNEXIONS/REPARTITEURS')
+
+    @cached_property
+    def _carrefourfeux(self):
+        return self._parser.xpath('ROOT_SYMUBRUIT/RESEAUX/RESEAU/CONNEXIONS/CARREFOURSAFEUX')
+
+    @cached_property
+    def _giratoire(self):
+        return self._parser.xpath('ROOT_SYMUBRUIT/RESEAUX/RESEAU/CONNEXIONS/GIRATOIRES')
+
+    @cached_property
+    def _extremity(self):
+        return self._parser.xpath('ROOT_SYMUBRUIT/RESEAUX/RESEAU/CONNEXIONS/EXTREMITES')
+
     def iter_links(self):
         return self._links.iterchildrens()
 
@@ -41,6 +57,11 @@ class NetworkReader(object):
     def get_network(self):
         troncons = self.iter_links()
         net = Network(self._id)
+        [net.add_node(caf.attr['id'], 'CARREFOURAFEUX') for caf in self._carrefourfeux.iterchildrens()]
+        [net.add_node(rep.attr['id'], 'REPARTITEUR') for rep in self._repartiteur.iterchildrens()]
+        [net.add_node(gir.attr['id'], 'GIRATOIRE') for gir in self._giratoire.iterchildrens()]
+        [net.add_node(ext.attr['id'], 'EXTREMITE') for ext in self._extremity.iterchildrens()]
+
         for tr in troncons:
             net.add_link(tr.attr['id'], tr.attr['id_eltamont'], tr.attr['id_eltaval'],
                          np.fromstring(tr.attr['extremite_amont'], sep=' '),
@@ -115,6 +136,7 @@ class NetworkReader(object):
 if __name__ == "__main__":
     import symupy
     import os
-    file = os.path.dirname(symupy.__file__)+'/../tests/mocks/bottlenecks/bottleneck_001.xml'
+    # file = os.path.dirname(symupy.__file__)+'/../tests/mocks/bottlenecks/bottleneck_001.xml'
+    file = '/Users/florian/Work/SimuBusLyon/Bus24h/Lyon_007_01_10RES.xml'
     reader = NetworkReader(file)
     network = reader.get_network()

@@ -11,6 +11,7 @@ class NetworkElement:
 @dataclass
 class Node(NetworkElement):
     links: list = field(default_factory=list)
+    type: str = None
 
     def __getitem__(self, attr):
         return self.__dict__[attr]
@@ -80,8 +81,8 @@ class Network(NetworkElement):
         self.termination_zone = {}
         self.networks = {}
 
-    def add_node(self, id):
-        self.nodes[id] = Node(id)
+    def add_node(self, id, type=None):
+        self.nodes[id] = Node(id=id, type=type)
 
     def add_link(self, id, upstream_node, downstream_node, upstream_coords,
                  downstream_coords, nb_lanes=1, authorized_mode="all"):

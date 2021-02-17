@@ -21,19 +21,21 @@ class Element():
                 line = f.readline().strip()
                 while not any(bool(x) for x in [re.findall(self._end_tag(self.tag), line),
                                                 re.findall(self._startend_tag(self.tag), line)]):
-                    new_tag = re.findall('(?<=<)(\w+)(?=>|\s|\/)', line)[0]
-                    if re.findall(self._startend_tag(new_tag), line):
-                        pos = f.tell() - (len(line)+2)
-                        yield Element(line, pos, self._filename)
-                    elif re.findall(self._start_tag(new_tag), line):
-                        pos = f.tell() - (len(line)+2)
-                        keep_line = line
-                        while True:
-                            if re.findall(self._end_tag(new_tag), f.readline().strip()):
-                                break
-                        yield Element(keep_line, pos, self._filename)
-                    else:
-                        break
+                    #Checking if line is a comment or blank
+                    if not re.findall('^<!(.*)>$', line) and line != '':
+                        new_tag = re.findall('(?<=<)(\w+)(?=>|\s|\/)', line)[0]
+                        if re.findall(self._startend_tag(new_tag), line):
+                            pos = f.tell() - (len(line)+2)
+                            yield Element(line, pos, self._filename)
+                        elif re.findall(self._start_tag(new_tag), line):
+                            pos = f.tell() - (len(line)+2)
+                            keep_line = line
+                            while True:
+                                if re.findall(self._end_tag(new_tag), f.readline().strip()):
+                                    break
+                            yield Element(keep_line, pos, self._filename)
+                        else:
+                            break
                     line = f.readline().strip()
             else:
                 yield from ()
