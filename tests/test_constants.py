@@ -15,7 +15,7 @@ import os
 from pathlib import Path
 import platform
 import pytest
-from decouple import config
+import decouple
 
 # ============================================================================
 # INTERNAL IMPORTS
@@ -39,9 +39,13 @@ def test_environment_variable(env_path_default):
 
 
 def test_detection_default_symupy(env_path_default):
-    DEFAULT_LIB_LINUX = config("DEFAULT_LIB_LINUX")
-    DEFAULT_LIB_WINDOWS = config("DEFAULT_LIB_WINDOWS")
-    DEFAULT_LIB_OSX = config("DEFAULT_LIB_OSX")
+
+    # Settings.ini location
+    decouple.Config(os.path.join(os.getcwd(), ".."))
+
+    DEFAULT_LIB_LINUX = decouple.config("DEFAULT_LIB_LINUX")
+    DEFAULT_LIB_WINDOWS = decouple.config("DEFAULT_LIB_WINDOWS")
+    DEFAULT_LIB_OSX = decouple.config("DEFAULT_LIB_OSX")
     assert env_path_default in (
         DEFAULT_LIB_LINUX,
         DEFAULT_LIB_WINDOWS,
