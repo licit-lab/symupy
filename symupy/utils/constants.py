@@ -37,7 +37,7 @@
 import os
 from datetime import date, datetime, timedelta
 import platform
-from decouple import config, UndefinedValueError
+from decouple import Config, RepositoryEnv, UndefinedValueError
 from numpy import array, float64, int32
 from pathlib import Path
 from collections import defaultdict
@@ -59,6 +59,11 @@ from .exceptions import SymupyError, SymupyWarning
 # DEFAULT PATHS TO FIND SIMULATOR PLATFORMS
 # =============================================================================
 
+# Point to ini file
+DOTINI_FILE = os.path.join(os.getcwd(), "settings.ini")
+ini_config = Config(RepositoryEnv(DOTINI_FILE))
+
+
 DEFAULT_LIB_OSX = os.path.join(
     os.getenv("CONDA_PREFIX"), "lib", "libSymuVia.dylib"
 )
@@ -76,7 +81,7 @@ if platform.system() == "Darwin":
         if Path(DEFAULT_LIB_OSX).exists():
             DEFAULT_PATH_SYMUVIA = DEFAULT_LIB_OSX
         else:
-            DEFAULT_PATH_SYMUVIA = config("DEFAULT_LIB_OSX")
+            DEFAULT_PATH_SYMUVIA = ini_config("DEFAULT_LIB_OSX")
     except UndefinedValueError:
         SymupyWarning("No Simulator could be defined")
         DEFAULT_PATH_SYMUVIA = ""
@@ -85,13 +90,13 @@ elif platform.system() == "Linux":
         if Path(DEFAULT_LIB_LINUX).exists():
             DEFAULT_PATH_SYMUVIA = DEFAULT_LIB_LINUX
         else:
-            DEFAULT_PATH_SYMUVIA = config("DEFAULT_LIB_LINUX")
+            DEFAULT_PATH_SYMUVIA = ini_config("DEFAULT_LIB_LINUX")
     except UndefinedValueError:
         SymupyWarning("No Simulator could be defined")
         DEFAULT_PATH_SYMUVIA = ""
 elif platform.system() == "Windows":
     try:
-        DEFAULT_PATH_SYMUVIA = config("DEFAULT_LIB_WINDOWS")
+        DEFAULT_PATH_SYMUVIA = ini_config("DEFAULT_LIB_WINDOWS")
     except UndefinedValueError:
         SymupyWarning("No Simulator could be defined")
         DEFAULT_PATH_SYMUVIA = ""
