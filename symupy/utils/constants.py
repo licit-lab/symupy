@@ -37,7 +37,7 @@
 import os
 from datetime import date, datetime, timedelta
 import platform
-from decouple import Config, RepositoryEnv, UndefinedValueError
+from decouple import Config, RepositoryIni, UndefinedValueError
 from numpy import array, float64, int32
 from pathlib import Path
 from collections import defaultdict
@@ -61,7 +61,7 @@ from .exceptions import SymupyError, SymupyWarning
 
 # Point to ini file
 DOTINI_FILE = os.path.join(os.getcwd(), "settings.ini")
-ini_config = Config(RepositoryEnv(DOTINI_FILE))
+ini_config = Config(RepositoryIni(DOTINI_FILE))
 
 
 DEFAULT_LIB_OSX = os.path.join(
