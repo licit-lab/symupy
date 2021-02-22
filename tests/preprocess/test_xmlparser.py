@@ -30,5 +30,5 @@ def bottleneck_001():
 
 def test_xmlparse(bottleneck_001):
     parser = XMLParser(bottleneck_001)
-    root = parser.get_elem('ROOT_SYMUBRUIT')
+    root = parser.get_elem("ROOT_SYMUBRUIT")
     assert len(root.getchildrens()) == 4
