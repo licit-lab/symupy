@@ -1,6 +1,8 @@
 version: 2
+
 sphinx:
   builder: html
   configuration: docs/source/conf.py
+
 conda:
-  environment: doc/environment.yml
+  environment: docs/environment.yml
