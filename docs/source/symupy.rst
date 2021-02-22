@@ -12,6 +12,7 @@ Subpackages
    symupy.logic
    symupy.metaclass
    symupy.reader
+   symupy.renderer
    symupy.utils
 
 Module contents

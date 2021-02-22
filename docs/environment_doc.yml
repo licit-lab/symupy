@@ -2,16 +2,8 @@ name: symupy_doc
 channels:
   - licit-lab
   - conda-forge
-  - anaconda
 dependencies:
   - python=3.9
-  - pandoc
-  - sphinx
-  - recommonmark
-  - anaconda::sphinx-rtd-theme
-  - nbsphinx
-  - sphinx-book-theme
-  - ipykernel
   - numpy>=1.16
   - lxml>=4.3.3
   - xmltodict>=0.12
@@ -26,3 +18,12 @@ dependencies:
   - coverage
   - ipython
   - symuvia=1.0.0
+  - pandoc
+  - sphinx
+  - recommonmark
+  - nbsphinx
+  - sphinx-book-theme
+  - ipykernel
+  - pip 
+  - pip:
+    - sphinx-rtd-theme
