@@ -1,1 +1,8 @@
-include *.md LICENSE settings.ini
+include LICENSE
+include *.md
+
+recursive-include tests *
+recursive-include symupy *.xml
+recursive-include symupy *.xsd
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
