@@ -10,7 +10,7 @@ CLASSIFIERS = [
     "Natural Language :: English",
     "Operating System :: Microsoft :: Windows",
     "Operating System :: MacOS :: MacOS X",
-    "Programming Language :: Python :: 3.9"    
+    "Programming Language :: Python :: 3.9",
 ]
 
 with open("README.md", "r", encoding="UTF8") as f:
@@ -62,11 +62,16 @@ setup(
     maintainer_email="aladinoster@gmail.com",
     url="https://github.com/symuvia/symupy",
     download_url="https://github.com/symuvia/symupy",
-    packages=find_packages(include=["symupy","symupy.*"]),
+    packages=find_packages(
+        include=["symupy", "symupy.*", "*.ini", "*.xml", "*.xsd"]
+    ),
     classifiers=CLASSIFIERS,
     license="MIT",
     keywords="traffic microsimulation",
     include_package_data=True,
+    package_data={
+        "": ["*.ini", "*.xml", "*.xsd"],
+    },
     install_requires=requirements,
     extra_require={"dev": dev_requirements},
     python_requires=">=3.7",
