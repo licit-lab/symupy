@@ -26,5 +26,4 @@ dependencies:
   - ipykernel
   - pip 
   - pip:
-    - sphinx-rtd-theme
     - --editable ..

@@ -18,3 +18,18 @@ dependencies:
   - coverage
   - ipython
   - symuvia=1.0.0
+  - pandoc
+  - sphinx
+  - recommonmark
+  - nbsphinx
+  - sphinx-book-theme
+  - ipykernel
+  - pip 
+  - pytest
+  - bump2version
+  - black
+  - tox
+  - coverage
+  - pylint
+  - pip:
+    - --editable ..
