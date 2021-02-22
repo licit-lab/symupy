@@ -32,4 +32,4 @@ dependencies:
   - coverage
   - pylint
   - pip:
-    - --editable ..
+    - --editable .
