@@ -39,21 +39,15 @@ test:
         - coverage
     imports:
         - symupy
-    sorce_files:
+    source_files:
         - tests/metaclass/test*.py
-        - tests/reader/test*.py
+        - tests/preprocess/test*.py
         - tests/runtime/test*.py
         - tests/tsc/test*.py
         - tests/utils/test*.py
-        - tests/mocks/*.xml
-        - tests/mocks/*.xml
+        - tests/mocks/*.xsd
+        - tests/mocks/bottlenecks/*.xml
 
-    commands:
-        - python -m pytest tests/metaclass
-        - python -m pytest tests/preprocess
-        - python -m pytest tests/runtime
-        - python -m pytest tests/tsc
-        - python -m pytest tests/utils
 about:
     license: {{ setup_py.get('license') }}
     license_file: LICENSE
