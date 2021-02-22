@@ -4,6 +4,14 @@ channels:
   - conda-forge
 dependencies:
   - python=3.9
+  - pandoc==1.0.2
+  - sphinx==3.2.1
+  - recommonmark==0.6.0
+  - sphinx-rtd-theme==0.5.0
+  - nbsphinx==0.8.1
+  - pandoc==1.0.2
+  - sphinx-book-theme
+  - ipykernel
   - numpy>=1.16
   - lxml>=4.3.3
   - xmltodict>=0.12
