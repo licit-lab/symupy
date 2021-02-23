@@ -50,12 +50,10 @@ from symupy.utils.exceptions import (
 from .scenario import Simulation
 from symupy.utils import SimulatorRequest, Configurator
 from symupy.runtime.logic import RuntimeDevice
-from symupy.components.vehicles import VehicleList
+from symupy.tsc.vehicles import Vehicle, VehicleList
 
 from symupy.utils import timer_func, printer_time
 from symupy.utils import constants as CT
-
-from symupy.components.vehicles import Vehicle
 
 # ============================================================================
 # CLASS AND DEFINITIONS
