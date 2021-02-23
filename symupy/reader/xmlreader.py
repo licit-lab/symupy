@@ -3,7 +3,7 @@ import os
 
 from collections import OrderedDict
 
-from symupy.components.networks import Network
+from symupy.tsc.network import Network
 from symupy.reader.xmlparser import XMLParser
 from symupy.utils.exceptions import SymupyWarning
 

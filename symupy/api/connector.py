@@ -55,7 +55,6 @@ from symupy.components.vehicles import VehicleList
 from symupy.utils import timer_func, printer_time
 from symupy.utils import constants as CT
 
-# from symupy.components import V2INetwork, V2VNetwork
 from symupy.components.vehicles import Vehicle
 
 # ============================================================================
