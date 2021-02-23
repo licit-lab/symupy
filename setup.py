@@ -73,6 +73,7 @@ setup(
         "": ["*.ini", "*.xml", "*.xsd"],
     },
     install_requires=requirements,
+    entry_points={"console_scripts": ["symupy=symupy.cli:main"]},
     extra_require={"dev": dev_requirements},
     python_requires=">=3.7",
     test_suite="tests",
