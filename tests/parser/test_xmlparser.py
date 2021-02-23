@@ -18,7 +18,7 @@ import pytest
 # TESTS AND DEFINITIONS
 # ============================================================================
 
-from symupy.reader.xmlparser import XMLParser
+from symupy.parser.xmlparser import XMLParser
 
 
 @pytest.fixture

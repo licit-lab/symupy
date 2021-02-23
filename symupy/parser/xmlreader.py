@@ -1,13 +1,28 @@
+"""
+XML Reader 
+==========
+A module to parse information from Symuvia input XMLs
+"""
+# ============================================================================
+# STANDARD  IMPORTS
+# ============================================================================
+
 import numpy as np
 import os
-
 from collections import OrderedDict
+from functools import cached_property
+
+# ============================================================================
+# INTERNAL IMPORTS
+# ============================================================================
 
 from symupy.tsc.network import Network
-from symupy.reader.xmlparser import XMLParser
+from symupy.parser.xmlparser import XMLParser
 from symupy.utils.exceptions import SymupyWarning
 
-from functools import cached_property
+# ============================================================================
+# CLASS AND DEFINITIONS
+# ============================================================================
 
 
 class NetworkReader(object):

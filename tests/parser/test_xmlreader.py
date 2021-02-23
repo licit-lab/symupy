@@ -18,7 +18,7 @@ import pytest
 # TESTS AND DEFINITIONS
 # ============================================================================
 
-from symupy.reader.xmlreader import NetworkReader
+from symupy.parser.xmlreader import NetworkReader
 
 
 @pytest.fixture
