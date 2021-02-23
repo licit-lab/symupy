@@ -40,8 +40,8 @@ test:
     imports:
         - symupy
     source_files:
-        - tests/metaclass/test*.py
-        - tests/preprocess/test*.py
+        - tests/abstractions/test*.py
+        - tests/parser/test*.py
         - tests/runtime/test*.py
         - tests/tsc/test*.py
         - tests/utils/test*.py
