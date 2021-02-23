@@ -15,7 +15,7 @@ from xmltodict import parse
 # INTERNAL IMPORTS
 # ============================================================================
 
-from symupy.utils import SimulatorRequest
+from symupy.utils.parser import SimulatorRequest
 from symupy.utils.constants import BUFFER_STRING
 
 # ============================================================================

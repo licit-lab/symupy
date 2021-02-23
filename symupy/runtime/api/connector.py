@@ -48,7 +48,8 @@ from symupy.utils.exceptions import (
 
 #
 from .scenario import Simulation
-from symupy.utils import SimulatorRequest, Configurator
+from symupy.utils.parser import SimulatorRequest
+from symupy.utils.configurator import Configurator
 from symupy.runtime.logic import RuntimeDevice
 from symupy.tsc.vehicles import Vehicle, VehicleList
 

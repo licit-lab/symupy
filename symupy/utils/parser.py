@@ -22,7 +22,7 @@ from collections import defaultdict
 
 from symupy.runtime.logic.publisher import Publisher
 from symupy.tsc.vehicles import Vehicle, VehicleList
-import symupy.utils.constants as ct
+from symupy.utils import constants as ct
 
 # ============================================================================
 # CLASS AND DEFINITIONS
