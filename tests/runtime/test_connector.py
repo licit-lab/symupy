@@ -13,7 +13,7 @@ import pytest
 # INTERNAL IMPORTS
 # ============================================================================
 
-from symupy.api import Simulation, Simulator
+from symupy.runtime import Simulation, Simulator
 import symupy.utils.constants as CT
 
 # ============================================================================

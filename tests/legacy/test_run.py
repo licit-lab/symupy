@@ -1,6 +1,6 @@
 import os
 import unittest
-from symupy.api import Simulation, Simulator
+from symupy.runtime import Simulation, Simulator
 import platform
 
 
