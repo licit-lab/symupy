@@ -1,18 +1,12 @@
 """ 
-No command 
-====================================
+No Command 
+==========
 """
-
-# ============================================================================
-# STANDARD  IMPORTS
-# ============================================================================
-
-
 # ============================================================================
 # INTERNAL IMPORTS
 # ============================================================================
 
-from symupy.utils.metaclass.command import AbsCommand
+from symupy.abstractions import AbsCommand
 
 # ============================================================================
 # CLASS AND DEFINITIONS
@@ -25,4 +19,3 @@ class NoCommand(AbsCommand):
 
     def execute(self):
         pass
-        # click.echo(click.style("No command is executed", fg="blue", bold=True))
