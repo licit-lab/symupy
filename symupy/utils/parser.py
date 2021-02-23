@@ -20,7 +20,7 @@ from collections import defaultdict
 # INTERNAL IMPORTS
 # ============================================================================
 
-from symupy.logic.publisher import Publisher
+from symupy.runtime.logic.publisher import Publisher
 from symupy.components.vehicles import Vehicle, VehicleList
 import symupy.utils.constants as ct
 

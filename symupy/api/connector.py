@@ -49,7 +49,7 @@ from symupy.utils.exceptions import (
 #
 from .scenario import Simulation
 from symupy.utils import SimulatorRequest, Configurator
-from symupy.logic import RuntimeDevice
+from symupy.runtime.logic import RuntimeDevice
 from symupy.components.vehicles import VehicleList
 
 from symupy.utils import timer_func, printer_time
@@ -69,47 +69,47 @@ TupleFloat = Union[float, tuple]
 
 
 class Simulator(Configurator, RuntimeDevice):
-    """ 
-        Simulator class for containing object to connect and  command a simulation in SymuVia
+    """
+    Simulator class for containing object to connect and  command a simulation in SymuVia
 
-        Example:
-            Call of the default simulator ::
+    Example:
+        Call of the default simulator ::
 
-                >>> from symupy.api import Simulator
-                >>> simulator = Simulator()
+            >>> from symupy.api import Simulator
+            >>> simulator = Simulator()
 
-        :return: Symuvia simulator object with simulation parameters
-        :rtype: Simulator
+    :return: Symuvia simulator object with simulation parameters
+    :rtype: Simulator
 
-        You may also pass suplementary parameters to the object by specifying keys in the call: 
+    You may also pass suplementary parameters to the object by specifying keys in the call:
 
-        Example: 
-            To use the ``Simulator`` declare in a string the ``path`` to the simulator ::
+    Example:
+        To use the ``Simulator`` declare in a string the ``path`` to the simulator ::
 
-                >>> from symupy.api import Simulator
-                >>> path_symuvia = "path/to/libSymuyVia.dylib"
-                >>> simulator = Simulator(library_path=path_symuvia)
-    
-        This object describes is a configurator manager for the interface between the traffic simulator and the python interface. For more details on the optinal keyword parameters please refer to :py:class:`~symupy.utils.configurator.Configurator` class.
+            >>> from symupy.api import Simulator
+            >>> path_symuvia = "path/to/libSymuyVia.dylib"
+            >>> simulator = Simulator(library_path=path_symuvia)
 
-        :raises SymupyLoadLibraryError: 
-            Error raised whenever the SymuVia library is not found
+    This object describes is a configurator manager for the interface between the traffic simulator and the python interface. For more details on the optinal keyword parameters please refer to :py:class:`~symupy.utils.configurator.Configurator` class.
 
-        :raises SymupyFileLoadError: 
-            Error raised whenever the provided path for an scenario cannot be loaded into the Simulator
+    :raises SymupyLoadLibraryError:
+        Error raised whenever the SymuVia library is not found
 
-        :raises SymupyVehicleCreationError: 
-            Error raised when a vehicle cannot be created
+    :raises SymupyFileLoadError:
+        Error raised whenever the provided path for an scenario cannot be loaded into the Simulator
 
-        :raises SymupyDriveVehicleError: 
-            Error rased when a vehicle state cannot be imposed
+    :raises SymupyVehicleCreationError:
+        Error raised when a vehicle cannot be created
 
-        :raises NotImplementedError: 
-            Not implemented functionality 
+    :raises SymupyDriveVehicleError:
+        Error rased when a vehicle state cannot be imposed
 
-        :return: Simulator manager object 
+    :raises NotImplementedError:
+        Not implemented functionality
 
-        :rtype: Simulator
+    :return: Simulator manager object
+
+    :rtype: Simulator
     """
 
     def __init__(self, **kwargs) -> None:
@@ -125,9 +125,7 @@ class Simulator(Configurator, RuntimeDevice):
     # =========================================================================
 
     def load_symuvia(self):
-        """ Load SymuVia shared library 
-
-        """
+        """Load SymuVia shared library"""
         try:
             lib_symuvia = cdll.LoadLibrary(self.library_path)
         except OSError:
@@ -135,9 +133,7 @@ class Simulator(Configurator, RuntimeDevice):
         self.__library = lib_symuvia
 
     def load_network(self) -> int:
-        """ Load SymuVia Simulation File 
-
-        """
+        """Load SymuVia Simulation File"""
         if not hasattr(self, "_sim"):
             raise SymupyFileLoadError("File not provided", "")
         valid = self.__library.SymLoadNetworkEx(self.scenarioFilename("UTF8"))
@@ -146,9 +142,7 @@ class Simulator(Configurator, RuntimeDevice):
         return valid
 
     def register_simulation(self, scenario_path: str):
-        """ Register simulation file within the simulator
-
-        """
+        """Register simulation file within the simulator"""
         self._sim = Simulation(scenario_path)
 
     # def register_network(self, network: NetworkType):
@@ -161,10 +155,10 @@ class Simulator(Configurator, RuntimeDevice):
 
     @timer_func
     def run_simulation(self, scenario_path: str = ""):
-        """ Run simulation in a single shot
+        """Run simulation in a single shot
 
-            Args:
-                sim_object (Simulation): Valid simulation scenario
+        Args:
+            sim_object (Simulation): Valid simulation scenario
 
         """
         if scenario_path:
@@ -174,18 +168,16 @@ class Simulator(Configurator, RuntimeDevice):
         self.__library.SymRunEx(self.scenarioFilename("UTF8"))
 
     def run(self, scenario_path: str = ""):
-        """ Alias method to run simulation
+        """Alias method to run simulation
 
-            Args:
-                scenario_path (Simulation): Valid simulation scenario
+        Args:
+            scenario_path (Simulation): Valid simulation scenario
 
         """
         self.run_simulation(scenario_path)
 
     def request_answer(self):
-        """ Request simulator answer and maps the data locally
-
-        """
+        """Request simulator answer and maps the data locally"""
         if self.step_launch_mode == "lite":
             self._bContinue = self.__library.SymRunNextStepLiteEx(
                 self.write_xml, byref(self._b_end)
@@ -199,10 +191,10 @@ class Simulator(Configurator, RuntimeDevice):
 
     @printer_time
     def run_step(self) -> int:
-        """ Run simulation step by step
+        """Run simulation step by step
 
-            :returns it:  Iteration step
-            :type it: int
+        :returns it:  Iteration step
+        :type it: int
 
         """
         try:
@@ -214,9 +206,7 @@ class Simulator(Configurator, RuntimeDevice):
             return -1
 
     def stop_step(self):
-        """Stop current current step of running simulation
-
-        """
+        """Stop current current step of running simulation"""
         self._bContinue = False
 
     def create_vehicle(
@@ -227,38 +217,38 @@ class Simulator(Configurator, RuntimeDevice):
         lane: int = 1,
         simid: int = 0,
     ) -> int:
-        """ Creates a vehicle within the network
+        """Creates a vehicle within the network
 
-            :param vehtype: vehicle type according to simulation definitions
-            :type vehtype: str
-                    
-            :param origin: network endpoint nodeaccording to simulation
-            :type origin: str
-                    
-            :param destination: network endpoint nodeaccording to simulation
-            :type destination: str
-                    
-            :param lane: vehicle lane number, defaults to 1
-            :type lane: int
-                    
-            :param simid: simulation id, defaults to 0
-            :type simid: int
-                    
+        :param vehtype: vehicle type according to simulation definitions
+        :type vehtype: str
 
-            :returns vehid: Vehicle id of the vehicle created >0
-            :type vehid: int 
+        :param origin: network endpoint nodeaccording to simulation
+        :type origin: str
 
-            Example: 
-                One example to create a vehicle is as follows ::
+        :param destination: network endpoint nodeaccording to simulation
+        :type destination: str
 
-                >>> with symuvia as s:
-                >>>     while s.do_next:
-                >>>         s.request_answer()  # Initialize
-                >>>         s.request_answer()  # Vehicle 0
-                >>>         # Vehicle instantiation
-                >>>         veh_id = s.create_vehicle("VL", "Ext_In", "Ext_Out")
-                >>>         force_driven = s.request.is_vehicle_driven("1")
-                >>>         s.request_answer() 
+        :param lane: vehicle lane number, defaults to 1
+        :type lane: int
+
+        :param simid: simulation id, defaults to 0
+        :type simid: int
+
+
+        :returns vehid: Vehicle id of the vehicle created >0
+        :type vehid: int
+
+        Example:
+            One example to create a vehicle is as follows ::
+
+            >>> with symuvia as s:
+            >>>     while s.do_next:
+            >>>         s.request_answer()  # Initialize
+            >>>         s.request_answer()  # Vehicle 0
+            >>>         # Vehicle instantiation
+            >>>         veh_id = s.create_vehicle("VL", "Ext_In", "Ext_Out")
+            >>>         force_driven = s.request.is_vehicle_driven("1")
+            >>>         s.request_answer()
 
 
         """
@@ -296,25 +286,25 @@ class Simulator(Configurator, RuntimeDevice):
         creation_time: float = 0,
         route: str = "",
     ) -> int:
-        """ Creates a vehicle with a specific route
+        """Creates a vehicle with a specific route
 
-            :param vehtype: vehicle type according to simulation definitions
-            :type vehtype: str 
-                    
-            :param origin: network endpoint nodeaccording to simulation
-            :type origin: str 
-                    
-            :param destination: network endpoint nodeaccording to simulation
-            :type destination: str 
-                    
-            :param lane: vehicle lane number, defaults to 1
-            :type lane: int 
-                    
-            :param route: route followed by the vehicle, defaults to ""
-            :type route: str 
- 
-            :return vehid: Vehicle id of the vehicle created >0
-            :type vehid: int
+        :param vehtype: vehicle type according to simulation definitions
+        :type vehtype: str
+
+        :param origin: network endpoint nodeaccording to simulation
+        :type origin: str
+
+        :param destination: network endpoint nodeaccording to simulation
+        :type destination: str
+
+        :param lane: vehicle lane number, defaults to 1
+        :type lane: int
+
+        :param route: route followed by the vehicle, defaults to ""
+        :type route: str
+
+        :return vehid: Vehicle id of the vehicle created >0
+        :type vehid: int
 
         """
         if origin == destination:
@@ -349,32 +339,32 @@ class Simulator(Configurator, RuntimeDevice):
     def drive_vehicle(
         self, vehid: int, new_pos: float, destination: str = None, lane: str = 1
     ):
-        """ Drives a vehicle to a specific position
+        """Drives a vehicle to a specific position
 
-            :param vehtype: vehicle type according to simulation definitions
-            :type vehtype: str, optional
-                    
-            :param new_pos: position to place the vehicle
-            :type new_pos: float
-                    
-            :param destination: link of destination, defaults to None
-            :type destination: str
-                    
-            :param lane: lane fo destination, defaults to 1
-            :type lane: int
-                    
-            :param route: route followed by the vehicle, defaults to ""
-            :type route: str    
+        :param vehtype: vehicle type according to simulation definitions
+        :type vehtype: str, optional
 
-            Example: 
-                One example to drive a vehicle as follows ::
+        :param new_pos: position to place the vehicle
+        :type new_pos: float
 
-                >>> with symuvia as s:
-                >>>     while s.do_next:
-                >>>         s.run_step()
-                >>>         if s.request.is_vehicle_in_network("0"):
-                >>>             drive_status = s.drive_vehicle(0, 1.0)
-                >>>             force_driven = s.request.is_vehicle_driven("0")
+        :param destination: link of destination, defaults to None
+        :type destination: str
+
+        :param lane: lane fo destination, defaults to 1
+        :type lane: int
+
+        :param route: route followed by the vehicle, defaults to ""
+        :type route: str
+
+        Example:
+            One example to drive a vehicle as follows ::
+
+            >>> with symuvia as s:
+            >>>     while s.do_next:
+            >>>         s.run_step()
+            >>>         if s.request.is_vehicle_in_network("0"):
+            >>>             drive_status = s.drive_vehicle(0, 1.0)
+            >>>             force_driven = s.request.is_vehicle_driven("0")
         """
         links = self._sim.get_network_links()
 
@@ -419,25 +409,23 @@ class Simulator(Configurator, RuntimeDevice):
     #     pass
 
     def init_total_travel_time(self):
-        """ Counter initializer for total travel time
-        """
+        """Counter initializer for total travel time"""
         # TODO: Improvement → Better organizadtion
         self.__library.SymGetTotalTravelTimeEx.restype = c_double
 
     def init_total_travel_distance(self):
-        """ Counter initializer for total travel time
-        """
+        """Counter initializer for total travel time"""
         # TODO: Improvement → Better organizadtion
         self.__library.SymGetTotalTravelDistanceEx.restype = c_double
 
     def get_total_travel_time(self, sensors_mfd: list = []):
-        """ Computes the total travel time of vehicles in a MFD region
-        
-            :param zone_id: MFD sensor id, defaults to None
-            :type zone_id: str, optional
+        """Computes the total travel time of vehicles in a MFD region
 
-            :return ttt: Associated total travel time
-            :type ttt: float
+        :param zone_id: MFD sensor id, defaults to None
+        :type zone_id: str, optional
+
+        :return ttt: Associated total travel time
+        :type ttt: float
 
         """
         # TODO: Improvement → Better organizadtion
@@ -455,14 +443,14 @@ class Simulator(Configurator, RuntimeDevice):
         )
 
     def get_total_travel_distance(self, sensors_mfd: list = []):
-        """ Computes the total travel distance of vehicles in a MFD region
-        
-            :param sensors_mfd: MFD sensor ids, defaults to None
-            :type sensors_mfd: list, optional
+        """Computes the total travel distance of vehicles in a MFD region
 
-            :return ttd: Associated total travel distance
-            :type ttd: float, tuple
-            
+        :param sensors_mfd: MFD sensor ids, defaults to None
+        :type sensors_mfd: list, optional
+
+        :return ttd: Associated total travel distance
+        :type ttd: float, tuple
+
         """
         if isinstance(sensors_mfd, str):
             return self.__library.SymGetTotalTravelDistanceEx(
@@ -478,13 +466,13 @@ class Simulator(Configurator, RuntimeDevice):
         )
 
     def get_mfd_speed(self, sensors_mfd: list = []):
-        """ Computes the total speed of vehicles in a MFD region
-        
-            :param sensors_mfd: MFD sensor ids, defaults to None
-            :type sensors_mfd: list, optional
+        """Computes the total speed of vehicles in a MFD region
 
-            :return spd: speed computed as ttt/ttd
-            :type spd: float, tuple
+        :param sensors_mfd: MFD sensor ids, defaults to None
+        :type sensors_mfd: list, optional
+
+        :return spd: speed computed as ttt/ttd
+        :type spd: float, tuple
 
         """
         if isinstance(sensors_mfd, str):
@@ -509,13 +497,13 @@ class Simulator(Configurator, RuntimeDevice):
         self, access_probability: dict, minimum_distance: dict
     ):
         """
-            Add a probability to control the access to a specific zone within the network
-        
-            :param access_probability: Key (zone name) Value (probability of access)
-            :type access_probability: dict
+        Add a probability to control the access to a specific zone within the network
 
-            :param minimum_distance: Key (zone name) Value (distance before entering the zone to activate policy)
-            :type minimum_distance: dict
+        :param access_probability: Key (zone name) Value (probability of access)
+        :type access_probability: dict
+
+        :param minimum_distance: Key (zone name) Value (distance before entering the zone to activate policy)
+        :type minimum_distance: dict
         """
         self.dctidzone = {}
 
@@ -538,10 +526,10 @@ class Simulator(Configurator, RuntimeDevice):
 
     def modify_control_probability_zone_mfd(self, access_probability: dict):
         """
-            Modifies a probability to control the access to a specific zone within the network
-        
-            :param access_probability: Key (zone name) Value (probability of access)
-            :type access_probability: dict
+        Modifies a probability to control the access to a specific zone within the network
+
+        :param access_probability: Key (zone name) Value (probability of access)
+        :type access_probability: dict
         """
 
         for sensor, probablity in access_probability.items():
@@ -554,9 +542,9 @@ class Simulator(Configurator, RuntimeDevice):
 
     def __enter__(self) -> None:
         """
-            This method initializes the usage of the ``Simulator`` class as a context manager. 
+        This method initializes the usage of the ``Simulator`` class as a context manager.
 
-            The protocol followed in order to perform the full connection is as follows 
+        The protocol followed in order to perform the full connection is as follows
 
         """
 
@@ -581,8 +569,7 @@ class Simulator(Configurator, RuntimeDevice):
         return False
 
     def build_dynamic_param(self):
-        """Construct parameters for vehicle dynamics
-        """
+        """Construct parameters for vehicle dynamics"""
         self.__dct_par = {
             "time_step": self.simulation.time_step,
             "engine_tau": CT.ENGINE_CONSTANT,
@@ -594,13 +581,13 @@ class Simulator(Configurator, RuntimeDevice):
 
     def __performCompliance(self) -> None:
         """
-            Perform compliance check
+        Perform compliance check
         """
         self.next_state(True)
 
     def __performConnect(self) -> None:
         """
-            Perform simulation connection
+        Perform simulation connection
         """
         self.load_symuvia()
         self.load_network()
@@ -608,7 +595,7 @@ class Simulator(Configurator, RuntimeDevice):
 
     def __performInitialize(self) -> None:
         """
-            Perform simulation initialization
+        Perform simulation initialization
         """
         self._b_end = c_int()
         self.request = SimulatorRequest()
@@ -625,26 +612,26 @@ class Simulator(Configurator, RuntimeDevice):
 
     def __performPreRoutine(self) -> None:
         """
-            Perform simulator preroutine
+        Perform simulator preroutine
         """
         self.next_state(self.do_next)
 
     def __performQuery(self) -> None:
         """
-            Perform simulator Query
+        Perform simulator Query
         """
         self.next_state(self.do_next)
 
     def __performControl(self) -> None:
         """
-            Perform simulator Control
+        Perform simulator Control
         """
         self.next_state(self.do_next)
 
     def _set_manual_initialization(self) -> None:
         """
-            This method is a way to set manual initialization of the simulator
-            for testing purposes. (Internal use)
+        This method is a way to set manual initialization of the simulator
+        for testing purposes. (Internal use)
         """
         self.__performCompliance()
         self.__performConnect()
@@ -655,79 +642,79 @@ class Simulator(Configurator, RuntimeDevice):
     # =========================================================================
 
     def scenarioFilename(self, encoding=None) -> str:
-        """ 
-            Scenario filenamme
-        
-            :return: Absolute path towards the XML input for SymuVia
-            :rtype: str
+        """
+        Scenario filenamme
+
+        :return: Absolute path towards the XML input for SymuVia
+        :rtype: str
         """
         return self.simulation.filename(encoding)
 
     @property
     def s_response_dec(self):
-        """ 
-            Obtains instantaneous data from simulator
+        """
+        Obtains instantaneous data from simulator
 
-            :return: last query from simulator
-            :rtype: str
+        :return: last query from simulator
+        :rtype: str
         """
         return self.buffer_string.value.decode("UTF8")
 
     @property
     def do_next(self) -> bool:
         """
-            Returns true if the simulation shold continue
-        
-            :return: True if next step continues
-            :rtype: bool
+        Returns true if the simulation shold continue
+
+        :return: True if next step continues
+        :rtype: bool
         """
         return self._bContinue
 
     @property
     def get_request(self) -> dict:
         """
-            Returns the query received from the simulator
-        
-            :return: Request from the simulator
-            :rtype: dict
+        Returns the query received from the simulator
+
+        :return: Request from the simulator
+        :rtype: dict
         """
         return self.request.data_query
 
     @property
     def simulation(self) -> Simulation:
         """
-            Simulation scenario 
-        
-            :return: Object describing senario under simulation
-            :rtype: Simulation
+        Simulation scenario
+
+        :return: Object describing senario under simulation
+        :rtype: Simulation
         """
         return self._sim
 
     @property
     def simulationstep(self) -> float:
-        """ 
-            Current simulation step.
+        """
+        Current simulation step.
 
-            Example:
-                You can use the time step to control actions 
+        Example:
+            You can use the time step to control actions
 
-                >>> with simulator as s:
-                ...     while s.do_next()
-                ...         if s.simulationstep>0:
-                ...             print(s.simulationtimestep)
-        
-            :return: current simulation iteration
-            :rtype: str
+            >>> with simulator as s:
+            ...     while s.do_next()
+            ...         if s.simulationstep>0:
+            ...             print(s.simulationtimestep)
+
+        :return: current simulation iteration
+        :rtype: str
         """
         return self._c_iter
 
     @property
     def sampling_time(self) -> float:
-        """ 
-            Simulation sampling time 
-        
-            :return: sampling time from XML file
-            :rtype: float
+        """
+        Simulation sampling time
+
+        :return: sampling time from XML file
+        :rtype: float
         """
         return self.simulation.sampling_time
 
@@ -741,14 +728,14 @@ class Simulator(Configurator, RuntimeDevice):
 
     @classmethod
     def from_path(cls, filename_path: str, symuvia_path: str):
-        """ Alternative constructor for the Simulator 
+        """Alternative constructor for the Simulator
 
-            Example:
-                To use this alternative constructor ``Simulator`` declare in a string the ``path`` to the simulator ::
+        Example:
+            To use this alternative constructor ``Simulator`` declare in a string the ``path`` to the simulator ::
 
-                    >>> path = "path/to/simulator.so"
-                    >>> scenario = "path/to/scenario.xml"
-                    >>> simulator = Simulator.from_path(path,scenario) 
+                >>> path = "path/to/simulator.so"
+                >>> scenario = "path/to/scenario.xml"
+                >>> simulator = Simulator.from_path(path,scenario)
 
         """
         sim = cls(library_path=symuvia_path)

@@ -12,8 +12,8 @@ import pytest
 # INTERNAL IMPORTS
 # ============================================================================
 
-from symupy.logic.publisher import Publisher
-from symupy.logic.subscriber import Subscriber
+from symupy.runtime.logic.publisher import Publisher
+from symupy.runtime.logic.subscriber import Subscriber
 
 # ============================================================================
 # TESTS AND DEFINITIONS
