@@ -14,7 +14,7 @@ from click.testing import CliRunner
 # INTERNAL IMPORTS
 # ============================================================================
 
-from symupy.api.commands import NoCommand
+from symupy.runtime.api.commands import NoCommand
 
 # ============================================================================
 # TESTS AND DEFINITIONS

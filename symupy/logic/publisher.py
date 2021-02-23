@@ -8,7 +8,7 @@ This module dedicates a generic object to generate a publisher pattern implement
 # STANDARD  IMPORTS
 # ============================================================================
 
-from symupy.metaclass import AbsSubject
+from symupy.abstractions import AbsSubject
 
 # ============================================================================
 # CLASS AND DEFINITIONS
