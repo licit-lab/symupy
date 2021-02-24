@@ -27,9 +27,7 @@ def test_symupyerror():
 
 
 def test_symupyloadlibraryerror():
-    assert (
-        str(SymupyLoadLibraryError("Error raised", "a")) == "Error raised at: a"
-    )
+    assert str(SymupyLoadLibraryError("Error raised", "a")) == "Error raised at: a"
     with pytest.raises(SymupyLoadLibraryError):
         raise SymupyLoadLibraryError("Test Error", "")
 
@@ -41,19 +39,13 @@ def test_symupyfileloaderror():
 
 
 def test_symupydrivevehicleerror():
-    assert (
-        str(SymupyDriveVehicleError("Error raised", "a"))
-        == "Error raised at: a"
-    )
+    assert str(SymupyDriveVehicleError("Error raised", "a")) == "Error raised at: a"
     with pytest.raises(SymupyDriveVehicleError):
         raise SymupyDriveVehicleError("Test Error", "")
 
 
 def test_symupyvehiclecreationerror():
-    assert (
-        str(SymupyVehicleCreationError("Error raised", "a"))
-        == "Error raised at: a"
-    )
+    assert str(SymupyVehicleCreationError("Error raised", "a")) == "Error raised at: a"
     with pytest.raises(SymupyVehicleCreationError):
         raise SymupyVehicleCreationError("Test Error", "")
 
