@@ -31,5 +31,3 @@ dependencies:
   - tox
   - coverage
   - pylint
-  - pip:
-    - --editable .
