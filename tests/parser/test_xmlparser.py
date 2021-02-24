@@ -1,30 +1,34 @@
 """
-Unit tests for symupy.runtime.api.commands
-==========================================
+    Unit tests for symupy.reader.xmlparser
 """
-
 # ============================================================================
 # STANDARD  IMPORTS
 # ============================================================================
 
+import os
+import platform
 import pytest
-from click.testing import CliRunner
 
 # ============================================================================
 # INTERNAL IMPORTS
 # ============================================================================
 
-from symupy.runtime.api.commands import NoCommand
 
 # ============================================================================
 # TESTS AND DEFINITIONS
 # ============================================================================
 
+from symupy.parser.xmlparser import XMLParser
+
 
 @pytest.fixture
-def runner():
-    return CliRunner()
+def bottleneck_001():
+    file_name = "bottleneck_001.xml"
+    file_path = ("tests", "mocks", "bottlenecks", file_name)
+    return os.path.join(os.getcwd(), *file_path)
 
 
-def test_no_command(runner):
-    NoCommand().execute()
+def test_xmlparse(bottleneck_001):
+    parser = XMLParser(bottleneck_001)
+    root = parser.get_elem("ROOT_SYMUBRUIT")
+    assert len(root.getchildrens()) == 4

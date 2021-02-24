@@ -12,8 +12,8 @@ import pytest
 # INTERNAL IMPORTS
 # ============================================================================
 
-from symupy.utils import SimulatorRequest
-from symupy.components.vehicles import Vehicle, VehicleList
+from symupy.utils.parser import SimulatorRequest
+from symupy.tsc.vehicles import Vehicle, VehicleList
 
 # ============================================================================
 # TESTS AND DEFINITIONS
