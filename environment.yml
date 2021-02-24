@@ -31,3 +31,4 @@ dependencies:
   - tox
   - coverage
   - pylint
+  - conda-build
