@@ -22,7 +22,8 @@ from collections import defaultdict
 
 from symupy.runtime.logic.publisher import Publisher
 from symupy.tsc.vehicles import Vehicle, VehicleList
-from symupy.utils import constants as ct
+
+from symupy.utils.constants import BUFFER_STRING, FIELD_DATA, FIELD_FORMAT
 
 # ============================================================================
 # CLASS AND DEFINITIONS
@@ -38,7 +39,7 @@ response = defaultdict(lambda: False)
 class SimulatorRequest(Publisher):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._str_response = create_string_buffer(ct.BUFFER_STRING)
+        self._str_response = create_string_buffer(BUFFER_STRING)
 
     def __repr__(self):
         return f"{self.__class__.__name__}()"
@@ -141,11 +142,9 @@ class SimulatorRequest(Publisher):
 
         """
         for key, val in veh_data.items():
-            response[ct.FIELD_DATA[key]] = ct.FIELD_FORMAT[key](val)
+            response[FIELD_DATA[key]] = FIELD_FORMAT[key](val)
         lkey = "@etat_pilotage"
-        response[ct.FIELD_DATA[lkey]] = ct.FIELD_FORMAT[lkey](
-            veh_data.get(lkey)
-        )
+        response[FIELD_DATA[lkey]] = FIELD_FORMAT[lkey](veh_data.get(lkey))
         return dict(response)
 
     def get_vehicles_property(self, property: str) -> vdata:

@@ -12,7 +12,7 @@ import pytest
 # INTERNAL IMPORTS
 # ============================================================================
 
-from symupy.runtime import Simulation, Simulator
+from symupy.runtime.api import Simulation, Simulator
 from symupy.utils.constants import DEFAULT_PATH_SYMUVIA
 
 # ============================================================================
