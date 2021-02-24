@@ -47,7 +47,7 @@ from collections import defaultdict
 # INTERNAL IMPORTS
 # =============================================================================
 
-from .exceptions import SymupyError, SymupyWarning
+from symupy.utils.exceptions import SymupyError, SymupyWarning
 
 
 # =============================================================================
@@ -64,14 +64,21 @@ from .exceptions import SymupyError, SymupyWarning
 ini_config = decouple.Config(os.path.dirname(__file__))
 
 
-DEFAULT_LIB_OSX = os.path.join(os.getenv("CONDA_PREFIX"), "lib", "libSymuVia.dylib")
+DEFAULT_LIB_OSX = os.path.join(
+    ini_config("CONDA_PREFIX"), "lib", "libSymuVia.dylib"
+)
 
-DEFAULT_LIB_LINUX = os.path.join(os.getenv("CONDA_PREFIX"), "lib", "libSymuVia.so")
+DEFAULT_LIB_LINUX = os.path.join(
+    ini_config("CONDA_PREFIX"), "lib", "libSymuVia.so"
+)
 
-DEFAULT_LIB_WINDOWS = os.path.join(os.getenv("CONDA_PREFIX"), "lib", "libSymuVia.dll")
+DEFAULT_LIB_WINDOWS = os.path.join(
+    ini_config("CONDA_PREFIX"), "lib", "libSymuVia.dll"
+)
 
 if platform.system() == "Darwin":
     try:
+        print(DEFAULT_LIB_OSX)
         if Path(DEFAULT_LIB_OSX).exists():
             DEFAULT_PATH_SYMUVIA = DEFAULT_LIB_OSX
         else:
@@ -247,3 +254,6 @@ ENGINE_CONSTANT = 0.2
 # =============================================================================
 
 RADIOUS_ANT = 500
+
+if __name__ == "__main__":
+    print(DEFAULT_LIB_WINDOWS, DEFAULT_LIB_OSX, DEFAULT_LIB_LINUX)

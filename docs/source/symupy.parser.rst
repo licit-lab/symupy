@@ -1,30 +1,29 @@
-symupy.reader package
+symupy.parser package
 =====================
 
 Submodules
 ----------
 
-symupy.reader.xmlparser module
+symupy.parser.xmlparser module
 ------------------------------
 
-.. automodule:: symupy.reader.xmlparser
+.. automodule:: symupy.parser.xmlparser
    :members:
    :undoc-members:
    :show-inheritance:
 
-symupy.reader.xmlreader module
+symupy.parser.xmlreader module
 ------------------------------
 
-.. automodule:: symupy.reader.xmlreader
+.. automodule:: symupy.parser.xmlreader
    :members:
    :undoc-members:
    :show-inheritance:
-
 
 Module contents
 ---------------
 
-.. automodule:: symupy.reader
+.. automodule:: symupy.parser
    :members:
    :undoc-members:
    :show-inheritance:

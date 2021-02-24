@@ -36,6 +36,14 @@ symupy.utils.parser module
    :undoc-members:
    :show-inheritance:
 
+symupy.utils.screen module
+--------------------------
+
+.. automodule:: symupy.utils.screen
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 symupy.utils.tools module
 -------------------------
 

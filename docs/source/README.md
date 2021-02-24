@@ -2,13 +2,13 @@
 
 # Symupy
 
-![](_static/logo.png)
+[![Documentation Status](https://readthedocs.org/projects/symupy/badge/?version=stable)](https://symupy.readthedocs.io/en/stable/?badge=stable) ![PyPI](https://img.shields.io/pypi/v/symupy) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/symupy) 
 
 A Python API to control and interact with SymuVia. Please find more information in the [documentation](https://symupy.readthedocs.io/en/stable/)
 
 ## Overview 
 
-### Download 
+## Download 
 
 You can download the latest version in this [link](https://github.com/symuvia/symupy/archive/master.zip) or clone this repository at
 
@@ -16,7 +16,7 @@ You can download the latest version in this [link](https://github.com/symuvia/sy
 git clone https://github.com/symuvia/symupy.git
 ```
 
-### Installation 
+## Installation 
 
 There are two possibilities to install this package. 
 
@@ -33,4 +33,11 @@ There are two possibilities to install this package.
    ```
 
 
-### Usage 
+## Usage 
+
+## License 
+
+
+## Contact 
+
+Please feel free to submit an issue 

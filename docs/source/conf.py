@@ -46,7 +46,6 @@ author = "Andres Ladino"
 
 # import os
 # import sys
-import sphinx_rtd_theme
 
 
 import symupy
