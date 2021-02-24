@@ -106,9 +106,7 @@ class Simulation(object):
             self.get_simulation_parameters()[simid].get("fin"), HOUR_FORMAT
         )
         t = t2 - t1
-        n = t.seconds / float(
-            self.get_simulation_parameters()[simid].get("pasdetemps")
-        )
+        n = t.seconds / float(self.get_simulation_parameters()[simid].get("pasdetemps"))
         return range(int(n))
 
     def get_mfd_sensor_names(self) -> tuple:
@@ -132,9 +130,7 @@ class Simulation(object):
         branch_tree = "TRAFICS/TRAFIC/PARAMETRAGE_CAPTEURS/CAPTEURS"
         sensors = self.xmltree.xpath(branch_tree)[0].getchildren()
         try:
-            sensor_element = sensors[
-                self.get_mfd_sensor_names().index(sensor_id)
-            ]
+            sensor_element = sensors[self.get_mfd_sensor_names().index(sensor_id)]
             links = sensor_element.getchildren()[0].getchildren()
             return tuple(lk.attrib["id"] for lk in links)
         except:

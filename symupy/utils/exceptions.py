@@ -25,11 +25,11 @@ import warnings
 
 class SymupyError(Exception):
     """General error exception, it can be raised at whatever moment,
-        the class its intends to create a base class that intends to
-        tag error situations dected by this module.
+    the class its intends to create a base class that intends to
+    tag error situations dected by this module.
 
-        :return: General ``SymupyError`` exception handler
-        :rtype: SymupyError
+    :return: General ``SymupyError`` exception handler
+    :rtype: SymupyError
     """
 
     def __init__(self, error_message: str = "", *args) -> None:
@@ -53,19 +53,17 @@ class SymupyError(Exception):
         )
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}({self.get_message},{self.extra_args})"
-        )
+        return f"{self.__class__.__name__}({self.get_message},{self.extra_args})"
 
 
 class SymupyWarning:
     """
-       General warning exception, it can be raised at whatever moment, the
-       class its intends to create a base class that intends to tag
-       situations dected by this module.
+    General warning exception, it can be raised at whatever moment, the
+    class its intends to create a base class that intends to tag
+    situations dected by this module.
 
-        :param Exception: General ``SymupyWarning`` exception handler
-        :type Exception: SymupyWarning
+     :param Exception: General ``SymupyWarning`` exception handler
+     :type Exception: SymupyWarning
     """
 
     def __init__(self, warning_message: str) -> None:
@@ -74,11 +72,11 @@ class SymupyWarning:
 
 class SymupyFileLoadError(SymupyError):
     """
-        File Load Error exception handler, created for handling file situations
-        in particular scenario situations
+    File Load Error exception handler, created for handling file situations
+    in particular scenario situations
 
-        :return: File Load Error
-        :rtype: SymupyFileLoadError
+    :return: File Load Error
+    :rtype: SymupyFileLoadError
     """
 
     def __init__(self, error_message: str, target_dir: str = "") -> None:
@@ -94,12 +92,12 @@ class SymupyFileLoadError(SymupyError):
 
 class SymupyLoadLibraryError(SymupyError):
     """
-        Load Library Error exception handler, created for handling library
-        situations in particular when it is not possible to link the library
-        and python
+    Load Library Error exception handler, created for handling library
+    situations in particular when it is not possible to link the library
+    and python
 
-        :return: Library Load Error
-        :rtype: SymupyLoadLibraryError
+    :return: Library Load Error
+    :rtype: SymupyLoadLibraryError
     """
 
     def __init__(self, error_message: str, target_dir: str = "") -> None:
@@ -115,12 +113,12 @@ class SymupyLoadLibraryError(SymupyError):
 
 class SymupyVehicleCreationError(SymupyError):
     """
-        Vehicle Creation Error exception handler, created for handling
-        situations at runtime when the vehicles cannot be created within the
-        network
+    Vehicle Creation Error exception handler, created for handling
+    situations at runtime when the vehicles cannot be created within the
+    network
 
-        :return: Vehicle Creation Error
-        :rtype: SymupyVehicleCreationError
+    :return: Vehicle Creation Error
+    :rtype: SymupyVehicleCreationError
     """
 
     def __init__(self, error_message: str, target_dir: str = "") -> None:
@@ -131,18 +129,16 @@ class SymupyVehicleCreationError(SymupyError):
         return "{0}".format(*self.get_message) + f" at: {self._target_dir}"
 
     def __repr__(self) -> str:
-        return (
-            f"SymupyVehicleCreationError({self.get_message},{self._target_dir})"
-        )
+        return f"SymupyVehicleCreationError({self.get_message},{self._target_dir})"
 
 
 class SymupyDriveVehicleError(SymupyError):
     """
-        Vehicle Drive Error exception handler, created for handling situations
-        at runtime when the vehicles cannot be created within the network
+    Vehicle Drive Error exception handler, created for handling situations
+    at runtime when the vehicles cannot be created within the network
 
-        :return: Vehicle Creation Error
-        :rtype: SymupyDriveVehicleError
+    :return: Vehicle Creation Error
+    :rtype: SymupyDriveVehicleError
     """
 
     def __init__(self, error_message: str, target_dir: str = "") -> None:

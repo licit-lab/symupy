@@ -20,9 +20,7 @@ class Element:
         self._filename = filename
         self._pos = pos
         self.tag = re.findall("(?<=<)(\w+)(?=>|\s|\/)", line)[0]
-        self.attr = {
-            key: val for key, val in re.findall('\s(\w+)="(.*?)"', line)
-        }
+        self.attr = {key: val for key, val in re.findall('\s(\w+)="(.*?)"', line)}
 
         if re.findall("\/>$", line):
             self._has_childrens = False

@@ -429,9 +429,7 @@ class Simulator(Configurator, RuntimeDevice):
         """
         # TODO: Improvement → Better organizadtion
         if isinstance(sensors_mfd, str):
-            return self.__library.SymGetTotalTravelTimeEx(
-                sensors_mfd.encode("UTF8")
-            )
+            return self.__library.SymGetTotalTravelTimeEx(sensors_mfd.encode("UTF8"))
 
         if not sensors_mfd:
             sensors_mfd = self.simulation.get_mfd_sensor_names()

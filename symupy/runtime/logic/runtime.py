@@ -13,7 +13,17 @@ import click
 # INTERNAL IMPORTS
 # ============================================================================
 
-from .states import Compliance, Connect, Initialize, PreRoutine, Query, Control, Push, PostRoutine, Terminate
+from .states import (
+    Compliance,
+    Connect,
+    Initialize,
+    PreRoutine,
+    Query,
+    Control,
+    Push,
+    PostRoutine,
+    Terminate,
+)
 
 # ============================================================================
 # CLASS AND DEFINITIONS
@@ -27,11 +37,11 @@ end_seq = [
 
 
 class RuntimeDevice:
-    """ 
-        This class defines the runtime device describing a series of cyclic states required to be run 
+    """
+    This class defines the runtime device describing a series of cyclic states required to be run
 
-        :return: Runtime Device for controlling states of the simulation runtime
-        :rtype: RuntimeDevice
+    :return: Runtime Device for controlling states of the simulation runtime
+    :rtype: RuntimeDevice
     """
 
     def __init__(self) -> None:
@@ -39,24 +49,24 @@ class RuntimeDevice:
         self.state = Compliance()  # Initial state
 
     def __logic(self, boolContinue: bool = True) -> dict:
-        """ 
-            Logic for state machine, transitions 
+        """
+        Logic for state machine, transitions
 
-            * ``Compliance`` -> ``Connect``
-            * ``Connect`` -> ``Initialize``
-            * ``Initialize`` -> ``PreRoutine``
-            * ``PreRoutine`` -> ``Query``
-            * ``Query`` -> ``Control``
-            * ``Control`` -> ``Push``
-            * ``Push`` -> ``PostRoutine``
-            * ``PostRoutine`` -> ``PreRoutine`` when ``boolContinue`` = True
-            * ``PostRoutine`` -> ``Terminate`` when ``boolContinue`` = False
-            * ``Terminate`` -> ``Terminate``
+        * ``Compliance`` -> ``Connect``
+        * ``Connect`` -> ``Initialize``
+        * ``Initialize`` -> ``PreRoutine``
+        * ``PreRoutine`` -> ``Query``
+        * ``Query`` -> ``Control``
+        * ``Control`` -> ``Push``
+        * ``Push`` -> ``PostRoutine``
+        * ``PostRoutine`` -> ``PreRoutine`` when ``boolContinue`` = True
+        * ``PostRoutine`` -> ``Terminate`` when ``boolContinue`` = False
+        * ``Terminate`` -> ``Terminate``
 
-            :param boolContinue: Flag to determine continue looping, defaults to True
-            :type boolContinue: bool, optional
-            :return: State 
-            :rtype: State
+        :param boolContinue: Flag to determine continue looping, defaults to True
+        :type boolContinue: bool, optional
+        :return: State
+        :rtype: State
         """
         dct = {
             ("Compliance", True): self.state.on_event("Connect"),
@@ -75,25 +85,25 @@ class RuntimeDevice:
 
     def reset_state(self) -> None:
         """
-            Reset to initial state in case required 
+        Reset to initial state in case required
         """
         self.state = Compliance()
 
     def next_state(self, cycle: bool = True) -> None:
         """
-            Updates the state according to the state machine logic, possible states 
+        Updates the state according to the state machine logic, possible states
 
-            * ``Compliance``
-            * ``Connect``
-            * ``Initialize``
-            * ``PreRoutine``
-            * ``Query``
-            * ``Control``
-            * ``Push``
-            * ``PostRoutine``
-            * ``Terminate``        
+        * ``Compliance``
+        * ``Connect``
+        * ``Initialize``
+        * ``PreRoutine``
+        * ``Query``
+        * ``Control``
+        * ``Push``
+        * ``PostRoutine``
+        * ``Terminate``
 
-            :param cycle: Cycle parameter to return to PreRoutine state, defaults to True
-            :type cycle: bool, optional
+        :param cycle: Cycle parameter to return to PreRoutine state, defaults to True
+        :type cycle: bool, optional
         """
         self.state = self.__logic(cycle)

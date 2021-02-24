@@ -103,12 +103,8 @@ def test_create_vehicle_bottleneck_001(bottleneck_001, symuvia_library_path):
     assert veh_id == 0
 
 
-def test_create_drive_vehicle_bottleneck_001(
-    bottleneck_001, symuvia_library_path
-):
-    symuvia = Simulator(
-        library_path=symuvia_library_path, step_launch_mode="full"
-    )
+def test_create_drive_vehicle_bottleneck_001(bottleneck_001, symuvia_library_path):
+    symuvia = Simulator(library_path=symuvia_library_path, step_launch_mode="full")
     symuvia.register_simulation(bottleneck_001)
 
     with symuvia as s:
@@ -135,9 +131,7 @@ def test_create_drive_vehicle_bottleneck_001(
 
 
 def test_drive_vehicle_bottleneck_001(bottleneck_001, symuvia_library_path):
-    symuvia = Simulator(
-        library_path=symuvia_library_path, step_launch_mode="full"
-    )
+    symuvia = Simulator(library_path=symuvia_library_path, step_launch_mode="full")
     symuvia.register_simulation(bottleneck_001)
 
     with symuvia as s:

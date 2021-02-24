@@ -64,17 +64,11 @@ from .exceptions import SymupyError, SymupyWarning
 ini_config = decouple.Config(os.path.dirname(__file__))
 
 
-DEFAULT_LIB_OSX = os.path.join(
-    os.getenv("CONDA_PREFIX"), "lib", "libSymuVia.dylib"
-)
+DEFAULT_LIB_OSX = os.path.join(os.getenv("CONDA_PREFIX"), "lib", "libSymuVia.dylib")
 
-DEFAULT_LIB_LINUX = os.path.join(
-    os.getenv("CONDA_PREFIX"), "lib", "libSymuVia.so"
-)
+DEFAULT_LIB_LINUX = os.path.join(os.getenv("CONDA_PREFIX"), "lib", "libSymuVia.so")
 
-DEFAULT_LIB_WINDOWS = os.path.join(
-    os.getenv("CONDA_PREFIX"), "lib", "libSymuVia.dll"
-)
+DEFAULT_LIB_WINDOWS = os.path.join(os.getenv("CONDA_PREFIX"), "lib", "libSymuVia.dll")
 
 if platform.system() == "Darwin":
     try:

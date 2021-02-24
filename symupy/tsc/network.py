@@ -84,9 +84,7 @@ class TerminationZone:
         self.__dict__[attr] = value
 
     def __repr__(self):
-        return (
-            f"TerminationZone(id={self.id.__repr__()}, {len(self.links)} links)"
-        )
+        return f"TerminationZone(id={self.id.__repr__()}, {len(self.links)} links)"
 
 
 class Network(NetworkElement):

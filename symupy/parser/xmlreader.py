@@ -44,9 +44,7 @@ class NetworkReader(object):
 
     @cached_property
     def _termination_zones(self):
-        return self._parser.xpath(
-            "ROOT_SYMUBRUIT/TRAFICS/TRAFIC/ZONES_DE_TERMINAISON"
-        )
+        return self._parser.xpath("ROOT_SYMUBRUIT/TRAFICS/TRAFIC/ZONES_DE_TERMINAISON")
 
     @cached_property
     def _public_transport(self):
@@ -72,15 +70,11 @@ class NetworkReader(object):
 
     @cached_property
     def _giratoire(self):
-        return self._parser.xpath(
-            "ROOT_SYMUBRUIT/RESEAUX/RESEAU/CONNEXIONS/GIRATOIRES"
-        )
+        return self._parser.xpath("ROOT_SYMUBRUIT/RESEAUX/RESEAU/CONNEXIONS/GIRATOIRES")
 
     @cached_property
     def _extremity(self):
-        return self._parser.xpath(
-            "ROOT_SYMUBRUIT/RESEAUX/RESEAU/CONNEXIONS/EXTREMITES"
-        )
+        return self._parser.xpath("ROOT_SYMUBRUIT/RESEAUX/RESEAU/CONNEXIONS/EXTREMITES")
 
     def iter_links(self):
         return self._links.iterchildrens()
@@ -143,9 +137,7 @@ class NetworkReader(object):
 
     def info_sensors(self):
         if self._sensors is not None:
-            return {
-                cpt.attr["id"]: cpt.tag for cpt in self._sensors.iterchildrens()
-            }
+            return {cpt.attr["id"]: cpt.tag for cpt in self._sensors.iterchildrens()}
         else:
             return dict()
 
@@ -164,9 +156,7 @@ class NetworkReader(object):
 
     def info_termination_zones(self):
         if self._termination_zones is not None:
-            return [
-                zn.attr["id"] for zn in self._termination_zones.iterchildrens()
-            ]
+            return [zn.attr["id"] for zn in self._termination_zones.iterchildrens()]
         else:
             return list()
 

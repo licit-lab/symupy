@@ -16,18 +16,18 @@ from symupy.abstractions import AbsSubject
 
 
 class Publisher(AbsSubject):
-    """ This generic class model implements a general publisher pattern to
-        broadcast information towards different subscribers. Subscribers are
-        intented to be objects such as vehicles or other objects that should be aware of the publisher.
+    """This generic class model implements a general publisher pattern to
+    broadcast information towards different subscribers. Subscribers are
+    intented to be objects such as vehicles or other objects that should be aware of the publisher.
 
-        In particular this creates a subject that can notify to a specific channel where subscribers are registered.
-        
-        Example:
-            Create a DataQuery for 2 type of channels, ``automated`` and  ``regular`` and perform a subscription ::
+    In particular this creates a subject that can notify to a specific channel where subscribers are registered.
 
-                >>> channels = ('auto','regular')
-                >>> p = Publisher(channels)        
-                >>> s = Subscriber(p,'auto')  # Registers a s into p
+    Example:
+        Create a DataQuery for 2 type of channels, ``automated`` and  ``regular`` and perform a subscription ::
+
+            >>> channels = ('auto','regular')
+            >>> p = Publisher(channels)
+            >>> s = Subscriber(p,'auto')  # Registers a s into p
     """
 
     def __init__(self, channels=("default",)):
@@ -47,33 +47,33 @@ class Publisher(AbsSubject):
         return self._channels[channel]
 
     def attach(self, observer, channel: str, callback=None):
-        """ Attach a new observer to a specific channel,, one can specify 
-            a method of the class to be called.
+        """Attach a new observer to a specific channel,, one can specify
+        a method of the class to be called.
 
-            Args:
-                channel(str): channel name
-                observer(observer): observer object
-                callback(callable): method to be executed when publisher notifies.
+        Args:
+            channel(str): channel name
+            observer(observer): observer object
+            callback(callable): method to be executed when publisher notifies.
         """
         if callback == None:
             callback = getattr(observer, "update")
         self.get_subscribers(channel)[observer] = callback
 
     def detach(self, observer, channel: str):
-        """ Detach observer from the subject 
+        """Detach observer from the subject
 
-            Args:
-                channel(str): channel name
-                observer(observer): observer object
-                callback(callable): method to be executed when publisher notifies.
+        Args:
+            channel(str): channel name
+            observer(observer): observer object
+            callback(callable): method to be executed when publisher notifies.
         """
         del self.get_subscribers(channel)[observer]
 
     def dispatch(self, channel: str = "default"):
-        """ Dispatches a message to a specific channel
+        """Dispatches a message to a specific channel
 
-            Args:
-                channel(str): channel name                
+        Args:
+            channel(str): channel name
         """
         for _, callback in self.get_subscribers(channel).items():
             callback()

@@ -79,7 +79,7 @@ class Query(State):
 
 class Control(State):
     """
-    The state which computes the control decision  
+    The state which computes the control decision
     """
 
     def on_event(self, event: str):
@@ -103,7 +103,7 @@ class Push(State):
 
 class PostRoutine(State):
     """
-    The state which logs information or compute step indicators 
+    The state which logs information or compute step indicators
     """
 
     def on_event(self, event: str):

@@ -20,20 +20,17 @@ class AbsSubject(metaclass=abc.ABCMeta):
 
     @abc.abstractclassmethod
     def attach(self, observer, channel, callback):
-        """ Attach a new observer 
-        """
+        """Attach a new observer"""
         pass
 
     @abc.abstractclassmethod
     def detach(self, observer, channel):
-        """ Detach an existing observer 
-        """
+        """Detach an existing observer"""
         pass
 
     @abc.abstractclassmethod
     def dispatch(self, channel):
-        """ Notify all observers by calling update method
-        """
+        """Notify all observers by calling update method"""
         pass
 
     def __enter__(self):
