@@ -18,7 +18,7 @@ from datetime import datetime
 # ============================================================================
 
 from symupy.utils.exceptions import SymupyFileLoadError
-from symupy.utils import constants as ct
+from symupy.utils.constants import HOUR_FORMAT
 
 # ============================================================================
 # CLASS AND DEFINITIONS
@@ -37,8 +37,7 @@ class Simulation(object):
         return f"{self.__class__.__name__}({self.filename()})"
 
     def load_xml_tree(self) -> None:
-        """ Load XML file_name
-        """
+        """Load XML file_name"""
         # TODO: Add validation with DTD
         tree = etree.parse(self._file_name)
         root = tree.getroot()
@@ -53,7 +52,7 @@ class Simulation(object):
         self._xml_tree = rootxml
 
     def get_simulation_parameters(self) -> tuple:
-        """ Get simulation parameters
+        """Get simulation parameters
 
         :return: tuple with XML dictionary containing parameters
         :rtype: tuple
@@ -63,7 +62,7 @@ class Simulation(object):
         return tuple(par.attrib for par in sim_params)
 
     def get_vehicletype_information(self) -> tuple:
-        """ Get the vehicle parameters
+        """Get the vehicle parameters
 
         :return: tuple of dictionaries containing vehicle parameters
         :rtype: tuple
@@ -73,7 +72,7 @@ class Simulation(object):
         return tuple(v.attrib for v in vehicle_types)
 
     def get_network_endpoints(self) -> tuple:
-        """ Get networks endpoint names
+        """Get networks endpoint names
 
         :return: tuple containing endpoint names
         :rtype: tuple
@@ -83,9 +82,9 @@ class Simulation(object):
         return tuple(ep.attrib["id"] for ep in end_points)
 
     def get_network_links(self) -> tuple:
-        """ Get network link names
+        """Get network link names
 
-        :return: tuple containing link names 
+        :return: tuple containing link names
         :rtype: tuple
         """
         branch_tree = "TRAFICS/TRAFIC/TRONCONS"
@@ -100,15 +99,21 @@ class Simulation(object):
         :return:
         :rtype: range
         """
-        t1 = datetime.strptime(self.get_simulation_parameters()[simid].get("debut"), ct.HOUR_FORMAT)
-        t2 = datetime.strptime(self.get_simulation_parameters()[simid].get("fin"), ct.HOUR_FORMAT)
+        t1 = datetime.strptime(
+            self.get_simulation_parameters()[simid].get("debut"), HOUR_FORMAT
+        )
+        t2 = datetime.strptime(
+            self.get_simulation_parameters()[simid].get("fin"), HOUR_FORMAT
+        )
         t = t2 - t1
-        n = t.seconds / float(self.get_simulation_parameters()[simid].get("pasdetemps"))
+        n = t.seconds / float(
+            self.get_simulation_parameters()[simid].get("pasdetemps")
+        )
         return range(int(n))
 
     def get_mfd_sensor_names(self) -> tuple:
-        """ Get MFD sensors defined for a specific simulation
-        
+        """Get MFD sensors defined for a specific simulation
+
         :return: tuple of MFD sensors in the network
         :rtype: tuple
         """
@@ -117,8 +122,8 @@ class Simulation(object):
         return tuple(sn.attrib["id"] for sn in sensors)
 
     def get_links_in_mfd_sensor(self, sensor_id: str) -> tuple:
-        """ Get links associated to a particular MFD sensor for a specific simulation
-        
+        """Get links associated to a particular MFD sensor for a specific simulation
+
         :param sensor_id: Sensor id
         :type sensor_id: str
         :return: tuple of strings with links covered by the sensor
@@ -127,7 +132,9 @@ class Simulation(object):
         branch_tree = "TRAFICS/TRAFIC/PARAMETRAGE_CAPTEURS/CAPTEURS"
         sensors = self.xmltree.xpath(branch_tree)[0].getchildren()
         try:
-            sensor_element = sensors[self.get_mfd_sensor_names().index(sensor_id)]
+            sensor_element = sensors[
+                self.get_mfd_sensor_names().index(sensor_id)
+            ]
             links = sensor_element.getchildren()[0].getchildren()
             return tuple(lk.attrib["id"] for lk in links)
         except:
@@ -138,13 +145,13 @@ class Simulation(object):
         raise NotImplementedError
 
     def filename(self, encoding: str = None):
-        """ 
-            This method returns the value of encoding of the simulation scenario under consideration
-        
-            :param encoding: enconder UTF8, defaults to None
-            :type encoding: string, optional
-            :return: Full path of scenario
-            :rtype: string
+        """
+        This method returns the value of encoding of the simulation scenario under consideration
+
+        :param encoding: enconder UTF8, defaults to None
+        :type encoding: string, optional
+        :return: Full path of scenario
+        :rtype: string
         """
         if encoding == "UTF8":
             return self._file_name.encode(encoding)

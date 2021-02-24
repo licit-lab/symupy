@@ -47,14 +47,15 @@ from symupy.utils.exceptions import (
 )
 
 #
-from .scenario import Simulation
+from symupy.runtime.api.scenario import Simulation
+
 from symupy.utils.parser import SimulatorRequest
 from symupy.utils.configurator import Configurator
 from symupy.runtime.logic import RuntimeDevice
 from symupy.tsc.vehicles import Vehicle, VehicleList
 
-from symupy.utils import timer_func, printer_time
-from symupy.utils import constants as CT
+from symupy.utils.tools import timer_func, printer_time
+import symupy.utils.constants as CT
 
 # ============================================================================
 # CLASS AND DEFINITIONS
