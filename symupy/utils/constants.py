@@ -64,7 +64,7 @@ from symupy import __version__
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Conda RTD
-RTDPATH = config("RTD_ENV", cast=str)
+RTDPATH = os.getenv("RTD_ENV", config("RTD_ENV", cast=str))
 
 # Solving conda (local,RTD)
 CONDA_PREFIX = os.getenv("CONDA_PREFIX", RTDPATH)
@@ -79,7 +79,8 @@ DCT_LIBOSNAME = {
 
 def find_path(roots):
     for root in roots:
-        yield from Path(root).glob(f"**/{DCT_LIBOSNAME[platform.system()]}")
+        if (p := Path(root)).is_dir():
+            yield from p.glob(f"**/{DCT_LIBOSNAME[platform.system()]}")
 
 
 # Add all root paths to search for the library here
