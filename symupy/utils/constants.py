@@ -64,9 +64,7 @@ from symupy import __version__
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Conda RTD
-RTD_ENV = os.path.join(config("RTD_ENV", cast=str), "v" + __version__)  # prod
-RTD_ALT = os.path.join(config("RTD_ENV", cast=str), "dev")  # dev
-RTDPATH = RTD_ENV if Path(RTD_ENV).exists() else RTD_ALT
+RTDPATH = config("RTD_ENV", cast=str)
 
 # Solving conda (local,RTD)
 CONDA_PREFIX = os.getenv("CONDA_PREFIX", RTDPATH)
@@ -78,24 +76,24 @@ DCT_LIBOSNAME = {
     "Windows": "libSymuVia.dll",
 }
 
-# Default conda paths/platforms
-DEFAULT_LIB = os.path.join(
-    CONDA_PREFIX, "lib", DCT_LIBOSNAME[platform.system()]
-)
 
-# Default paths to search when no c
-ENV2SEARCH = {
-    "Darwin": "DEFAULT_LIB_OSX",
-    "Linux": "DEFAULT_LIB_LINUX",
-    "Windows": "DEFAULT_LIB_WINDOWS",
-}
+def find_path(roots):
+    for root in roots:
+        yield from Path(root).glob(f"**/{DCT_LIBOSNAME[platform.system()]}")
 
-f = lambda x: x if Path(x).exists() else config(ENV2SEARCH[platform().system()])
 
-# Solving path
-DEFAULT_PATH_SYMUVIA = f(DEFAULT_LIB)
+# Add all root paths to search for the library here
+PATHS_2_SEARCH = (CONDA_PREFIX, RTDPATH)
+
+for path in find_path(PATHS_2_SEARCH):
+    DEFAULT_PATH_SYMUVIA = path
 
 print(f"Default path: {DEFAULT_PATH_SYMUVIA}")
+
+if not DEFAULT_PATH_SYMUVIA:
+    DEFAULT_PATH_SYMUVIA = ""
+    raise SymupyWarning("No Simulator could be defined")
+
 # =============================================================================
 # DEFAULT SIMULATOR/ OS ASSOCIATION
 # =============================================================================
