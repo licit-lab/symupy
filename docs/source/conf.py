@@ -52,6 +52,7 @@ author = "Andres Ladino"
 from symupy.utils.constants import DEFAULT_PATH_SYMUVIA
 
 print("LIB: Library Check")
+print("===============================")
 print(DEFAULT_PATH_SYMUVIA)
 
 import symupy
