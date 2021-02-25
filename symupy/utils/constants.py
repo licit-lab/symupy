@@ -71,7 +71,7 @@ if os.environ.get("READTHEDOCS"):
     LIBABSPATH = os.path.normpath(os.path.join(DIR_NAME, LIBRELPATH))
 
 
-print(f"LIBABSPATH")
+print(f"{LIBABSPATH}")
 
 if not os.path.isdir(LIBABSPATH):
 
@@ -262,4 +262,4 @@ ENGINE_CONSTANT = 0.2
 RADIOUS_ANT = 500
 
 if __name__ == "__main__":
-    print(DEFAULT_LIB_WINDOWS, DEFAULT_LIB_OSX, DEFAULT_LIB_LINUX)
+    print(DEFAULT_PATH_SYMUVIA)
