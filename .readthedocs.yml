@@ -6,3 +6,10 @@ sphinx:
 
 conda:
   environment: docs/environment_doc.yml
+
+python:
+  version: 3.8
+  install:
+    # install symupy itself
+    - method: pip
+      path: .

@@ -37,8 +37,8 @@
 import os
 from datetime import date, datetime, timedelta
 import platform
-import decouple
-from decouple import UndefinedValueError
+
+from decouple import UndefinedValueError, config
 from numpy import array, float64, int32
 from pathlib import Path
 from collections import defaultdict
@@ -48,7 +48,7 @@ from collections import defaultdict
 # =============================================================================
 
 from symupy.utils.exceptions import SymupyError, SymupyWarning
-
+from symupy import __version__
 
 # =============================================================================
 # CLASS AND DEFINITIONS
@@ -61,49 +61,41 @@ from symupy.utils.exceptions import SymupyError, SymupyWarning
 # =============================================================================
 
 # Point to ini file
-ini_config = decouple.Config(os.path.dirname(__file__))
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# Conda RTD
+RTD_ENV = os.path.join(config("RTD_ENV", cast=str), "v" + __version__)  # prod
+RTD_ALT = os.path.join(config("RTD_ENV", cast=str), "dev")  # dev
+RTDPATH = RTD_ENV if Path(RTD_ENV).exists() else RTD_ALT
 
-DEFAULT_LIB_OSX = os.path.join(
-    ini_config("CONDA_PREFIX"), "lib", "libSymuVia.dylib"
+# Solving conda (local,RTD)
+CONDA_PREFIX = os.getenv("CONDA_PREFIX", RTDPATH)
+
+# Default names/platform
+DCT_LIBOSNAME = {
+    "Darwin": "libSymuVia.dylib",
+    "Linux": "libSymuVia.so",
+    "Windows": "libSymuVia.dll",
+}
+
+# Default conda paths/platforms
+DEFAULT_LIB = os.path.join(
+    CONDA_PREFIX, "lib", DCT_LIBOSNAME[platform.system()]
 )
 
-DEFAULT_LIB_LINUX = os.path.join(
-    ini_config("CONDA_PREFIX"), "lib", "libSymuVia.so"
-)
+# Default paths to search when no c
+ENV2SEARCH = {
+    "Darwin": "DEFAULT_LIB_OSX",
+    "Linux": "DEFAULT_LIB_LINUX",
+    "Windows": "DEFAULT_LIB_WINDOWS",
+}
 
-DEFAULT_LIB_WINDOWS = os.path.join(
-    ini_config("CONDA_PREFIX"), "lib", "libSymuVia.dll"
-)
+f = lambda x: x if Path(x).exists() else config(ENV2SEARCH[platform().system()])
 
-if platform.system() == "Darwin":
-    try:
-        print(DEFAULT_LIB_OSX)
-        if Path(DEFAULT_LIB_OSX).exists():
-            DEFAULT_PATH_SYMUVIA = DEFAULT_LIB_OSX
-        else:
-            DEFAULT_PATH_SYMUVIA = ini_config("DEFAULT_LIB_OSX")
-    except UndefinedValueError:
-        SymupyWarning("No Simulator could be defined")
-        DEFAULT_PATH_SYMUVIA = ""
-elif platform.system() == "Linux":
-    try:
-        if Path(DEFAULT_LIB_LINUX).exists():
-            DEFAULT_PATH_SYMUVIA = DEFAULT_LIB_LINUX
-        else:
-            DEFAULT_PATH_SYMUVIA = ini_config("DEFAULT_LIB_LINUX")
-    except UndefinedValueError:
-        SymupyWarning("No Simulator could be defined")
-        DEFAULT_PATH_SYMUVIA = ""
-elif platform.system() == "Windows":
-    try:
-        DEFAULT_PATH_SYMUVIA = ini_config("DEFAULT_LIB_WINDOWS")
-    except UndefinedValueError:
-        SymupyWarning("No Simulator could be defined")
-        DEFAULT_PATH_SYMUVIA = ""
-else:
-    raise SymupyError("Platform could not be determined")
+# Solving path
+DEFAULT_PATH_SYMUVIA = f(DEFAULT_LIB)
 
+print(f"Default path: {DEFAULT_PATH_SYMUVIA}")
 # =============================================================================
 # DEFAULT SIMULATOR/ OS ASSOCIATION
 # =============================================================================
