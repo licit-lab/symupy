@@ -38,6 +38,11 @@ print("===============================")
 for item in sys.path:
     print(item)
 
+print("ENV: Environment check")
+print("===============================")
+conda = os.environ.get("CONDA_PREFIX")
+print(conda)
+
 # -- Project information -----------------------------------------------------
 
 project = "Symupy"
