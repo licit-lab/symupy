@@ -1,5 +1,14 @@
 from setuptools import setup, find_packages
 
+import os
+
+if os.environ.get("READTHEDOCS"):
+    file_path = os.path.realpath(__file__)
+    checkout_name = os.path.basename(os.path.dirname(file_path))
+    symuvia_rel_path = os.path.join("..", "..", "conda", checkout_name, "lib")
+    symuvia_path = os.path.realpath(symuvia_rel_path)
+    os.environ["SYMUVIA_PATH"] = symuvia_path
+
 CLASSIFIERS = [
     "Development Status :: 2 - Pre-Alpha",
     "Intended Audience :: Developers",

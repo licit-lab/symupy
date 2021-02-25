@@ -60,41 +60,46 @@ from symupy import __version__
 # DEFAULT PATHS TO FIND SIMULATOR PLATFORMS
 # =============================================================================
 
-# Point to ini file
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SYMUVIA_PATH = os.environ.get("SYMUVIA_PATH")
 
-# Conda RTD
-RTDPATH = os.getenv("RTD_ENV", config("RTD_ENV", cast=str))
+if not SYMUVIA_PATH:
 
-# Solving conda (local,RTD)
-CONDA_PREFIX = os.getenv("CONDA_PREFIX", RTDPATH)
+    # Point to ini file
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Default names/platform
-DCT_LIBOSNAME = {
-    "Darwin": "libSymuVia.dylib",
-    "Linux": "libSymuVia.so",
-    "Windows": "libSymuVia.dll",
-}
+    # Conda RTD
+    RTDPATH = os.getenv("RTD_ENV", config("RTD_ENV", cast=str))
 
+    # Solving conda (local,RTD)
+    CONDA_PREFIX = os.getenv("CONDA_PREFIX", RTDPATH)
 
-def find_path(roots):
-    for root in roots:
-        if (p := Path(root)).is_dir():
-            yield from p.glob(f"**/{DCT_LIBOSNAME[platform.system()]}")
+    # Default names/platform
+    DCT_LIBOSNAME = {
+        "Darwin": "libSymuVia.dylib",
+        "Linux": "libSymuVia.so",
+        "Windows": "libSymuVia.dll",
+    }
 
+    def find_path(roots):
+        for root in roots:
+            if (p := Path(root)).is_dir():
+                yield from p.glob(f"**/{DCT_LIBOSNAME[platform.system()]}")
 
-# Add all root paths to search for the library here
-PATHS_2_SEARCH = (CONDA_PREFIX, RTDPATH, ".")
+    # Add all root paths to search for the library here
+    PATHS_2_SEARCH = (CONDA_PREFIX, RTDPATH, ".")
 
-for path in find_path(PATHS_2_SEARCH):
-    DEFAULT_PATH_SYMUVIA = path
+    for path in find_path(PATHS_2_SEARCH):
+        DEFAULT_PATH_SYMUVIA = path
 
-print(f"Default path: {DEFAULT_PATH_SYMUVIA}")
+    print(f"Default path: {DEFAULT_PATH_SYMUVIA}")
 
-if not DEFAULT_PATH_SYMUVIA:
-    DEFAULT_PATH_SYMUVIA = ""
-    raise SymupyWarning("No Simulator could be defined")
+    if not DEFAULT_PATH_SYMUVIA:
+        DEFAULT_PATH_SYMUVIA = ""
+        raise SymupyWarning("No Simulator could be defined")
 
+else:
+    DEFAULT_PATH_SYMUVIA = SYMUVIA_PATH
+    
 # =============================================================================
 # DEFAULT SIMULATOR/ OS ASSOCIATION
 # =============================================================================
