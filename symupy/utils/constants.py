@@ -60,46 +60,51 @@ from symupy import __version__
 # DEFAULT PATHS TO FIND SIMULATOR PLATFORMS
 # =============================================================================
 
-SYMUVIA_PATH = os.environ.get("SYMUVIA_PATH")
+# RTD Setup
+LIBABSPATH = ""
+if os.environ.get("READTHEDOCS"):
+    FILE_PATH = os.path.realpath(__file__)
+    CKNAME = os.path.basename(os.path.dirname(FILE_PATH))
+    LIBRELPATH = os.path.join("..", "..", "conda", CKNAME, "lib")
+    LIBPATH = os.path.realpath(LIBRELPATH)
+    LIBABSPATH = os.path.abspath(LIBPATH)
 
-if not SYMUVIA_PATH:
+if not os.path.isdir(LIBABSPATH):
 
-    # Point to ini file
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-    # Conda RTD
-    RTDPATH = os.getenv("RTD_ENV", config("RTD_ENV", cast=str))
-
     # Solving conda (local,RTD)
-    CONDA_PREFIX = os.getenv("CONDA_PREFIX", RTDPATH)
+    CONDA_PREFIX = os.getenv("CONDA_PREFIX")
 
-    # Default names/platform
-    DCT_LIBOSNAME = {
-        "Darwin": "libSymuVia.dylib",
-        "Linux": "libSymuVia.so",
-        "Windows": "libSymuVia.dll",
-    }
-
-    def find_path(roots):
-        for root in roots:
-            if (p := Path(root)).is_dir():
-                yield from p.glob(f"**/{DCT_LIBOSNAME[platform.system()]}")
-
-    # Add all root paths to search for the library here
-    PATHS_2_SEARCH = (CONDA_PREFIX, RTDPATH, ".")
-
-    for path in find_path(PATHS_2_SEARCH):
-        DEFAULT_PATH_SYMUVIA = path
-
-    print(f"Default path: {DEFAULT_PATH_SYMUVIA}")
-
-    if not DEFAULT_PATH_SYMUVIA:
-        DEFAULT_PATH_SYMUVIA = ""
-        raise SymupyWarning("No Simulator could be defined")
+    PATHS_2_SEARCH = (CONDA_PREFIX,)
 
 else:
-    DEFAULT_PATH_SYMUVIA = SYMUVIA_PATH
-    
+    PATHS_2_SEARCH = (LIBABSPATH,)
+
+# Default names/platform
+DCT_LIBOSNAME = {
+    "Darwin": "libSymuVia.dylib",
+    "Linux": "libSymuVia.so",
+    "Windows": "libSymuVia.dll",
+}
+
+
+def find_path(roots):
+    for root in roots:
+        if (p := Path(root)).is_dir():
+            yield from p.glob(f"**/{DCT_LIBOSNAME[platform.system()]}")
+
+
+for path in find_path(PATHS_2_SEARCH):
+    DEFAULT_PATH_SYMUVIA = path
+
+print(f"Default path: {DEFAULT_PATH_SYMUVIA}")
+
+if not DEFAULT_PATH_SYMUVIA:
+    DEFAULT_PATH_SYMUVIA = ""
+    raise SymupyWarning("No Simulator could be defined")
+
+
 # =============================================================================
 # DEFAULT SIMULATOR/ OS ASSOCIATION
 # =============================================================================

@@ -49,9 +49,10 @@ project = "Symupy"
 copyright = "2020, Andres Ladino"
 author = "Andres Ladino"
 
-# import os
-# import sys
+from symupy.utils.constants import DEFAULT_PATH_SYMUVIA
 
+print("LIB: Library Check")
+print(DEFAULT_PATH_SYMUVIA)
 
 import symupy
 
