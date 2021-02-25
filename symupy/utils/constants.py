@@ -84,7 +84,7 @@ def find_path(roots):
 
 
 # Add all root paths to search for the library here
-PATHS_2_SEARCH = (CONDA_PREFIX, RTDPATH)
+PATHS_2_SEARCH = (CONDA_PREFIX, RTDPATH, ".")
 
 for path in find_path(PATHS_2_SEARCH):
     DEFAULT_PATH_SYMUVIA = path
