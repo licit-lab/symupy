@@ -64,17 +64,22 @@ from symupy import __version__
 LIBABSPATH = ""
 if os.environ.get("READTHEDOCS"):
     FILE_PATH = os.path.realpath(__file__)
-    CKNAME = os.path.basename(os.path.dirname(FILE_PATH))
+    DIR_NAME = os.path.dirname(FILE_PATH)
+    CKNAME = os.path.basename(DIR_NAME)
     LIBRELPATH = os.path.join("..", "..", "conda", CKNAME, "lib")
     LIBPATH = os.path.realpath(LIBRELPATH)
-    LIBABSPATH = os.path.abspath(LIBPATH)
+    LIBABSPATH = os.path.normpath(os.path.join(DIR_NAME, LIBRELPATH))
+
+
+print(f"LIBABSPATH")
 
 if not os.path.isdir(LIBABSPATH):
 
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
     # Solving conda (local,RTD)
-    CONDA_PREFIX = os.getenv("CONDA_PREFIX")
+    RTDPATH = config("RTD_ENV", cast=str)
+    CONDA_PREFIX = os.getenv("CONDA_PREFIX", RTDPATH)
 
     PATHS_2_SEARCH = (CONDA_PREFIX,)
 

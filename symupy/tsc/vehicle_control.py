@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from collections import deque
 from typing import List
 
-from symupy.components.vehicles import Vehicle, VehicleList
+from symupy.tsc.vehicles import Vehicle, VehicleList
 from symupy.utils import constants as ct
 
 import numpy as np
