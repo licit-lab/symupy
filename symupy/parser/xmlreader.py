@@ -1,5 +1,5 @@
 """
-XML Reader 
+XML Reader
 ==========
 A module to parse information from Symuvia input XMLs
 """
@@ -112,6 +112,8 @@ class NetworkReader(object):
                 np.fromstring(tr.attr["extremite_amont"], sep=" "),
                 np.fromstring(tr.attr["extremite_aval"], sep=" "),
             )
+            if 'vit_reg' in tr.attr.keys():
+                net.links[tr.attr["id"]]["speed_limit"] = float(tr.attr['vit_reg'])
             internal_points = tr.find_children_tag("POINTS_INTERNES")
             if internal_points is not None:
                 elt = internal_points.getchildrens()

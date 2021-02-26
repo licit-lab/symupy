@@ -1,7 +1,7 @@
 """
 Network
 =======
-This module contains representation for different traffic objects related to the road infrastructure. 
+This module contains representation for different traffic objects related to the road infrastructure.
 """
 
 # ============================================================================
@@ -43,6 +43,7 @@ class Link(NetworkElement):
     nb_lanes: int = 1
     authorized_mode: str = "all"
     internal_points: list = field(default_factory=list)
+    speed_limit: float = None
 
     def __getitem__(self, attr):
         return self.__dict__[attr]
@@ -108,6 +109,7 @@ class Network(NetworkElement):
         downstream_node,
         upstream_coords,
         downstream_coords,
+        speed_limit=None,
         nb_lanes=1,
         authorized_mode="all",
     ):
@@ -125,6 +127,7 @@ class Network(NetworkElement):
             downstream_coords=downstream_coords,
             nb_lanes=nb_lanes,
             authorized_mode=authorized_mode,
+            speed_limit=speed_limit
         )
 
         self.links[id] = l
