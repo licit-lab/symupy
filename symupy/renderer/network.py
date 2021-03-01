@@ -23,7 +23,7 @@ def render(network, fig=None, termination_zone=[], sensors=[], path={}):
             + [arr.tolist() for arr in link["internal_points"]]
             + [link["downstream_coords"].tolist()]
         )
-    print(np.array(network_coords).shape)
+
     for key in sensors:
         troncons = network.sensors[key]["links"]
         troncons_id = [network_keys.index(id) for id in troncons]
@@ -41,9 +41,10 @@ def render(network, fig=None, termination_zone=[], sensors=[], path={}):
         ids_to_delete.update(troncons_id)
         path_plot[key] = np.array(network_coords, dtype=object)[troncons_id]
 
-    network_coords = np.delete(
-        np.array(network_coords, dtype=object), list(ids_to_delete), axis=0
-    )
+    if ids_to_delete:
+        network_coords = np.delete(
+            np.array(network_coords, dtype=object), list(ids_to_delete), axis=0)
+
     network_coords = np.row_stack([arr + [[None, None]] for arr in network_coords])
     fig.gca().plot(
         network_coords[:, 0],
@@ -70,3 +71,12 @@ def render(network, fig=None, termination_zone=[], sensors=[], path={}):
     plt.tight_layout()
     fig.gca().set_aspect("equal")
     plt.show()
+
+if __name__ == '__main__':
+
+    from symupy.tsc.network import Network
+    network = Network(id='mynet')
+    network.add_node('Ext_In')
+    network.add_node('Ext_Out')
+    network.add_link('Zone_001','Ext_In','Ext_Out',[0, 0],[0, 1])
+    render(network)

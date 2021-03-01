@@ -123,8 +123,8 @@ class Network(NetworkElement):
             id=id,
             upstream_node=upstream_node,
             downstream_node=downstream_node,
-            upstream_coords=upstream_coords,
-            downstream_coords=downstream_coords,
+            upstream_coords=np.array(upstream_coords),
+            downstream_coords=np.array(downstream_coords),
             nb_lanes=nb_lanes,
             authorized_mode=authorized_mode,
             speed_limit=speed_limit
