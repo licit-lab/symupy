@@ -1,0 +1,1 @@
+from .mplfigure import MplWidget

@@ -1,5 +1,5 @@
 """
-Main Command Line Interface 
+Main Command Line Interface
 ===========================
 This file groups all the commands contained in the cli menu for symupy
 """
@@ -16,6 +16,7 @@ import click
 # ============================================================================
 
 from symupy.utils.screen import log_verify
+from symupy.postprocess.visunet.main import launch_app
 
 # ============================================================================
 # CLASS AND DEFINITIONS
@@ -25,7 +26,7 @@ help_text = """Symupy
 
 A package to launch traffic simulations using SymuVia
 
-This is a Command Line Interface to provide functionalities related to specific task executions and 
+This is a Command Line Interface to provide functionalities related to specific task executions and
 
 Please visit: symupy.readthedocs.io/ for more information.
 """
@@ -56,6 +57,15 @@ def main(verbose: bool) -> int:
 def launch(scenario: str) -> None:
     """Launches a simulation """
     pass
+
+
+# ------------------------------ Visunet command--------------------------------
+
+
+@main.command()
+def visu() -> None:
+    """Launches VisuNet app """
+    launch_app()
 
 
 # ------------------------------ Analyze command-------------------------------
