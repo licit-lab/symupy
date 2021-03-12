@@ -83,9 +83,12 @@ class NetworkWidget(QGroupBox):
 
     def load_network(self):
         options = QFileDialog.Options(QFileDialog.Options(QFileDialog.DontUseNativeDialog))
-        self.data.file_network, _ = QFileDialog.getOpenFileName(self,"Load Network", "","Network file (*.xml)", options=options)
+        file, _ = QFileDialog.getOpenFileName(self,"Load Network", "","Network file (*.xml)", options=options)
 
-        self.plot_network()
+        if file != '':
+            print(file)
+            self.data.file_network = file
+            self.plot_network()
 
     def process_network(self):
         parser = XMLParser(self.data.file_network)
@@ -97,25 +100,25 @@ class NetworkWidget(QGroupBox):
             troncons_elem = parser.xpath("ROOT_SYMUBRUIT/RESEAUX/RESEAU/TRONCONS")
 
         troncons_coords = list()
+        self.data.troncons_coords = OrderedDict()
         for elem in troncons_elem.iterchildrens():
             amont = np.fromstring(elem.attr['extremite_amont'], sep=' ')
             aval = np.fromstring(elem.attr['extremite_aval'], sep=' ')
             internal_points = elem.find_children_tag('POINTS_INTERNES')
             if internal_points is not None:
-                internal_coords = [np.fromstring(ip.attr['coordonnees'], sep=' ') for ip in internal_points.iterchildrens()]
-                troncons_coords.append([amont]+internal_coords+[aval])
-                print([amont]+[internal_coords]+[aval])
+                coords = [np.fromstring(ip.attr['coordonnees'], sep=' ') for ip in internal_points.iterchildrens()]
+                coords = [amont]+coords+[aval]
 
             else:
-                troncons_coords.append([amont]+[aval])
-
-        troncons_coords = np.row_stack([arr + [[None, None]] for arr in troncons_coords])
-        return troncons_coords
+                coords = [amont]+[aval]
+            self.data.troncons_coords[elem.attr['id']] = coords
 
 
+    @waitcursor
     def plot_network(self):
         self.data.figure.clf()
-        troncons_coords = self.process_network()
+        self.process_network()
+        troncons_coords = np.row_stack(arr + [[None, None]] for arr in self.data.troncons_coords.values())
         self.data.figure.gca().plot(
             troncons_coords[:, 0],
             troncons_coords[:, 1],
