@@ -3,13 +3,14 @@ from collections import OrderedDict
 
 import matplotlib.pyplot as plt
 import numpy as np
-from lxml import etree
+
 from matplotlib.lines import Line2D
 from PyQt5.QtCore import Qt, pyqtSlot, QThread, pyqtSignal
 from PyQt5.QtWidgets import (QFileDialog, QGroupBox, QLabel, QPushButton,
                              QRadioButton, QVBoxLayout, QProgressBar)
 
 from symupy.postprocess.visunet.qtutils import waitcursor
+from symupy.parser.xmlparser import XMLParser
 
 class NetworkWidget(QGroupBox):
     def __init__(self, data, name='Network', parent=None):
@@ -33,11 +34,6 @@ class NetworkWidget(QGroupBox):
         self.layout.addWidget(self.show_public_transport)
         self.show_public_transport.toggled.connect(self.update_show_public)
 
-        self.progress = QProgressBar(self)
-        self.progress.setMinimum(0)
-        self.progress.setMaximum(100)
-
-        self.layout.addWidget(self.progress)
 
         self.label_file_netw = QLabel('File:')
         self.label_file_netw.setAlignment(Qt.AlignTop | Qt.AlignLeft)
@@ -89,72 +85,109 @@ class NetworkWidget(QGroupBox):
         options = QFileDialog.Options(QFileDialog.Options(QFileDialog.DontUseNativeDialog))
         self.data.file_network, _ = QFileDialog.getOpenFileName(self,"Load Network", "","Network file (*.xml)", options=options)
 
-        self.process_network()
+        self.plot_network()
+
+    def process_network(self):
+        parser = XMLParser(self.data.file_network)
+        root = parser.get_root()
+        print(root)
+        if root.tag == "OUT":
+            troncons_elem = parser.xpath("OUT/IN/RESEAU/TRONCONS")
+        elif root.tag == "ROOT_SYMUBRUIT":
+            troncons_elem = parser.xpath("ROOT_SYMUBRUIT/RESEAUX/RESEAU/TRONCONS")
+
+        troncons_coords = list()
+        for elem in troncons_elem.iterchildrens():
+            amont = np.fromstring(elem.attr['extremite_amont'], sep=' ')
+            aval = np.fromstring(elem.attr['extremite_aval'], sep=' ')
+            internal_points = elem.find_children_tag('POINTS_INTERNES')
+            if internal_points is not None:
+                internal_coords = [np.fromstring(ip.attr['coordonnees'], sep=' ') for ip in internal_points.iterchildrens()]
+                troncons_coords.append([amont]+internal_coords+[aval])
+                print([amont]+[internal_coords]+[aval])
+
+            else:
+                troncons_coords.append([amont]+[aval])
+
+        troncons_coords = np.row_stack([arr + [[None, None]] for arr in troncons_coords])
+        return troncons_coords
+
 
     def plot_network(self):
-        self.progress.setValue(0)
-        self.process = Plotter(self.data, self.show_public_transport.isChecked())
-        self.process.PBValueSig.connect(self.updateProgressBar)
-        self.process.start()
-
-    @pyqtSlot(int)
-    def updateProgressBar(self, value):
-        self.progress.setValue(value)
-
-class Plotter(QThread):
-    PBValueSig = pyqtSignal(int)
-
-    def __init__(self, data, public_transport):
-        QThread.__init__(self)
-        self.data = data
-        self.public_transport = public_transport
-
-    def run(self):
         self.data.figure.clf()
-        troncons_elt = self.data.tree_network.find('//RESEAU/TRONCONS')
-
-        troncons = troncons_elt.getchildren()
-        public_transport = self.data.tree_network.find('//RESEAUX/RESEAU/PARAMETRAGE_VEHICULES_GUIDES/LIGNES_TRANSPORT_GUIDEES')
-
-        print('Renderig network ... ')
-        
-        if public_transport is not None and self.public_transport:
-            print('Find public transportation')
-            nb_tr = len(troncons+public_transport.getchildren())
-        else:
-            nb_tr = len(troncons)
-
-        troncons_lines = dict()
-        for i, tr in enumerate(troncons):
-            amont = np.fromstring(tr.attrib['extremite_amont'], sep=' ')
-            if tr.getchildren():
-                elt = tr.getchildren()[0].getchildren()
-                amont = np.row_stack([amont]+[np.fromstring(e.attrib['coordonnees'], sep=' ') for e in elt if 'coordonnees' in e.keys()])
-            aval = np.fromstring(tr.attrib['extremite_aval'], sep=' ')
-            largeur = float(tr.attrib['largeur_voie'])
-            arr = np.row_stack((amont, aval))
-            troncons_lines[tr.attrib['id']] = self.data.figure.gca().plot(arr[:,0], arr[:,1], 'k-', linewidth=largeur*0.1, alpha=0.7)[0]
-            self.PBValueSig.emit(i/nb_tr*100)
-
-
-        if public_transport is not None and self.public_transport:
-            start = i
-            print('Find public transportation')
-            for i, ligne in enumerate(public_transport.iterchildren()):
-                ligne_tr = [tr.attrib['id'] for tr in ligne.iter('TRONCON')]
-                for id in ligne_tr:
-                    tr = troncons_elt.xpath("TRONCON[@id=$id]", id=id)[0]
-                    troncons_lines[tr.attrib['id']].set_color("red")
-                    troncons_lines[tr.attrib['id']].set_linewidth(1)
-                    troncons_lines[tr.attrib['id']].set_linestyle('dashed')
-                self.PBValueSig.emit((i+start)/nb_tr*100)
-            colors = ['black', 'green']
-            lines = [Line2D([0], [0], color='black', linewidth=1),
-                     Line2D([0], [0], color='red', linewidth=1, linestyle='dashed')]
-            labels = ['troncons', 'public transport']
-            self.data.legend_network = plt.legend(lines, labels, loc='lower center', bbox_to_anchor=(0.5, 1))
+        troncons_coords = self.process_network()
+        self.data.figure.gca().plot(
+            troncons_coords[:, 0],
+            troncons_coords[:, 1],
+            "k",
+            label="Network",
+            alpha=0.7,
+            linewidth=1,
+        )
 
         plt.axis('tight')
         self.data.figure.gca().set_aspect('equal')
         self.data.canvas.draw()
         print('Done')
+
+    # @pyqtSlot(int)
+    # def updateProgressBar(self, value):
+    #     self.progress.setValue(value)
+
+# class Plotter(QThread):
+#     PBValueSig = pyqtSignal(int)
+#
+#     def __init__(self, data, public_transport):
+#         QThread.__init__(self)
+#         self.data = data
+#         self.public_transport = public_transport
+#
+#     def run(self):
+#         self.data.figure.clf()
+#         troncons_elt = self.data.tree_network.find('//RESEAU/TRONCONS')
+#
+#         troncons = troncons_elt.getchildren()
+#         public_transport = self.data.tree_network.find('//RESEAUX/RESEAU/PARAMETRAGE_VEHICULES_GUIDES/LIGNES_TRANSPORT_GUIDEES')
+#
+#         print('Renderig network ... ')
+#
+#         if public_transport is not None and self.public_transport:
+#             print('Find public transportation')
+#             nb_tr = len(troncons+public_transport.getchildren())
+#         else:
+#             nb_tr = len(troncons)
+#
+#         troncons_lines = dict()
+#         for i, tr in enumerate(troncons):
+#             amont = np.fromstring(tr.attrib['extremite_amont'], sep=' ')
+#             if tr.getchildren():
+#                 elt = tr.getchildren()[0].getchildren()
+#                 amont = np.row_stack([amont]+[np.fromstring(e.attrib['coordonnees'], sep=' ') for e in elt if 'coordonnees' in e.keys()])
+#             aval = np.fromstring(tr.attrib['extremite_aval'], sep=' ')
+#             largeur = float(tr.attrib['largeur_voie'])
+#             arr = np.row_stack((amont, aval))
+#             troncons_lines[tr.attrib['id']] = self.data.figure.gca().plot(arr[:,0], arr[:,1], 'k-', linewidth=largeur*0.1, alpha=0.7)[0]
+#             self.PBValueSig.emit(i/nb_tr*100)
+#
+#
+#         if public_transport is not None and self.public_transport:
+#             start = i
+#             print('Find public transportation')
+#             for i, ligne in enumerate(public_transport.iterchildren()):
+#                 ligne_tr = [tr.attrib['id'] for tr in ligne.iter('TRONCON')]
+#                 for id in ligne_tr:
+#                     tr = troncons_elt.xpath("TRONCON[@id=$id]", id=id)[0]
+#                     troncons_lines[tr.attrib['id']].set_color("red")
+#                     troncons_lines[tr.attrib['id']].set_linewidth(1)
+#                     troncons_lines[tr.attrib['id']].set_linestyle('dashed')
+#                 self.PBValueSig.emit((i+start)/nb_tr*100)
+#             colors = ['black', 'green']
+#             lines = [Line2D([0], [0], color='black', linewidth=1),
+#                      Line2D([0], [0], color='red', linewidth=1, linestyle='dashed')]
+#             labels = ['troncons', 'public transport']
+#             self.data.legend_network = plt.legend(lines, labels, loc='lower center', bbox_to_anchor=(0.5, 1))
+#
+#         plt.axis('tight')
+#         self.data.figure.gca().set_aspect('equal')
+#         self.data.canvas.draw()
+#         print('Done')

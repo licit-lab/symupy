@@ -20,7 +20,7 @@ class Element:
         self._filename = filename
         self._pos = pos
         self.tag = re.findall("(?<=<)(\w+)(?=>|\s|\/)", line)[0]
-        self.attr = {key: val for key, val in re.findall('\s(\w+)="(.*?)"', line)}
+        self.attr = {key: val for key, val in re.findall('\s([a-zA-Z0-9_:]+)="(.*?)"', line)}
 
         if re.findall("\/>$", line):
             self._has_childrens = False
@@ -114,6 +114,15 @@ class XMLParser(object):
                 elem = elem.find_children_tag(t)
         return elem
 
+    def get_root(self):
+        with open(self._filename, "r") as f:
+            line = f.readline()
+            #Check first elem in XML but ignore header and comment
+            while not re.findall("^<[^\?|!](.*)>$", line):
+                line = f.readline()
+            pos = f.tell() - len(line)
+            return Element(line.strip(), pos, self._filename)
+
 
 if __name__ == "__main__":
     import symupy
@@ -124,4 +133,4 @@ if __name__ == "__main__":
         + "/../tests/mocks/bottlenecks/bottleneck_001.xml"
     )
     parser = XMLParser(file)
-    network = parser.get_network()
+    root = parser.get_root()
