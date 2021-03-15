@@ -32,3 +32,9 @@ def test_xmlparse(bottleneck_001):
     parser = XMLParser(bottleneck_001)
     root = parser.get_elem("ROOT_SYMUBRUIT")
     assert len(root.getchildrens()) == 4
+
+
+def test_sourceline(bottleneck_001):
+    parser = XMLParser(bottleneck_001)
+    elem = parser.xpath('ROOT_SYMUBRUIT/SCENARIOS/SCENARIO')
+    assert elem.sourceline == 60
