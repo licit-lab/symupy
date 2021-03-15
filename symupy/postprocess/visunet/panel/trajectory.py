@@ -132,7 +132,10 @@ class TrajectoryWidget(QGroupBox):
 
         elif 'xml' in self.data.file_traj:
             line = linecache.getline(self.data.file_traj, nb-1)
-            dist = re.search(r'dstParcourue="(.*)" entree=', line).group(1)
+            try:
+                dist = re.search(r'dstParcourue="(.*)" entree=', line).group(1)
+            except:
+                dist= "None"
             info += 'Distance : ' + dist + '\n'
             print(nb)
 
@@ -254,10 +257,10 @@ class Loader(QWidget):
     def load_traj_xml(self):
         self.traj.clear()
         self.list_widget.clear()
-        vehs = extract_vehs_outfile(self.data.file_traj)
+        # vehs = extract_vehs_outfile(self.data.file_traj)
         vehs = XMLParser(self.data.file_traj).xpath("OUT/SIMULATION/VEHS").iterchildrens()
         #
-        [self.traj.__setitem__(f"VEH{item.attr['id']}", [item.attr['itineraire'].split(' '), 0]) for item in vehs]
+        [self.traj.__setitem__(f"VEH{item.attr['id']}", [item.attr['itineraire'].split(' '), 0, item.sourceline]) for item in vehs]
         [self.list_widget.addItem(i) for i in self.traj]
         self.close()
 
