@@ -63,9 +63,15 @@ def launch(scenario: str) -> None:
 
 
 @main.command()
-def visu() -> None:
+@click.option(
+    "-f",
+    "--file",
+    default=None,
+    help="SymuVia network.",
+)
+def visu(file) -> None:
     """Launches VisuNet app """
-    launch_app()
+    launch_app(file)
 
 
 # ------------------------------ Analyze command-------------------------------

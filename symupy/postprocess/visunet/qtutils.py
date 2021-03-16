@@ -2,8 +2,8 @@ import functools
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (QApplication, QWidget, QHBoxLayout, QSlider, QLabel,
-                            QComboBox)
-
+                            QComboBox, QLineEdit)
+from PyQt5.QtGui import QIntValidator
 
 def waitcursor(func):
     @functools.wraps(func)
@@ -33,18 +33,24 @@ class Slider(QWidget):
 
         self.slider.valueChanged.connect(self.updateLabel)
 
-        self.label = QLabel('', self)
-        self.label.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-        # self.label.setMinimumWidth(80)
+        self.line_edit = QLineEdit('', self)
+        self.line_edit.setFixedWidth(40)
+        self.line_edit.setValidator(QIntValidator())
+        self.line_edit.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        self.line_edit.editingFinished.connect(self.updateSlider)
+        # self.line_edit.setMinimumWidth(80)
 
 
         # self.layout.addSpacing(5)
-        self.layout.addWidget(self.label)
+        self.layout.addWidget(self.line_edit)
 
         self.valueChanged = self.slider.valueChanged
 
     def updateLabel(self, value):
-        self.label.setText(str(value))
+        self.line_edit.setText(str(value))
+
+    def updateSlider(self):
+        self.slider.setValue(int(self.line_edit.text()))
 
     def value(self):
         return self.slider.value()

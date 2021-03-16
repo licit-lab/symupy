@@ -48,7 +48,11 @@ class DataContainer(object):
         self.public_transport = None
 
 
-def launch_app():
+def launch_app(file=None):
     app = QtWidgets.QApplication(sys.argv)
     w = MainWindow()
+    if file is not None:
+        w.data.file_network=file
+        w.panel.panel_netw.plot_network()
+
     app.exec_()
