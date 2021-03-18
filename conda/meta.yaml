@@ -32,6 +32,7 @@ requirements:
         - python-decouple>=3.3
         - ipython
         - symuvia=1.0.0
+        - pyqt
 
 test:
     requires:
