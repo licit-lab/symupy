@@ -16,5 +16,5 @@ class RightPanelWidget(QWidget):
         self.panel_netw = NetworkWidget(self.data)
         self.layout.addWidget(self.panel_netw)
 
-        self.panel_traj = TrajectoryWidget(self.data)
-        self.layout.addWidget(self.panel_traj)
+        # self.panel_traj = TrajectoryWidget(self.data)
+        # self.layout.addWidget(self.panel_traj)

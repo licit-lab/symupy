@@ -19,62 +19,72 @@ from functools import cached_property
 from symupy.tsc.network import Network
 from symupy.parser.xmlparser import XMLParser
 from symupy.utils.exceptions import SymupyWarning
+from symupy.abstractions.reader import AbstractNetworkReader
 
 # ============================================================================
 # CLASS AND DEFINITIONS
 # ============================================================================
 
 
-class NetworkReader(object):
+class SymuviaNetworkReader(AbstractNetworkReader):
     def __init__(self, file, remove_comments=True):
+        super().__init__('xml')
+
         assert file.split(".")[-1] == "xml"
         self._file = file
         self._parser = XMLParser(self._file)
-        self._id = self._parser.xpath("ROOT_SYMUBRUIT/RESEAUX/RESEAU/@id")
+
+        root = self._parser.get_root()
+        if root.tag == "OUT":
+            self._prefix ="OUT/IN"
+        elif root.tag == "ROOT_SYMUBRUIT":
+            self._prefix = "ROOT_SYMUBRUIT"
+
+        self._id = self._parser.xpath(f"{self._prefix}/RESEAUX/RESEAU/@id")
 
     @cached_property
     def _links(self):
-        return self._parser.xpath("ROOT_SYMUBRUIT/RESEAUX/RESEAU/TRONCONS")
+        return self._parser.xpath(f"{self._prefix}/RESEAUX/RESEAU/TRONCONS")
 
     @cached_property
     def _sensors(self):
         return self._parser.xpath(
-            "ROOT_SYMUBRUIT/TRAFICS/TRAFIC/PARAMETRAGE_CAPTEURS/CAPTEURS"
+            f"{self._prefix}/TRAFICS/TRAFIC/PARAMETRAGE_CAPTEURS/CAPTEURS"
         )
 
     @cached_property
     def _termination_zones(self):
-        return self._parser.xpath("ROOT_SYMUBRUIT/TRAFICS/TRAFIC/ZONES_DE_TERMINAISON")
+        return self._parser.xpath(f"{self._prefix}/TRAFICS/TRAFIC/ZONES_DE_TERMINAISON")
 
     @cached_property
     def _public_transport(self):
         return self._parser.xpath(
-            "ROOT_SYMUBRUIT/RESEAUX/RESEAU/PARAMETRAGE_VEHICULES_GUIDES/LIGNES_TRANSPORT_GUIDEES"
+            f"{self._prefix}/RESEAUX/RESEAU/PARAMETRAGE_VEHICULES_GUIDES/LIGNES_TRANSPORT_GUIDEES"
         )
 
     @cached_property
     def _repartiteur(self):
         return self._parser.xpath(
-            "ROOT_SYMUBRUIT/RESEAUX/RESEAU/CONNEXIONS/REPARTITEURS"
+            f"{self._prefix}/RESEAUX/RESEAU/CONNEXIONS/REPARTITEURS"
         )
 
     @cached_property
     def _parking(self):
-        return self._parser.xpath("ROOT_SYMUBRUIT/TRAFICS/TRAFIC/PARKINGS")
+        return self._parser.xpath(f"{self._prefix}/TRAFICS/TRAFIC/PARKINGS")
 
     @cached_property
     def _carrefourfeux(self):
         return self._parser.xpath(
-            "ROOT_SYMUBRUIT/RESEAUX/RESEAU/CONNEXIONS/CARREFOURSAFEUX"
+            f"{self._prefix}/RESEAUX/RESEAU/CONNEXIONS/CARREFOURSAFEUX"
         )
 
     @cached_property
     def _giratoire(self):
-        return self._parser.xpath("ROOT_SYMUBRUIT/RESEAUX/RESEAU/CONNEXIONS/GIRATOIRES")
+        return self._parser.xpath(f"{self._prefix}/RESEAUX/RESEAU/CONNEXIONS/GIRATOIRES")
 
     @cached_property
     def _extremity(self):
-        return self._parser.xpath("ROOT_SYMUBRUIT/RESEAUX/RESEAU/CONNEXIONS/EXTREMITES")
+        return self._parser.xpath(f"{self._prefix}/RESEAUX/RESEAU/CONNEXIONS/EXTREMITES")
 
     def iter_links(self):
         return self._links.iterchildrens()
@@ -192,6 +202,6 @@ if __name__ == "__main__":
     import os
 
     # file = os.path.dirname(symupy.__file__)+'/../tests/mocks/bottlenecks/bottleneck_001.xml'
-    file = "/Users/florian/Work/SimuBusLyon/Bus24h/Lyon_007_01_10RES.xml"
-    reader = NetworkReader(file)
+    file = "/Users/florian/Work/visunet/data/Lyon63V/L63V.xml"
+    reader = SymuviaNetworkReader(file)
     network = reader.get_network()

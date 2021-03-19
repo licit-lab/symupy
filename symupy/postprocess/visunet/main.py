@@ -1,24 +1,24 @@
 import sys
 
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QDesktopWidget, QHBoxLayout, QWidget
+
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 
 from symupy.postprocess.visunet.figure import MplWidget
 from symupy.postprocess.visunet.panel import RightPanelWidget
 
 
-class MainWindow(QtWidgets.QMainWindow):
+class MainWindow(QMainWindow):
 
-    def __init__(self, *args, **kwargs):
-        super(MainWindow, self).__init__(*args, **kwargs)
-
+    def __init__(self, parent=None):
+        super().__init__(parent)
         self.resize(QDesktopWidget().availableGeometry(self).size() * 0.7)
 
         self.data = DataContainer()
 
         self.layout = QHBoxLayout()
-        self.widget = QWidget(self)
+        self.widget = QGroupBox(None, self)
         self.widget.setLayout(self.layout)
         self.setWindowTitle('VisuNet')
 
@@ -32,7 +32,24 @@ class MainWindow(QtWidgets.QMainWindow):
         self.widget.setLayout(self.layout)
         self.setCentralWidget(self.widget)
 
-        self.show()
+        self.menu()
+
+    def menu(self):
+        menubar = self.menuBar()
+        if sys.platform == "darwin":
+            menubar.setNativeMenuBar(False)
+
+        fileMenu = QMenu("&File", self)
+        menubar.addMenu(fileMenu)
+        openAction = QAction("&Open...", self)
+        fileMenu.addAction(openAction)
+        openAction.triggered.connect(self.panel.panel_netw.load_network)
+        openAction.setShortcut("Ctrl+O")
+
+
+
+
+
 
 class DataContainer(object):
     def __init__(self):
@@ -49,8 +66,9 @@ class DataContainer(object):
 
 
 def launch_app(file=None):
-    app = QtWidgets.QApplication(sys.argv)
+    app = QApplication(sys.argv)
     w = MainWindow()
+    w.show()
     if file is not None:
         w.data.file_network=file
         w.panel.panel_netw.plot_network()
