@@ -1,12 +1,13 @@
 import sys
 
-
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
+from PyQt5.QtWidgets import (QHBoxLayout, QGroupBox, QDesktopWidget, QMainWindow,
+                             QApplication, QMenu, QAction, QFileDialog)
+# from PyQt5.QtCore import QApplication
+# from PyQt5.QtGui import *
 
 from symupy.postprocess.visunet.figure import MplWidget
 from symupy.postprocess.visunet.panel import RightPanelWidget
+from symupy.plugins.reader import add_dir_to_plugin
 
 
 class MainWindow(QMainWindow):
@@ -32,21 +33,29 @@ class MainWindow(QMainWindow):
         self.widget.setLayout(self.layout)
         self.setCentralWidget(self.widget)
 
-        self.menu()
-
-    def menu(self):
-        menubar = self.menuBar()
+        self.menubar = self.menuBar()
         if sys.platform == "darwin":
-            menubar.setNativeMenuBar(False)
+            self.menubar.setNativeMenuBar(False)
 
-        fileMenu = QMenu("&File", self)
-        menubar.addMenu(fileMenu)
-        openAction = QAction("&Open...", self)
-        fileMenu.addAction(openAction)
-        openAction.triggered.connect(self.panel.panel_netw.load_network)
-        openAction.setShortcut("Ctrl+O")
+        self.fileMenu = QMenu("&File", self)
+        self.menubar.addMenu(self.fileMenu)
+        self.openAction = QAction("&Open...", self)
+        self.fileMenu.addAction(self.openAction)
+        self.openAction.triggered.connect(self.panel.panel_netw.load_network)
+        self.openAction.setShortcut("Ctrl+O")
+
+        self.pluginMenu = QMenu("&Plugins", self)
+        self.menubar.addMenu(self.pluginMenu)
+        self.addFolderAction = QAction("&Add folder...", self)
+        self.pluginMenu.addAction(self.addFolderAction)
+        self.addFolderAction.triggered.connect(self.add_plugins)
 
 
+    def add_plugins(self):
+        options = QFileDialog.Options(QFileDialog.Options(QFileDialog.DontUseNativeDialog))
+        folder = str(QFileDialog.getExistingDirectory(self, "Load Plugins", "", options=options))
+        print(folder)
+        add_dir_to_plugin(folder)
 
 
 
@@ -74,3 +83,6 @@ def launch_app(file=None):
         w.panel.panel_netw.plot_network()
 
     app.exec_()
+
+if __name__ == '__main__':
+    launch_app()

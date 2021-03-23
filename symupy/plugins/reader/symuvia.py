@@ -27,8 +27,10 @@ from symupy.abstractions.reader import AbstractNetworkReader
 
 
 class SymuviaNetworkReader(AbstractNetworkReader):
+    _ext = 'xml'
+
     def __init__(self, file, remove_comments=True):
-        super().__init__('xml')
+        super().__init__()
 
         assert file.split(".")[-1] == "xml"
         self._file = file

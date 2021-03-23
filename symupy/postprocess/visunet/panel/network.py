@@ -1,5 +1,5 @@
 import linecache
-from collections import OrderedDict
+from collections import OrderedDict, defaultdict
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -7,11 +7,14 @@ import numpy as np
 from matplotlib.lines import Line2D
 from PyQt5.QtCore import Qt, pyqtSlot, QThread, pyqtSignal
 from PyQt5.QtWidgets import (QFileDialog, QGroupBox, QLabel, QPushButton,
-                             QRadioButton, QVBoxLayout, QProgressBar)
+                             QRadioButton, QVBoxLayout, QProgressBar, QDesktopWidget,
+                             QWidget, QComboBox, QDialog)
+from PyQt5.Qt import QRect
 
 from symupy.postprocess.visunet.qtutils import waitcursor
-from symupy.parser.symuvia import SymuviaNetworkReader
+# from symupy.parser.symuvia import SymuviaNetworkReader
 from symupy.renderer.network import draw_network, NetworkRenderer
+from symupy.plugins.reader import load_plugins
 
 class NetworkWidget(QGroupBox):
     def __init__(self, data, name=None, parent=None):
@@ -27,7 +30,7 @@ class NetworkWidget(QGroupBox):
 
 
         self.button_load_network = QPushButton('Render')
-        self.button_load_network.clicked.connect(self.load_network)
+        # self.button_load_network.clicked.connect(self.load_network)
         self.layout.addWidget(self.button_load_network)
 
         # self.show_public_transport = QRadioButton('Show public transport')
@@ -52,49 +55,33 @@ class NetworkWidget(QGroupBox):
         tr = len(self.network.links)
         self.label_tr.setText('Troncons: '+str(tr))
 
-    # def update_show_public(self):
-    #     self.data.public_transport = self.show_public_transport.isChecked()
-    #
-    # @waitcursor
-    # def process_network(self):
-    #     if self.data.file_network:
-    #         self.data.tree_network = etree.parse(self.data.file_network)
-    #         self.update_label()
-    #
-    #         comments = self.data.tree_network.xpath('//comment()')
-    #         for c in comments:
-    #             p = c.getparent()
-    #             p.remove(c)
-    #         self.data.troncons_coords = OrderedDict()
-    #         troncons = self.data.tree_network.find('//RESEAU/TRONCONS')
-    #         for tr in troncons.iterchildren():
-    #             try:
-    #                 amont = np.fromstring(tr.attrib['extremite_amont'], sep=' ')
-    #             except KeyError:
-    #                 print(type(tr))
-    #             if tr.getchildren():
-    #                 elt = tr.getchildren()[0].getchildren()
-    #                 amont = np.row_stack([amont]+[np.fromstring(e.attrib['coordonnees'], sep=' ') for e in elt if 'coordonnees' in e.keys()])
-    #             aval = np.fromstring(tr.attrib['extremite_aval'], sep=' ')
-    #             arr = np.row_stack((amont, aval))
-    #             self.data.troncons_coords[tr.attrib['id']] = arr
-    #
-    #         print(f"loaded network: {self.data.file_network.split('/')[-1]}")
-    #         self.plot_network()
+    def choose_reader(self):
+        self.reader = Reader(self.data.file_network)
+        if self.reader.exec_() == QDialog.Accepted:
+            reader = self.reader.choosen_reader
+            self.process_network(reader)
+            self.plot_network()
+        # geom = QRect(0, 0, 200, 400)
+        # centerPoint = QDesktopWidget().availableGeometry().center()
+        # geom.moveCenter(centerPoint)
+        # self.reader.setGeometry(geom)
 
 
     def load_network(self):
         options = QFileDialog.Options(QFileDialog.Options(QFileDialog.DontUseNativeDialog))
-        file, _ = QFileDialog.getOpenFileName(self,"Load Network", "","Network file (*.xml)", options=options)
+        file, _ = QFileDialog.getOpenFileName(self,"Load Network", "","Network file (*)", options=options)
+
+
 
         if file != '':
             self.data.file_network = file
-            self.process_network()
-            self.plot_network()
+            self.choose_reader()
+            # self.process_network()
+            # self.plot_network()
 
     @waitcursor
-    def process_network(self):
-        reader = SymuviaNetworkReader(self.data.file_network)
+    def process_network(self, reader):
+        reader = reader(self.data.file_network)
         self.network = reader.get_network()
         self.update_label()
         self.renderer = NetworkRenderer(self.network, self.data.figure)
@@ -107,3 +94,35 @@ class NetworkWidget(QGroupBox):
         self.data.figure.gca().set_aspect('equal')
         self.data.canvas.draw()
         print('Done')
+
+
+class Reader(QDialog):
+    def __init__(self, file, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle('Available Reader')
+
+        self.readers = load_plugins()
+
+        ext_plugins = defaultdict(list)
+        for name, cls in self.readers.items():
+            ext_plugins[cls._ext].append(name)
+
+        self.reader_widget = QComboBox()
+        if file.split('.')[-1] in ext_plugins.keys():
+            for r in ext_plugins[file.split('.')[-1]]:
+                self.reader_widget.addItem(r)
+
+        self.layout = QVBoxLayout()
+        self.layout.setAlignment(Qt.AlignTop)
+        self.setLayout(self.layout)
+
+        self.layout.addWidget(self.reader_widget)
+        self.button_select = QPushButton('Select')
+        self.layout.addWidget(self.button_select)
+        self.button_select.clicked.connect(self.choose)
+
+        # self.show()
+
+    def choose(self):
+        self.choosen_reader = self.readers[self.reader_widget.currentText()]
+        self.accept()

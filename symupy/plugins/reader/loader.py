@@ -5,7 +5,7 @@ import importlib
 
 _reader_plugin_default_path = os.path.dirname(os.path.realpath(__file__))
 
-READER_PLUGIN_DIRS = [_reader_plugin_path]
+READER_PLUGIN_DIRS = [_reader_plugin_default_path]
 
 def get_all_readers():
     readers = dict()
@@ -19,7 +19,7 @@ def get_all_readers():
 
 def get_class(file):
     all_reader = []
-    with open(os.path.join(_reader_plugin_path, file), 'r') as f:
+    with open(file, 'r') as f:
         contents = f.read()
     match = re.findall('class (\w+)\(AbstractNetworkReader\)', contents, re.MULTILINE)
     if match is not None:
@@ -28,6 +28,10 @@ def get_class(file):
 
     return all_reader
 
+
+def add_dir_to_plugin(folder):
+    assert os.path.isdir(folder)
+    READER_PLUGIN_DIRS.append(os.path.abspath(folder))
 
 def load_plugins():
     readers =  get_all_readers()
