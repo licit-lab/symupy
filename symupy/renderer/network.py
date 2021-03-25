@@ -54,7 +54,7 @@ class NetworkRenderer(object):
 
     def add_paths(self, paths:dict):
         for key, troncons in paths.items():
-            troncons_id = [self._network.index(id) for id in troncons]
+            troncons_id = [self._network_keys.index(id) for id in troncons]
             self._path_plot[key] = troncons_id
 
     def remove_paths(self, paths:list):
@@ -68,19 +68,23 @@ class NetworkRenderer(object):
             self._ids_to_delete.update(tids)
             coords = np.array(self._network_coords, dtype=object)[tids]
             coords = np.row_stack([arr + [[None, None]] for arr in coords])
-            self._fig.gca().plot(coords[:, 0], coords[:, 1], next(self._colors), label=key, linewidth=1)
+            self._fig.gca().plot(coords[:, 0], coords[:, 1], next(self._colors), label=key, linewidth=3)
 
         for key, tids in self._termination_zone_plot.items():
             self._ids_to_delete.update(tids)
             coords = np.array(self._network_coords, dtype=object)[tids]
             coords = np.row_stack([arr + [[None, None]] for arr in coords])
-            self._fig.gca().plot(coords[:, 0], coords[:, 1], next(self._colors), label=key, linewidth=1)
+            self._fig.gca().plot(coords[:, 0], coords[:, 1], next(self._colors), label=key, linewidth=3)
 
         for key, tids in self._path_plot.items():
             self._ids_to_delete.update(tids)
             coords = np.array(self._network_coords, dtype=object)[tids]
-            coords = np.row_stack([arr + [[None, None]] for arr in coords])
-            self._fig.gca().plot(coords[:, 0], coords[:, 1], next(self._colors), label=key, linewidth=1)
+            coords = np.row_stack([arr for arr in coords])
+            self._fig.gca().plot(coords[:, 0], coords[:, 1], next(self._colors), label=key, linewidth=3)
+            self._fig.gca().plot(coords[0,0], coords[0,1], 'k+')
+            self._fig.gca().annotate("O",(coords[0,0], coords[0,1]))
+            self._fig.gca().plot(coords[-1,0], coords[-1,1], 'k+')
+            self._fig.gca().annotate("D",(coords[-1,0], coords[-1,1]))
 
         if self._ids_to_delete:
             network_coords = np.delete(
