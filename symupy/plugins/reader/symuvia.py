@@ -17,7 +17,7 @@ from functools import cached_property, lru_cache, cache
 # INTERNAL IMPORTS
 # ============================================================================
 
-from symupy.tsc.journey import Path, State
+from symupy.tsc.journey import Path, State, Trip
 from symupy.parser.xmlparser import XMLParser
 from symupy.utils.exceptions import SymupyWarning
 from symupy.abstractions.reader import AbstractNetworkReader, AbstractTrafficDataReader
@@ -283,10 +283,8 @@ class SymuviaTrafficDataReader(AbstractTrafficDataReader):
 
         self._get_ids_from_inst = lru_cache(maxsize=lru_cache_size)(_get_ids_from_inst)
 
-    def _get_path(self, vehid):
-        p = self._vehs.find_children_attr("id", str(vehid))
-        return Path(p.attr['itineraire'])
-
+    def _get_veh_element(self, vehid):
+        return self._vehs.find_children_attr("id", str(vehid))
 
     def _get_states(self, vehid):
         states = list()
@@ -298,7 +296,7 @@ class SymuviaTrafficDataReader(AbstractTrafficDataReader):
                 ord = float(vehtraj.attr['ord'])
                 acc = float(vehtraj.attr['acc'])
                 vit = float(vehtraj.attr['vit'])
-                voie = float(vehtraj.attr['voie'])
+                voie = int(vehtraj.attr['voie'])
                 states.append(State(time=inst.attr['val'],
                                     absolute_position=np.array([abs, ord]),
                                     acceleration=acc,
@@ -311,7 +309,21 @@ class SymuviaTrafficDataReader(AbstractTrafficDataReader):
         print(12)
 
     def get_trip(self, vehid):
-        print(12)
+        states = self._get_states(vehid)
+        veh_el = self._get_veh_element(vehid)
+        path = Path(veh_el.attr['itineraire'])
+        origin = veh_el.attr['entree']
+        dest = veh_el.attr['sortie']
+        departure_time = veh_el.attr['instE']
+        arrival_time = veh_el.attr['instS']
+
+        return Trip(states=states,
+                    path=path,
+                    departure_time=departure_time,
+                    arrival_time=arrival_time,
+                    origin=origin,
+                    destination=dest,
+                    vehicle=vehid)
 
 if __name__ == "__main__":
     import symupy
@@ -320,11 +332,12 @@ if __name__ == "__main__":
     # file = os.path.dirname(symupy.__file__)+'/../tests/mocks/bottlenecks/bottleneck_001.xml'
     file = "/Users/florian/Work/visunet/data/Lafayette/ref_153000_163000_traf.xml"
     reader = SymuviaTrafficDataReader(file)
-    p = reader._get_path('88')
-    p = reader._get_path('0')
-    p = reader._get_path('88')
-    reader._get_states('88')
-    reader._get_states('0')
-    reader._get_states('35')
+    t1 = reader.get_trip('1')
+    # p = reader._get_path('88')
+    # p = reader._get_path('0')
+    # p = reader._get_path('88')
+    # reader._get_states('88')
+    # reader._get_states('0')
+    # reader._get_states('35')
     # print(p.links)
     # print(reader._get_path.cache_info())

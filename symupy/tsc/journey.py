@@ -53,7 +53,7 @@ class Trip:
         self.__dict__[attr] = value
 
     def __repr__(self):
-        return f"Trip(veh={self.vehicle.id.__repr__()}, origin={self.origin.__repr__()}, destination={self.destination.__repr__()}, {len(self.states)} states)"
+        return f"Trip(veh={self.vehicle}, origin={self.origin.__repr__()}, destination={self.destination.__repr__()}, {len(self.states)} states)"
 
 
 @dataclass
