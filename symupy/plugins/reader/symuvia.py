@@ -7,26 +7,68 @@ A module to parse information from Symuvia input XMLs
 # STANDARD  IMPORTS
 # ============================================================================
 
+import types
 import numpy as np
 import os
 from collections import OrderedDict
-from functools import cached_property
+from functools import cached_property, lru_cache, cache
 
 # ============================================================================
 # INTERNAL IMPORTS
 # ============================================================================
 
-from symupy.tsc.network import Network
+from symupy.tsc.journey import Path, State
 from symupy.parser.xmlparser import XMLParser
 from symupy.utils.exceptions import SymupyWarning
-from symupy.abstractions.reader import AbstractNetworkReader
+from symupy.abstractions.reader import AbstractNetworkReader, AbstractTrafficDataReader
 
 # ============================================================================
 # CLASS AND DEFINITIONS
 # ============================================================================
 
 
+def _get_ids_from_inst(inst):
+    """From XMLElement of INSTANT return a dict of TRAJ.
+
+    Parameters
+    ----------
+    inst : symupy.parser.xmlparser.XMLElement
+        XMLElement of tag INSTANT
+
+    Returns
+    -------
+    dict
+        dict with veh id as key and TRAJ XMLElement as value
+
+    """
+    trajs = inst.find_children_tag('TRAJS')
+    return {el.attr['id']:el for el in trajs.iterchildrens()}
+
+
 class SymuviaNetworkReader(AbstractNetworkReader):
+    """Short summary.
+
+    Parameters
+    ----------
+    file : type
+        Description of parameter `file`.
+    remove_comments : type
+        Description of parameter `remove_comments`.
+
+    Attributes
+    ----------
+    _file : type
+        Description of attribute `_file`.
+    _parser : type
+        Description of attribute `_parser`.
+    _prefix : type
+        Description of attribute `_prefix`.
+    _id : type
+        Description of attribute `_id`.
+    _ext : type
+        Description of attribute `_ext`.
+
+    """
     _ext = 'xml'
 
     def __init__(self, file, remove_comments=True):
@@ -199,11 +241,90 @@ class SymuviaNetworkReader(AbstractNetworkReader):
             yield from ()
 
 
+class SymuviaTrafficDataReader(AbstractTrafficDataReader):
+    """Reader for output of Symuvia simulation.
+
+    Parameters
+    ----------
+    traficdatafile : str
+        Path to the Symuvia output xml file.
+    lru_cache_size : int
+        Description of parameter `lru_cache_size`.
+
+    Attributes
+    ----------
+    _file : type
+        Description of attribute `_file`.
+    parser : type
+        Description of attribute `parser`.
+    _inst : type
+        Description of attribute `_inst`.
+    _vehs : type
+        Description of attribute `_vehs`.
+    _get_ids_from_inst : type
+        Description of attribute `_get_ids_from_inst`.
+    _ext : type
+        Description of attribute `_ext`.
+
+    """
+    _ext = 'xml'
+
+    def __init__(self, traficdatafile, lru_cache_size=None):
+        super().__init__()
+        self._file = traficdatafile
+        self.parser = XMLParser(self._file)
+        sim = self.parser.xpath("OUT/SIMULATION")
+        for elem in sim.iterchildrens():
+            if elem.tag == 'INSTANTS':
+                self._inst = elem
+            elif elem.tag == 'VEHS':
+                self._vehs = elem
+                break
+
+        self._get_ids_from_inst = lru_cache(maxsize=lru_cache_size)(_get_ids_from_inst)
+
+    def _get_path(self, vehid):
+        p = self._vehs.find_children_attr("id", str(vehid))
+        return Path(p.attr['itineraire'])
+
+
+    def _get_states(self, vehid):
+        states = list()
+        for inst in self._inst.iterchildrens():
+            trajs = self._get_ids_from_inst(inst)
+            if vehid in trajs.keys():
+                vehtraj = trajs[vehid]
+                abs = float(vehtraj.attr['abs'])
+                ord = float(vehtraj.attr['ord'])
+                acc = float(vehtraj.attr['acc'])
+                vit = float(vehtraj.attr['vit'])
+                voie = float(vehtraj.attr['voie'])
+                states.append(State(time=inst.attr['val'],
+                                    absolute_position=np.array([abs, ord]),
+                                    acceleration=acc,
+                                    speed=vit,
+                                    lane=voie))
+        return states
+
+
+    def get_OD(self, period, OD, loop=None):
+        print(12)
+
+    def get_trip(self, vehid):
+        print(12)
+
 if __name__ == "__main__":
     import symupy
     import os
 
     # file = os.path.dirname(symupy.__file__)+'/../tests/mocks/bottlenecks/bottleneck_001.xml'
-    file = "/Users/florian/Work/visunet/data/Lyon63V/L63V.xml"
-    reader = SymuviaNetworkReader(file)
-    network = reader.get_network()
+    file = "/Users/florian/Work/visunet/data/Lafayette/ref_153000_163000_traf.xml"
+    reader = SymuviaTrafficDataReader(file)
+    p = reader._get_path('88')
+    p = reader._get_path('0')
+    p = reader._get_path('88')
+    reader._get_states('88')
+    reader._get_states('0')
+    reader._get_states('35')
+    # print(p.links)
+    # print(reader._get_path.cache_info())
