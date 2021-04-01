@@ -18,9 +18,9 @@ class MainWindow(QMainWindow):
 
         self.data = DataContainer()
 
-        self.layout = QHBoxLayout()
+        # self.layout = QHBoxLayout()
         self.widget = QSplitter(Qt.Horizontal)
-        self.widget.setLayout(self.layout)
+        # self.widget.setLayout(self.layout)
         self.setWindowTitle('VisuNet')
 
         self.widget_mpl = MplWidget(self.data)
@@ -30,7 +30,7 @@ class MainWindow(QMainWindow):
         self.widget.addWidget(self.panel)
 
 
-        self.widget.setLayout(self.layout)
+        # self.widget.setLayout(self.layout)
         self.setCentralWidget(self.widget)
 
         self.menubar = self.menuBar()
@@ -62,6 +62,13 @@ class MainWindow(QMainWindow):
         self.addFolderAction = QAction("&Add folder...", self)
         self.submenuReader.addAction(self.addFolderAction)
         self.addFolderAction.triggered.connect(self.add_plugins)
+
+        self.logMenu = QMenu("&Log", self)
+        self.menubar.addMenu(self.logMenu)
+        self.clearLogAction = QAction("&Clear", self)
+        self.logMenu.addAction(self.clearLogAction)
+        self.clearLogAction.triggered.connect(self.panel.logger.clearLog)
+
 
     def add_plugins(self):
         options = QFileDialog.Options(QFileDialog.Options(QFileDialog.DontUseNativeDialog))

@@ -12,6 +12,7 @@ from PyQt5.QtWidgets import (QFileDialog, QGroupBox, QLabel, QPushButton,
 from PyQt5.Qt import QRect
 
 from symupy.postprocess.visunet.qtutils import waitcursor
+from symupy.postprocess.visunet import logger
 # from symupy.parser.symuvia import SymuviaNetworkReader
 from symupy.renderer.network import draw_network, NetworkRenderer
 from symupy.plugins.reader import load_plugins
@@ -58,6 +59,7 @@ class NetworkWidget(QGroupBox):
     def choose_reader(self):
         self.reader = Reader(self.data.file_network)
         if self.reader.exec_() == QDialog.Accepted:
+            logger.debug(f'Choose reader {self.reader.choosen_reader}')
             reader = self.reader.choosen_reader
             self.process_network(reader)
             self.plot_network()

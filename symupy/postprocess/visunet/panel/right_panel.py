@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QWidget
 
 from .network import NetworkWidget
 from .trajectory import TrajectoryWidget
-
+from .logger import LoggerWidget
 
 class RightPanelWidget(QWidget):
     def __init__(self, data, parent=None):
@@ -14,6 +14,10 @@ class RightPanelWidget(QWidget):
 
         self.panel_netw = NetworkWidget(self.data)
         self.layout.addWidget(self.panel_netw)
+
+        self.logger = LoggerWidget()
+        self.layout.addWidget(self.logger)
+
 
         # self.panel_traj = TrajectoryWidget(self.data)
         # self.layout.addWidget(self.panel_traj)
