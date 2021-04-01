@@ -37,25 +37,37 @@ class MainWindow(QMainWindow):
         if sys.platform == "darwin":
             self.menubar.setNativeMenuBar(False)
 
-        self.fileMenu = QMenu("&File", self)
+        self.fileMenu = QMenu("&Network", self)
         self.menubar.addMenu(self.fileMenu)
-        self.openAction = QAction("&Open...", self)
-        self.fileMenu.addAction(self.openAction)
-        self.openAction.triggered.connect(self.panel.panel_netw.load_network)
-        self.openAction.setShortcut("Ctrl+O")
+        self.openNetAction = QAction("&Open...", self)
+        self.fileMenu.addAction(self.openNetAction)
+        self.openNetAction.triggered.connect(self.panel.panel_netw.load_network)
+        self.openNetAction.setShortcut("Ctrl+N")
+
+        self.trajMenu = QMenu("&Trajectories", self)
+        self.menubar.addMenu(self.trajMenu)
+        self.openTrajAction = QAction("&Open...", self)
+        self.trajMenu.addAction(self.openTrajAction)
+        self.openTrajAction.setShortcut("Ctrl+T")
+        self.renderTripAction = QAction("&Render Trip...", self)
+        self.trajMenu.addAction(self.renderTripAction)
+        self.renderODAction = QAction("&Render OD...", self)
+        self.trajMenu.addAction(self.renderODAction)
+        self.clearAction = QAction("&Clear", self)
+        self.trajMenu.addAction(self.clearAction)
 
         self.pluginMenu = QMenu("&Plugins", self)
         self.menubar.addMenu(self.pluginMenu)
+        self.submenuReader = self.pluginMenu.addMenu('&Reader')
         self.addFolderAction = QAction("&Add folder...", self)
-        self.pluginMenu.addAction(self.addFolderAction)
+        self.submenuReader.addAction(self.addFolderAction)
         self.addFolderAction.triggered.connect(self.add_plugins)
-
 
     def add_plugins(self):
         options = QFileDialog.Options(QFileDialog.Options(QFileDialog.DontUseNativeDialog))
         folder = str(QFileDialog.getExistingDirectory(self, "Load Plugins", "", options=options))
-        print(folder)
-        add_dir_to_plugin(folder)
+        if folder!='':
+            add_dir_to_plugin(folder)
 
 
 

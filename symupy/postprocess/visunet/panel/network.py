@@ -29,9 +29,9 @@ class NetworkWidget(QGroupBox):
         self.setLayout(self.layout)
 
 
-        self.button_load_network = QPushButton('Render')
+        # self.button_load_network = QPushButton('Render')
         # self.button_load_network.clicked.connect(self.load_network)
-        self.layout.addWidget(self.button_load_network)
+        # self.layout.addWidget(self.button_load_network)
 
         # self.show_public_transport = QRadioButton('Show public transport')
         # self.show_public_transport.setChecked(False)
@@ -90,6 +90,7 @@ class NetworkWidget(QGroupBox):
     def plot_network(self):
         self.data.figure.clf()
         self.renderer.draw()
+        plt.axis('off')
         plt.axis('tight')
         self.data.figure.gca().set_aspect('equal')
         self.data.canvas.draw()
@@ -101,7 +102,7 @@ class Reader(QDialog):
         super().__init__(parent)
         self.setWindowTitle('Available Reader')
 
-        self.readers = load_plugins()
+        self.readers = load_plugins('input')
 
         ext_plugins = defaultdict(list)
         for name, cls in self.readers.items():
