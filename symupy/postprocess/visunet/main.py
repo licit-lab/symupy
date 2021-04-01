@@ -1,8 +1,8 @@
 import sys
 
 from PyQt5.QtWidgets import (QHBoxLayout, QGroupBox, QDesktopWidget, QMainWindow,
-                             QApplication, QMenu, QAction, QFileDialog)
-# from PyQt5.QtCore import QApplication
+                             QApplication, QMenu, QAction, QFileDialog, QSplitter)
+from PyQt5.QtCore import Qt
 # from PyQt5.QtGui import *
 
 from symupy.postprocess.visunet.figure import MplWidget
@@ -19,15 +19,15 @@ class MainWindow(QMainWindow):
         self.data = DataContainer()
 
         self.layout = QHBoxLayout()
-        self.widget = QGroupBox(None, self)
+        self.widget = QSplitter(Qt.Horizontal)
         self.widget.setLayout(self.layout)
         self.setWindowTitle('VisuNet')
 
         self.widget_mpl = MplWidget(self.data)
-        self.layout.addWidget(self.widget_mpl)
+        self.widget.addWidget(self.widget_mpl)
 
         self.panel = RightPanelWidget(self.data)
-        self.layout.addWidget(self.panel)
+        self.widget.addWidget(self.panel)
 
 
         self.widget.setLayout(self.layout)

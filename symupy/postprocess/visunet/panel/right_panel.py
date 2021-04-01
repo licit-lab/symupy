@@ -9,7 +9,6 @@ class RightPanelWidget(QWidget):
         super().__init__(parent=parent)
         self.data = data
 
-        self.setFixedWidth(250)
         self.layout = QVBoxLayout()
         self.setLayout(self.layout)
 
