@@ -1,8 +1,3 @@
-"""
-XML Reader
-==========
-A module to parse information from Symuvia input XMLs
-"""
 # ============================================================================
 # STANDARD  IMPORTS
 # ============================================================================
@@ -10,14 +5,15 @@ A module to parse information from Symuvia input XMLs
 import types
 import numpy as np
 import os
-from collections import OrderedDict
-from functools import cached_property, lru_cache, cache
+from collections import OrderedDict, Counter
+from functools import cached_property, lru_cache
 
 # ============================================================================
 # INTERNAL IMPORTS
 # ============================================================================
 
 from symupy.tsc.journey import Path, State, Trip
+from symupy.tsc.network import Network
 from symupy.parser.xmlparser import XMLParser
 from symupy.utils.exceptions import SymupyWarning
 from symupy.abstractions.reader import AbstractNetworkReader, AbstractTrafficDataReader
@@ -304,9 +300,23 @@ class SymuviaTrafficDataReader(AbstractTrafficDataReader):
                                     lane=voie))
         return states
 
-
     def get_OD(self, period, OD, loop=None):
-        print(12)
+        result = list()
+        for el in self._vehs.iterchildrens():
+            if OD==(el.attr['entree'], el.attr['sortie']):
+                veh_el = self._get_veh_element(el.attr['id'])
+                path = Path(veh_el.attr['itineraire'])
+                result.append(path)
+
+        return result
+
+
+    def count_OD(self, period=None):
+        if period is None:
+            c = Counter([(el.attr['entree'], el.attr['sortie']) for el in self._vehs.iterchildrens()])
+        else:
+            c = Counter([(el.attr['entree'], el.attr['sortie']) for el in self._vehs.iterchildrens() if period[0]>=el.attr.get('instE')>=period[1] ])
+        return c
 
     def get_trip(self, vehid):
         states = self._get_states(vehid)
@@ -314,7 +324,7 @@ class SymuviaTrafficDataReader(AbstractTrafficDataReader):
         path = Path(veh_el.attr['itineraire'])
         origin = veh_el.attr['entree']
         dest = veh_el.attr['sortie']
-        departure_time = veh_el.attr['instE']
+        departure_time = veh_el.attr.get('instE')
         arrival_time = veh_el.attr['instS']
 
         return Trip(states=states,
@@ -325,19 +335,15 @@ class SymuviaTrafficDataReader(AbstractTrafficDataReader):
                     destination=dest,
                     vehicle=vehid)
 
+    def clear_cache(self):
+        self._get_ids_from_inst.cache_clear()
+
 if __name__ == "__main__":
     import symupy
     import os
 
     # file = os.path.dirname(symupy.__file__)+'/../tests/mocks/bottlenecks/bottleneck_001.xml'
-    file = "/Users/florian/Work/visunet/data/Lafayette/ref_153000_163000_traf.xml"
+    file = "/Users/florian.gacon/Work/SymuTools/data/ref_153000_163000_traf.xml"
     reader = SymuviaTrafficDataReader(file)
-    t1 = reader.get_trip('1')
-    # p = reader._get_path('88')
-    # p = reader._get_path('0')
-    # p = reader._get_path('88')
-    # reader._get_states('88')
-    # reader._get_states('0')
-    # reader._get_states('35')
-    # print(p.links)
-    # print(reader._get_path.cache_info())
+    c = reader.get_OD(None, ('A_Init_L1_OE', 'CAF_Laf_Duguesclin'))
+    # t1 = reader.get_trip('1')
