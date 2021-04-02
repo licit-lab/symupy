@@ -1,6 +1,7 @@
 import functools
+import logging
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import QThread, Qt, QObject, pyqtSignal
 from PyQt5.QtWidgets import (QApplication, QWidget, QHBoxLayout, QSlider, QLabel,
                             QComboBox, QLineEdit)
 from PyQt5.QtGui import QIntValidator
@@ -13,6 +14,19 @@ def waitcursor(func):
         QApplication.restoreOverrideCursor()
         return value
     return wrapper
+
+
+class ConsoleWindowLogHandler(logging.Handler, QObject):
+    sigLog = pyqtSignal(str)
+    def __init__(self):
+        logging.Handler.__init__(self)
+        QObject.__init__(self)
+        self.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))
+
+    def emit(self, logRecord):
+        logRecord = self.format(logRecord)
+        # message = str(logRecord.getMessage())
+        self.sigLog.emit(logRecord)
 
 class Slider(QWidget):
     def __init__(self, name=' ', parent=None):
@@ -62,7 +76,6 @@ class Slider(QWidget):
     def setName(self, name):
         self.name.setText(name)
 
-
 class LabelComboBox(QWidget):
     def __init__(self, name=' ', parent=None):
         super().__init__(parent)
@@ -89,3 +102,12 @@ class LabelComboBox(QWidget):
 
     def value(self):
         return self.widget.currentText()
+
+class Worker(QThread):
+    def __init__(self, func, args):
+        super(Worker, self).__init__()
+        self.func = func
+        self.args = args
+
+    def run(self):
+        self.func(*self.args)

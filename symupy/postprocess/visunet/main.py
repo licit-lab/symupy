@@ -1,4 +1,6 @@
 import sys
+import logging
+
 
 from PyQt5.QtWidgets import (QHBoxLayout, QGroupBox, QDesktopWidget, QMainWindow,
                              QApplication, QMenu, QAction, QFileDialog, QSplitter,
@@ -6,10 +8,12 @@ from PyQt5.QtWidgets import (QHBoxLayout, QGroupBox, QDesktopWidget, QMainWindow
 from PyQt5.QtCore import Qt
 # from PyQt5.QtGui import *
 
+from symupy.postprocess.visunet import logger
 from symupy.postprocess.visunet.figure import MplWidget
 from symupy.postprocess.visunet.panel import RightPanelWidget
 from symupy.plugins.reader import add_dir_to_plugin
 
+logger.setLevel(logging.INFO)
 
 class MainWindow(QMainWindow):
 
@@ -84,14 +88,14 @@ class MainWindow(QMainWindow):
         self.levelGroup.addAction(self.levelINFAction)
         self.levelGroup.addAction(self.levelWRNAction)
         self.levelGroup.addAction(self.levelERRAction)
+        self.levelDBGAction.triggered.connect(self.setLoggerLevelDBG)
+        self.levelINFAction.triggered.connect(self.setLoggerLevelINF)
+        self.levelWRNAction.triggered.connect(self.setLoggerLevelWRN)
+        self.levelERRAction.triggered.connect(self.setLoggerLevelERR)
         self.levelINFAction.setChecked(True)
-        self.levelDBGAction.triggered.connect(self.panel.logger.setLevelDebug)
-        self.levelINFAction.triggered.connect(self.panel.logger.setLevelInfo)
-        self.levelWRNAction.triggered.connect(self.panel.logger.setLevelWarning)
-        self.levelERRAction.triggered.connect(self.panel.logger.setLevelError)
         self.clearLogAction = QAction("&Clear", self)
         self.logMenu.addAction(self.clearLogAction)
-        self.clearLogAction.triggered.connect(self.panel.logger.clearLog)
+        self.clearLogAction.triggered.connect(self.clearLog)
 
 
     def add_plugins(self):
@@ -100,8 +104,20 @@ class MainWindow(QMainWindow):
         if folder!='':
             add_dir_to_plugin(folder)
 
+    def setLoggerLevelDBG(self):
+        logger.setLevel(logging.DEBUG)
 
+    def setLoggerLevelINF(self):
+        logger.setLevel(logging.INFO)
 
+    def setLoggerLevelWRN(self):
+        logger.setLevel(logging.WARNING)
+
+    def setLoggerLevelERR(self):
+        logger.setLevel(logging.ERROR)
+
+    def clearLog(self):
+        self.panel.logger_widget.clear()
 
 class DataContainer(object):
     def __init__(self):
