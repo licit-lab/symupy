@@ -10,10 +10,10 @@ class LoggerWidget(QDialog, QPlainTextEdit):
 
         self.logTextBox = QTextEditLogger(self)
         # You can format what is printed to text box
-        self.logTextBox.setFormatter(logging.Formatter('> %(asctime)s %(levelname)s: %(message)s', datefmt='%H:%M:%S'))
+        self.logTextBox.setFormatter(logging.Formatter('%(levelname)s: %(message)s', datefmt='%H:%M:%S'))
         logger.addHandler(self.logTextBox)
         # You can control the logging level
-        logging.getLogger().setLevel(logging.DEBUG)
+        logger.setLevel(logging.INFO)
 
         layout = QVBoxLayout()
         # Add the new logging box widget to the layout
@@ -22,3 +22,15 @@ class LoggerWidget(QDialog, QPlainTextEdit):
 
     def clearLog(self):
         self.logTextBox.widget.clear()
+
+    def setLevelDebug(self):
+        logger.setLevel(logging.DEBUG)
+
+    def setLevelInfo(self):
+        logger.setLevel(logging.INFO)
+
+    def setLevelWarning(self):
+        logger.setLevel(logging.WARNING)
+
+    def setLevelError(self):
+        logger.setLevel(logging.ERROR)

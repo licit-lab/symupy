@@ -1,7 +1,8 @@
 import sys
 
 from PyQt5.QtWidgets import (QHBoxLayout, QGroupBox, QDesktopWidget, QMainWindow,
-                             QApplication, QMenu, QAction, QFileDialog, QSplitter)
+                             QApplication, QMenu, QAction, QFileDialog, QSplitter,
+                             QActionGroup)
 from PyQt5.QtCore import Qt
 # from PyQt5.QtGui import *
 
@@ -65,6 +66,29 @@ class MainWindow(QMainWindow):
 
         self.logMenu = QMenu("&Log", self)
         self.menubar.addMenu(self.logMenu)
+        self.submenuLogger = self.logMenu.addMenu('&Level')
+        self.levelGroup = QActionGroup(self)
+        self.levelDBGAction = QAction("&Debug", self)
+        self.levelINFAction = QAction("&Info", self)
+        self.levelWRNAction = QAction("&Warning", self)
+        self.levelERRAction = QAction("&Error", self)
+        self.levelDBGAction.setCheckable(True)
+        self.levelINFAction.setCheckable(True)
+        self.levelWRNAction.setCheckable(True)
+        self.levelERRAction.setCheckable(True)
+        self.submenuLogger.addAction(self.levelDBGAction)
+        self.submenuLogger.addAction(self.levelINFAction)
+        self.submenuLogger.addAction(self.levelWRNAction)
+        self.submenuLogger.addAction(self.levelERRAction)
+        self.levelGroup.addAction(self.levelDBGAction)
+        self.levelGroup.addAction(self.levelINFAction)
+        self.levelGroup.addAction(self.levelWRNAction)
+        self.levelGroup.addAction(self.levelERRAction)
+        self.levelINFAction.setChecked(True)
+        self.levelDBGAction.triggered.connect(self.panel.logger.setLevelDebug)
+        self.levelINFAction.triggered.connect(self.panel.logger.setLevelInfo)
+        self.levelWRNAction.triggered.connect(self.panel.logger.setLevelWarning)
+        self.levelERRAction.triggered.connect(self.panel.logger.setLevelError)
         self.clearLogAction = QAction("&Clear", self)
         self.logMenu.addAction(self.clearLogAction)
         self.clearLogAction.triggered.connect(self.panel.logger.clearLog)

@@ -1,5 +1,6 @@
 import linecache
 from collections import OrderedDict, defaultdict
+import time
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -83,20 +84,25 @@ class NetworkWidget(QGroupBox):
 
     @waitcursor
     def process_network(self, reader):
+        logger.info(f'Creating Network object ...')
+        start = time.time()
         reader = reader(self.data.file_network)
         self.network = reader.get_network()
+        end = time.time()
+        logger.info(f'Done [{end-start} s]')
         self.update_label()
         self.renderer = NetworkRenderer(self.network, self.data.figure)
 
 
     def plot_network(self):
+        logger.info(f'Rendering Network object ...')
         self.data.figure.clf()
         self.renderer.draw()
         plt.axis('off')
         plt.axis('tight')
         self.data.figure.gca().set_aspect('equal')
         self.data.canvas.draw()
-        print('Done')
+        logger.info(f'Done')
 
 
 class Reader(QDialog):
