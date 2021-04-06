@@ -23,7 +23,7 @@ class State:
     time: str = None
     speed: float = 0
     acceleration: float = 0
-    relative_position: float = 0
+    curvilinear_abscissa: float = 0
     absolute_position: list = field(default_factory=list)
     link: str = None
     lane: int = None

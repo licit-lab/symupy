@@ -293,11 +293,15 @@ class SymuviaTrafficDataReader(AbstractTrafficDataReader):
                 acc = float(vehtraj.attr['acc'])
                 vit = float(vehtraj.attr['vit'])
                 voie = int(vehtraj.attr['voie'])
+                curv_pos = float(vehtraj.attr['dst'])
+                tron = vehtraj.attr['tron']
                 states.append(State(time=inst.attr['val'],
                                     absolute_position=np.array([abs, ord]),
+                                    curvilinear_abscissa=curv_pos,
                                     acceleration=acc,
                                     speed=vit,
-                                    lane=voie))
+                                    lane=voie,
+                                    link=tron))
         return states
 
     def get_OD(self, period, OD, loop=None):
@@ -343,7 +347,7 @@ if __name__ == "__main__":
     import os
 
     # file = os.path.dirname(symupy.__file__)+'/../tests/mocks/bottlenecks/bottleneck_001.xml'
-    file = "/Users/florian.gacon/Work/SymuTools/data/ref_153000_163000_traf.xml"
+    file = "/Users/florian/Work/SymuTools/data/ref_153000_163000_traf.xml"
     reader = SymuviaTrafficDataReader(file)
     c = reader.get_OD(None, ('A_Init_L1_OE', 'CAF_Laf_Duguesclin'))
     # t1 = reader.get_trip('1')
