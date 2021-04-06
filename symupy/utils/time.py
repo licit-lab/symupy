@@ -88,6 +88,17 @@ class Date(object):
     def __eq__(self, other):
         return self._total_sec == other._total_sec
 
+    def __lt__(self, other):
+        return self._total_sec < other._total_sec
+
+    def __le__(self, other):
+        return self._total_sec <= other._total_sec
+
+    def __gt__(self, other):
+        return self._total_sec > other._total_sec
+
+    def __ge__(self, other):
+        return self._total_sec >= other._total_sec
 
 if __name__ == '__main__':
     d1 = Date("01:01:02")

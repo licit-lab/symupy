@@ -16,29 +16,12 @@ from symupy.tsc.journey import Path, State, Trip
 from symupy.tsc.network import Network
 from symupy.parser.xmlparser import XMLParser
 from symupy.utils.exceptions import SymupyWarning
+from symupy.utils.time import Date
 from symupy.abstractions.reader import AbstractNetworkReader, AbstractTrafficDataReader
 
 # ============================================================================
 # CLASS AND DEFINITIONS
 # ============================================================================
-
-
-def _get_ids_from_inst(inst):
-    """From XMLElement of INSTANT return a dict of TRAJ.
-
-    Parameters
-    ----------
-    inst : symupy.parser.xmlparser.XMLElement
-        XMLElement of tag INSTANT
-
-    Returns
-    -------
-    dict
-        dict with veh id as key and TRAJ XMLElement as value
-
-    """
-    trajs = inst.find_children_tag('TRAJS')
-    return {el.attr['id']:el for el in trajs.iterchildrens()}
 
 
 class SymuviaNetworkReader(AbstractNetworkReader):
@@ -276,8 +259,10 @@ class SymuviaTrafficDataReader(AbstractTrafficDataReader):
             elif elem.tag == 'VEHS':
                 self._vehs = elem
                 break
+        self._start_sim = Date(sim.attr['debut'])
+        self._get_ids_from_inst = lru_cache(maxsize=lru_cache_size)(self._get_ids_from_inst)
+        self._get_veh_element = lru_cache(maxsize=lru_cache_size)(self._get_veh_element)
 
-        self._get_ids_from_inst = lru_cache(maxsize=lru_cache_size)(_get_ids_from_inst)
 
     def _get_veh_element(self, vehid):
         return self._vehs.find_children_attr("id", str(vehid))
@@ -295,7 +280,8 @@ class SymuviaTrafficDataReader(AbstractTrafficDataReader):
                 voie = int(vehtraj.attr['voie'])
                 curv_pos = float(vehtraj.attr['dst'])
                 tron = vehtraj.attr['tron']
-                states.append(State(time=inst.attr['val'],
+                time = Date(float(inst.attr['val']))+self._start_sim
+                states.append(State(time=time,
                                     absolute_position=np.array([abs, ord]),
                                     curvilinear_abscissa=curv_pos,
                                     acceleration=acc,
@@ -304,14 +290,23 @@ class SymuviaTrafficDataReader(AbstractTrafficDataReader):
                                     link=tron))
         return states
 
-    def get_OD(self, period, OD, loop=None):
+    def get_OD(self, OD, period=None, loop=None):
         result = list()
-        for el in self._vehs.iterchildrens():
-            if OD==(el.attr['entree'], el.attr['sortie']):
-                veh_el = self._get_veh_element(el.attr['id'])
-                path = Path(veh_el.attr['itineraire'])
-                result.append(path)
-
+        if period is None:
+            for el in self._vehs.iterchildrens():
+                if OD==(el.attr['entree'], el.attr['sortie']):
+                    veh_el = self._get_veh_element(el.attr['id'])
+                    path = Path(veh_el.attr['itineraire'])
+                    result.append(path)
+        else:
+            start = Date(period[0])
+            end = Date(period[1])
+            for el in self._vehs.iterchildrens():
+                inst = Date(float(el.attr.get('instE',el.attr['instC'])))+self._start_sim
+                if OD==(el.attr['entree'], el.attr['sortie']) and (start<=inst<=end):
+                    veh_el = self._get_veh_element(el.attr['id'])
+                    path = Path(veh_el.attr['itineraire'])
+                    result.append(path)
         return result
 
 
@@ -319,7 +314,9 @@ class SymuviaTrafficDataReader(AbstractTrafficDataReader):
         if period is None:
             c = Counter([(el.attr['entree'], el.attr['sortie']) for el in self._vehs.iterchildrens()])
         else:
-            c = Counter([(el.attr['entree'], el.attr['sortie']) for el in self._vehs.iterchildrens() if period[0]>=el.attr.get('instE')>=period[1] ])
+            start = Date(period[0])
+            end = Date(period[1])
+            c = Counter([(el.attr['entree'], el.attr['sortie']) for el in self._vehs.iterchildrens() if start<=Date(float(el.attr.get('instE',el.attr['instC'])))+self._start_sim<=end])
         return c
 
     def get_trip(self, vehid):
@@ -342,6 +339,25 @@ class SymuviaTrafficDataReader(AbstractTrafficDataReader):
     def clear_cache(self):
         self._get_ids_from_inst.cache_clear()
 
+
+
+    def _get_ids_from_inst(self, inst):
+        """From XMLElement of INSTANT return a dict of TRAJ.
+
+        Parameters
+        ----------
+        inst : symupy.parser.xmlparser.XMLElement
+            XMLElement of tag INSTANT
+
+        Returns
+        -------
+        dict
+            dict with veh id as key and TRAJ XMLElement as value
+
+        """
+        trajs = inst.find_children_tag('TRAJS')
+        return {el.attr['id']:el for el in trajs.iterchildrens()}
+
 if __name__ == "__main__":
     import symupy
     import os
@@ -349,5 +365,7 @@ if __name__ == "__main__":
     # file = os.path.dirname(symupy.__file__)+'/../tests/mocks/bottlenecks/bottleneck_001.xml'
     file = "/Users/florian/Work/SymuTools/data/ref_153000_163000_traf.xml"
     reader = SymuviaTrafficDataReader(file)
-    c = reader.get_OD(None, ('A_Init_L1_OE', 'CAF_Laf_Duguesclin'))
+    # c = reader.get_OD(('A_Init_L1_OE', 'CAF_Laf_Duguesclin'))
+    c = reader.count_OD()
+    cp = reader.count_OD(("15:30:00", "15:30:05"))
     # t1 = reader.get_trip('1')
