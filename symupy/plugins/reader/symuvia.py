@@ -290,7 +290,7 @@ class SymuviaTrafficDataReader(AbstractTrafficDataReader):
                                     link=tron))
         return states
 
-    def get_OD(self, OD, period=None, loop=None):
+    def get_OD(self, OD, period=None):
         result = list()
         if period is None:
             for el in self._vehs.iterchildrens():
@@ -308,6 +308,13 @@ class SymuviaTrafficDataReader(AbstractTrafficDataReader):
                     path = Path(veh_el.attr['itineraire'])
                     result.append(path)
         return result
+
+    def parse_args_OD(self, OD, period):
+        if period!='None':
+            period = period.split(',')
+        else:
+            period = None
+        return OD.split(','), period
 
 
     def count_OD(self, period=None):
@@ -365,7 +372,7 @@ if __name__ == "__main__":
     # file = os.path.dirname(symupy.__file__)+'/../tests/mocks/bottlenecks/bottleneck_001.xml'
     file = "/Users/florian/Work/SymuTools/data/ref_153000_163000_traf.xml"
     reader = SymuviaTrafficDataReader(file)
-    # c = reader.get_OD(('A_Init_L1_OE', 'CAF_Laf_Duguesclin'))
+    c = reader.get_OD(('A_Init_L1_OE', 'CAF_Laf_Duguesclin'))
     c = reader.count_OD()
     cp = reader.count_OD(("15:30:00", "15:30:05"))
     # t1 = reader.get_trip('1')

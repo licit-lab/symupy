@@ -22,5 +22,9 @@ class AbstractTrafficDataReader(ABC):
         pass
 
     @abstractmethod
+    def parse_args_OD(self, period, OD, loop):
+        pass
+
+    @abstractmethod
     def get_trip(self, vehid):
         pass
