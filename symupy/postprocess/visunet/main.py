@@ -52,6 +52,7 @@ class MainWindow(QMainWindow):
         self.trajMenu = QMenu("&Trajectories", self)
         self.menubar.addMenu(self.trajMenu)
         self.openTrajAction = QAction("&Open...", self)
+        self.openTrajAction.triggered.connect(self.panel.panel_netw.load_traffic_data)
         self.trajMenu.addAction(self.openTrajAction)
         self.openTrajAction.setShortcut("Ctrl+T")
         self.renderTripAction = QAction("&Render Trip...", self)

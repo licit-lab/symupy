@@ -41,7 +41,8 @@ class NetworkWidget(QGroupBox):
 
         self.network = None
         self.renderer = None
-        self.reader = Reader()
+        self.input_reader = Reader('input')
+        self.output_reader = Reader('output')
 
 
     def update_label(self):
@@ -50,11 +51,11 @@ class NetworkWidget(QGroupBox):
         tr = len(self.network.links)
         self.label_tr.setText('Troncons: '+str(tr))
 
-    def choose_reader(self):
-        self.reader.set_file(self.data.file_network)
-        if self.reader.exec_() == QDialog.Accepted:
-            logger.debug(f'Choose reader {self.reader.choosen_reader}')
-            reader = self.reader.choosen_reader
+    def choose_input_reader(self):
+        self.input_reader.set_file(self.data.file_network)
+        if self.input_reader.exec_() == QDialog.Accepted:
+            logger.debug(f'Choose reader {self.input_reader.choosen_reader}')
+            reader = self.input_reader.choosen_reader
             self.workerProcessNet = Worker(process_network, [self, reader])
             self.workerPlotNet = Worker(plot_network, [self])
             self.workerProcessNet.finished.connect(self.workerPlotNet.start)
@@ -66,9 +67,27 @@ class NetworkWidget(QGroupBox):
 
         if file != '':
             self.data.file_network = file
-            self.choose_reader()
+            self.choose_input_reader()
             # self.process_network()
             # self.plot_network()
+
+    def load_traffic_data(self):
+        options = QFileDialog.Options(QFileDialog.Options(QFileDialog.DontUseNativeDialog))
+        file, _ = QFileDialog.getOpenFileName(self,"Load Traffic Data", "","Traffic Data file (*)", options=options)
+        print(file)
+        if file != '':
+            self.data.file_traj = file
+            self.choose_output_reader()
+
+    def choose_output_reader(self):
+        self.output_reader.set_file(self.data.file_traj)
+        if self.output_reader.exec_() == QDialog.Accepted:
+            logger.debug(f'Choose reader {self.output_reader.choosen_reader}')
+            reader = self.output_reader.choosen_reader
+            # self.workerProcessNet = Worker(process_network, [self, reader])
+            # self.workerPlotNet = Worker(plot_network, [self])
+            # self.workerProcessNet.finished.connect(self.workerPlotNet.start)
+            # self.workerProcessNet.start()
 
 @waitcursor
 def process_network(networkwidget, reader):
@@ -96,33 +115,33 @@ def plot_network(networkwidget):
 
 
 class Reader(QDialog):
-    def __init__(self, parent=None):
+    def __init__(self, type, parent=None):
         super().__init__(parent)
         self.setWindowTitle('Available Reader')
 
-        self.readers = load_plugins('input')
+        self.input_readers = load_plugins(type)
 
-        self.reader_widget = QComboBox()
+        self.input_reader_widget = QComboBox()
 
 
         self.layout = QVBoxLayout()
         self.layout.setAlignment(Qt.AlignTop)
         self.setLayout(self.layout)
 
-        self.layout.addWidget(self.reader_widget)
+        self.layout.addWidget(self.input_reader_widget)
         self.button_select = QPushButton('Select')
         self.layout.addWidget(self.button_select)
         self.button_select.clicked.connect(self.choose)
 
     def set_file(self, file):
-        self.reader_widget.clear()
+        self.input_reader_widget.clear()
         ext_plugins = defaultdict(list)
-        for name, cls in self.readers.items():
+        for name, cls in self.input_readers.items():
             ext_plugins[cls._ext].append(name)
         if file.split('.')[-1] in ext_plugins.keys():
             for r in ext_plugins[file.split('.')[-1]]:
-                self.reader_widget.addItem(r)
+                self.input_reader_widget.addItem(r)
 
     def choose(self, file):
-        self.choosen_reader = self.readers[self.reader_widget.currentText()]
+        self.choosen_reader = self.input_readers[self.input_reader_widget.currentText()]
         self.accept()

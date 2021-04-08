@@ -21,6 +21,7 @@ from symupy.abstractions.reader import AbstractTrafficDataReader
 
 
 class SymuMasterTrafficDataReader(AbstractTrafficDataReader):
+    _ext = 'csv'
     def __init__(self, ppaths, final_ppaths, distribution):
         self._file_ppaths = ppaths
         self._file_final_ppaths = final_ppaths
