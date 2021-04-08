@@ -115,6 +115,7 @@ class Reader(QDialog):
         self.button_select.clicked.connect(self.choose)
 
     def set_file(self, file):
+        self.reader_widget.clear()
         ext_plugins = defaultdict(list)
         for name, cls in self.readers.items():
             ext_plugins[cls._ext].append(name)
