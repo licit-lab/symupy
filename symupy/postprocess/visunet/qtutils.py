@@ -103,6 +103,24 @@ class LabelComboBox(QWidget):
     def value(self):
         return self.widget.currentText()
 
+class LabelLineEdit(QWidget):
+    def __init__(self, name=' ', parent=None):
+        super().__init__(parent)
+
+        self.layout = QHBoxLayout()
+        self.setLayout(self.layout)
+
+        self.name = QLabel(name, self)
+        self.layout.addWidget(self.name)
+
+        self.widget = QLineEdit()
+        self.layout.addWidget(self.widget)
+
+        self.name.setAlignment(Qt.AlignLeft)
+
+    def value(self):
+        return self.widget.text()
+
 class Worker(QThread):
     def __init__(self, func, args):
         super(Worker, self).__init__()

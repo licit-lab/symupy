@@ -52,15 +52,19 @@ class MainWindow(QMainWindow):
         self.trajMenu = QMenu("&Trajectories", self)
         self.menubar.addMenu(self.trajMenu)
         self.openTrajAction = QAction("&Open...", self)
-        self.openTrajAction.triggered.connect(self.panel.panel_netw.load_traffic_data)
+        self.openTrajAction.triggered.connect(self.openTraj)
         self.trajMenu.addAction(self.openTrajAction)
         self.openTrajAction.setShortcut("Ctrl+T")
         self.renderTripAction = QAction("&Render Trip...", self)
+        self.renderTripAction.setDisabled(True)
+        self.renderTripAction.triggered.connect(self.panel.panel_netw.select_trip)
         self.trajMenu.addAction(self.renderTripAction)
         self.renderODAction = QAction("&Render OD...", self)
+        self.renderODAction.setDisabled(True)
         self.trajMenu.addAction(self.renderODAction)
         self.clearAction = QAction("&Clear", self)
         self.trajMenu.addAction(self.clearAction)
+        self.clearAction.triggered.connect(self.panel.panel_netw.clear)
 
         self.pluginMenu = QMenu("&Plugins", self)
         self.menubar.addMenu(self.pluginMenu)
@@ -119,6 +123,12 @@ class MainWindow(QMainWindow):
 
     def clearLog(self):
         self.panel.logger_widget.clear()
+
+
+    def openTraj(self):
+        self.renderTripAction.setDisabled(False)
+        self.renderODAction.setDisabled(False)
+        self.panel.panel_netw.load_traffic_data()
 
 class DataContainer(object):
     def __init__(self):

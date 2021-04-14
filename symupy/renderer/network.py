@@ -47,7 +47,7 @@ class NetworkRenderer(object):
         )
         plt.draw()
 
-    def draw_path(self, paths:dict):
+    def draw_paths(self, paths:dict):
         for key, troncons in paths.items():
             troncons_id = [self._network_keys.index(id) for id in troncons]
             coords = np.array(self._network_coords, dtype=object)[troncons_id]

@@ -3,7 +3,7 @@ import logging
 from PyQt5.QtWidgets import QVBoxLayout, QWidget, QTextEdit
 
 from .network import NetworkWidget
-from .trajectory import TrajectoryWidget
+# from .trajectory import TrajectoryWidget
 from symupy.postprocess.visunet.qtutils import ConsoleWindowLogHandler
 
 from symupy.postprocess.visunet import logger

@@ -329,7 +329,7 @@ class SymuviaTrafficDataReader(AbstractTrafficDataReader):
     def get_trip(self, vehid):
         states = self._get_states(vehid)
         veh_el = self._get_veh_element(vehid)
-        path = Path(veh_el.attr['itineraire'])
+        path = Path(veh_el.attr['itineraire'].split(" "))
         origin = veh_el.attr['entree']
         dest = veh_el.attr['sortie']
         departure_time = veh_el.attr.get('instE')
