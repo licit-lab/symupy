@@ -59,7 +59,7 @@ class NetworkRenderer(object):
             self._path_plot.append(self._fig.gca().plot(coords[-1,0], coords[-1,1], 'k+')[0])
             self._path_plot.append(self._fig.gca().annotate("D",(coords[-1,0], coords[-1,1])))
             self._path_plot.append(self._fig.gca().annotate("D",(coords[-1,0], coords[-1,1])))
-            self._legends.append([Line2D([0], [0], color=c, lw=2), str(key)])
+            # self._legends.append([Line2D([0], [0], color=c, lw=2), str(key)])
 
         self._show_legend()
         plt.draw()
@@ -90,9 +90,10 @@ class NetworkRenderer(object):
         plt.draw()
 
     def _show_legend(self):
-        leg = [i[0] for i in self._legends]
-        lab = [i[1] for i in self._legends]
-        self._legend = self._fig.gca().legend(leg, lab)
+        if self._legends:
+            leg = [i[0] for i in self._legends]
+            lab = [i[1] for i in self._legends]
+            self._legend = self._fig.gca().legend(leg, lab)
 
 
 
@@ -101,8 +102,9 @@ class NetworkRenderer(object):
             for line in plot:
                 line.remove()
             plot.clear()
-        self._legends.clear()
-        self._legend.remove()
+        if self._legend:
+            self._legends.clear()
+            self._legend.remove()
         plt.draw()
 
     def plot(self):

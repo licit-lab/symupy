@@ -35,8 +35,10 @@ class ODSelector(QDialog):
 
         sig = signature(func)
         self.widgets = list()
+        maxsize = max([len(item) for item in sig.parameters.keys()])
+        print(maxsize)
         for name, param in sig.parameters.items():
-            w = LabelLineEdit(name+'\t')
+            w = LabelLineEdit(name+' '*(maxsize-len(name)))
             self.widgets.append(w)
             self.layout.addWidget(w)
             if param.default != _empty:

@@ -117,7 +117,11 @@ class NetworkWidget(QGroupBox):
     def selectOD(self):
         OD_selector = ODSelector(self._output_reader.get_OD)
         if OD_selector.exec_() == QDialog.Accepted:
-            args = self._output_reader.parse_args_OD(*OD_selector.values)
+            # args = self._output_reader.parse_args_OD(*OD_selector.values)
+            for arg in OD_selector.values:
+                if arg=='None':
+                    arg = None
+            args = [None if arg=='None' else arg for arg in OD_selector.values]
             self.workerProcessTrip = Worker(process_ODs, [self, args])
             self.workerProcessTrip.start()
 
@@ -133,7 +137,7 @@ def process_network(networkwidget):
     networkwidget._input_reader = networkwidget._input_reader(networkwidget.data.file_network)
     networkwidget.network = networkwidget._input_reader.get_network()
     end = time.time()
-    logger.info(f'Done [{end-start} s]')
+    logger.info(f'Done [{end-start:.4f} s]')
     networkwidget.update_label()
     networkwidget.renderer = NetworkRenderer(networkwidget.network, networkwidget.data.figure)
 
@@ -141,10 +145,10 @@ def process_network(networkwidget):
 def process_trip(networkwidget, vehid):
     logger.info(f'Looking for trip {vehid} and plotting it ...')
     start = time.time()
-    trip = networkwidget._output_reader.get_trip(vehid)
-    networkwidget.renderer.draw_paths({vehid:trip.path.links})
+    path = networkwidget._output_reader.get_path(vehid)
+    networkwidget.renderer.draw_paths({vehid:path.links})
     end = time.time()
-    logger.info(f'Done [{end-start} s]')
+    logger.info(f'Done [{end-start:.4f} s]')
 
 @waitcursor
 def process_ODs(networkwidget, args_OD):
@@ -155,7 +159,7 @@ def process_ODs(networkwidget, args_OD):
     print(pathes)
     networkwidget.renderer.draw_paths(pathes)
     end = time.time()
-    logger.info(f'Done [{end-start} s]')
+    logger.info(f'Done [{end-start:.4f} s]')
 
 
 def plot_network(networkwidget):

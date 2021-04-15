@@ -260,8 +260,8 @@ class SymuviaTrafficDataReader(AbstractTrafficDataReader):
                 self._vehs = elem
                 break
         self._start_sim = Date(sim.attr['debut'])
-        self._get_ids_from_inst = lru_cache(maxsize=lru_cache_size)(self._get_ids_from_inst)
-        self._get_veh_element = lru_cache(maxsize=lru_cache_size)(self._get_veh_element)
+        self.get_ids_from_inst = lru_cache(maxsize=lru_cache_size)(self._get_ids_from_inst)
+        self.get_veh_element = lru_cache(maxsize=lru_cache_size)(self._get_veh_element)
 
 
     def _get_veh_element(self, vehid):
@@ -270,7 +270,7 @@ class SymuviaTrafficDataReader(AbstractTrafficDataReader):
     def _get_states(self, vehid):
         states = list()
         for inst in self._inst.iterchildrens():
-            trajs = self._get_ids_from_inst(inst)
+            trajs = self.get_ids_from_inst(inst)
             if vehid in trajs.keys():
                 vehtraj = trajs[vehid]
                 abs = float(vehtraj.attr['abs'])
@@ -290,34 +290,34 @@ class SymuviaTrafficDataReader(AbstractTrafficDataReader):
                                     link=tron))
         return states
 
-    def get_OD(self, OD, period=None):
-        OD = tuple(OD)
+    def get_OD(self, origin, destination, start_period=None, end_period=None):
+        OD = (origin, destination)
         result = list()
-        if period is None:
+        if start_period is None and end_period is None:
             for el in self._vehs.iterchildrens():
                 if OD==(el.attr['entree'], el.attr['sortie']):
-                    veh_el = self._get_veh_element(el.attr['id'])
+                    veh_el = self.get_veh_element(el.attr['id'])
                     path = Path(veh_el.attr['itineraire'].split(" "))
                     result.append(path)
         else:
-            start = Date(period[0])
-            end = Date(period[1])
+            start = Date(start_period)
+            end = Date(end_period)
             for el in self._vehs.iterchildrens():
                 inst = Date(float(el.attr.get('instE',el.attr['instC'])))+self._start_sim
                 if OD==(el.attr['entree'], el.attr['sortie']) and (start<=inst<=end):
-                    veh_el = self._get_veh_element(el.attr['id'])
+                    veh_el = self.get_veh_element(el.attr['id'])
                     path = Path(veh_el.attr['itineraire'].split(" "))
                     result.append(path)
         return result
 
-    def parse_args_OD(self, OD, period):
-        if period!='None':
-            period = period.split(',')
-            [item.strip() for item in period]
-        else:
-            period = None
-        parsed_OD = [item.strip() for item in OD.split(',')]
-        return parsed_OD, period
+    # def parse_args_OD(self, OD, period):
+    #     if period!='None':
+    #         period = period.split(',')
+    #         [item.strip() for item in period]
+    #     else:
+    #         period = None
+    #     parsed_OD = [item.strip() for item in OD.split(',')]
+    #     return parsed_OD, period
 
 
     def count_OD(self, period=None):
@@ -331,7 +331,7 @@ class SymuviaTrafficDataReader(AbstractTrafficDataReader):
 
     def get_trip(self, vehid):
         states = self._get_states(vehid)
-        veh_el = self._get_veh_element(vehid)
+        veh_el = self.get_veh_element(vehid)
         path = Path(veh_el.attr['itineraire'].split(" "))
         origin = veh_el.attr['entree']
         dest = veh_el.attr['sortie']
@@ -346,8 +346,15 @@ class SymuviaTrafficDataReader(AbstractTrafficDataReader):
                     destination=dest,
                     vehicle=vehid)
 
+    def get_path(self, vehid):
+        veh_el = self.get_veh_element(vehid)
+        path = Path(veh_el.attr['itineraire'].split(" "))
+
+        return path
+
     def clear_cache(self):
-        self._get_ids_from_inst.cache_clear()
+        self.get_ids_from_inst.cache_clear()
+        self.get_veh_element.cache_clear()
 
 
 
@@ -373,9 +380,11 @@ if __name__ == "__main__":
     import os
 
     # file = os.path.dirname(symupy.__file__)+'/../tests/mocks/bottlenecks/bottleneck_001.xml'
-    file = "/Users/florian/Work/SymuTools/data/ref_153000_163000_traf.xml"
+    file = "/Users/florian.gacon/Work/SymuTools/data/ref_153000_163000_traf.xml"
     reader = SymuviaTrafficDataReader(file)
     c = reader.get_OD(('A_Init_L1_OE', 'CAF_Laf_Duguesclin'))
     c = reader.count_OD()
     cp = reader.count_OD(("15:30:00", "15:30:05"))
     # t1 = reader.get_trip('1')
+    # E_Moliere_S, S_Crequi_N
+    # 15:30:00, 15:30:05
