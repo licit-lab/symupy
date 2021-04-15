@@ -28,7 +28,7 @@ class SymuMasterPPathsReader(AbstractTrafficDataReader):
         self.ppaths = pd.read_csv(self._file_ppaths, sep=';', index_col=False, header=None, engine='python')
 
 
-    def get_OD(self, OD, period=None, loop=None, file='distribution'): #Both ppaths and distribution
+    def get_OD(self, origin, destination, period=None, outer_loop=None, inner_loop=None):
         paths = list()
         for row in self.ppaths.iterrows():
             try:
@@ -66,7 +66,7 @@ class SymuMasterFinalPPathsReader(AbstractTrafficDataReader):
         row = self.final_ppaths[self.final_ppaths.iloc[:,3]==float(userid)]
         path = row[7].to_list()[0].split('\\')
         path = [p for p in path[1:-1][::2] if p!='Area Pattern']
-        return Path(path[1:-1][::2])
+        return Path(path)
 
     def get_trip(self, userid):
         row = self.final_ppaths[self.final_ppaths.iloc[:,3]==float(userid)]
@@ -96,14 +96,14 @@ class SymuMasterDistributionReader(AbstractTrafficDataReader):
         self.distribution = pd.read_csv(self._file_distribution, sep=';', index_col=False, engine='python', header=None, skiprows=1)
 
 
-    def get_OD(self, OD, period=None, loop=None): #Both ppaths and distribution
+    def get_OD(self, origin, destination, period=None, outer_loop=None, inner_loop=None):
         paths = list()
 
-        mask = (self.distribution.iloc[:,4]==OD[0]) & (self.distribution.iloc[:,5]==OD[1]) & (self.distribution.iloc[:,8]!='Sum of user and minimum travel time for the OD')
+        mask = (self.distribution.iloc[:,4]==origin) & (self.distribution.iloc[:,5]==destination) & (self.distribution.iloc[:,8]!='Sum of user and minimum travel time for the OD')
         if period is not None:
             mask &= (self.distribution.iloc[:,0].astype(int)==period)
-        if loop is not None:
-            mask &= (self.distribution.iloc[:,1].astype(int)==loop[0]) & (self.distribution.iloc[:,2].astype(int)==loop[1])
+        if outer_loop is not None and inner_loop is not None:
+            mask &= (self.distribution.iloc[:,1].astype(int)==outer_loop) & (self.distribution.iloc[:,2].astype(int)==inner_loop)
         rows = self.distribution[mask]
 
 
