@@ -310,16 +310,6 @@ class SymuviaTrafficDataReader(AbstractTrafficDataReader):
                     result.append(path)
         return result
 
-    # def parse_args_OD(self, OD, period):
-    #     if period!='None':
-    #         period = period.split(',')
-    #         [item.strip() for item in period]
-    #     else:
-    #         period = None
-    #     parsed_OD = [item.strip() for item in OD.split(',')]
-    #     return parsed_OD, period
-
-
     def count_OD(self, period=None):
         if period is None:
             c = Counter([(el.attr['entree'], el.attr['sortie']) for el in self._vehs.iterchildrens()])

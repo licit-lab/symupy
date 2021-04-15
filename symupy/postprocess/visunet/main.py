@@ -128,9 +128,17 @@ class MainWindow(QMainWindow):
 
 
     def openTraj(self):
-        self.renderTripAction.setDisabled(False)
-        self.renderODAction.setDisabled(False)
         self.panel.panel_netw.load_traffic_data()
+        reader = self.panel.panel_netw._output_reader
+        if hasattr(reader, "get_trip") and callable(getattr(reader, "get_trip")):
+            self.renderTripAction.setDisabled(False)
+        else:
+            self.renderTripAction.setDisabled(True)
+        if hasattr(reader, "get_OD") and callable(getattr(reader, "get_OD")):
+            self.renderODAction.setDisabled(False)
+        else:
+            self.renderODAction.setDisabled(True)
+
 
 class DataContainer(object):
     def __init__(self):
