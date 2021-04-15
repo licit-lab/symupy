@@ -291,12 +291,13 @@ class SymuviaTrafficDataReader(AbstractTrafficDataReader):
         return states
 
     def get_OD(self, OD, period=None):
+        OD = tuple(OD)
         result = list()
         if period is None:
             for el in self._vehs.iterchildrens():
                 if OD==(el.attr['entree'], el.attr['sortie']):
                     veh_el = self._get_veh_element(el.attr['id'])
-                    path = Path(veh_el.attr['itineraire'])
+                    path = Path(veh_el.attr['itineraire'].split(" "))
                     result.append(path)
         else:
             start = Date(period[0])
@@ -305,16 +306,18 @@ class SymuviaTrafficDataReader(AbstractTrafficDataReader):
                 inst = Date(float(el.attr.get('instE',el.attr['instC'])))+self._start_sim
                 if OD==(el.attr['entree'], el.attr['sortie']) and (start<=inst<=end):
                     veh_el = self._get_veh_element(el.attr['id'])
-                    path = Path(veh_el.attr['itineraire'])
+                    path = Path(veh_el.attr['itineraire'].split(" "))
                     result.append(path)
         return result
 
     def parse_args_OD(self, OD, period):
         if period!='None':
             period = period.split(',')
+            [item.strip() for item in period]
         else:
             period = None
-        return OD.split(','), period
+        parsed_OD = [item.strip() for item in OD.split(',')]
+        return parsed_OD, period
 
 
     def count_OD(self, period=None):

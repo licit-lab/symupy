@@ -60,7 +60,9 @@ class MainWindow(QMainWindow):
         self.renderTripAction.triggered.connect(self.panel.panel_netw.select_trip)
         self.trajMenu.addAction(self.renderTripAction)
         self.renderODAction = QAction("&Render OD...", self)
+        self.renderODAction.triggered.connect(self.panel.panel_netw.selectOD)
         self.renderODAction.setDisabled(True)
+
         self.trajMenu.addAction(self.renderODAction)
         self.clearAction = QAction("&Clear", self)
         self.trajMenu.addAction(self.clearAction)

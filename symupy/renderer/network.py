@@ -53,7 +53,7 @@ class NetworkRenderer(object):
             coords = np.array(self._network_coords, dtype=object)[troncons_id]
             coords = np.row_stack([arr for arr in coords])
             c = self.color
-            self._path_plot.append(self._fig.gca().plot(coords[:, 0], coords[:, 1], c, linewidth=3)[0])
+            self._path_plot.append(self._fig.gca().plot(coords[:, 0], coords[:, 1], c, linewidth=2)[0])
             self._path_plot.append(self._fig.gca().plot(coords[0,0], coords[0,1], 'k+')[0])
             self._path_plot.append(self._fig.gca().annotate("O",(coords[0,0], coords[0,1])))
             self._path_plot.append(self._fig.gca().plot(coords[-1,0], coords[-1,1], 'k+')[0])

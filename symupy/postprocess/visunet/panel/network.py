@@ -1,6 +1,7 @@
 import linecache
 from collections import OrderedDict, defaultdict
 import time
+from inspect import signature
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -19,7 +20,7 @@ from symupy.postprocess.visunet.qtutils import Worker
 from symupy.renderer.network import NetworkRenderer
 from symupy.plugins.reader import load_plugins
 
-from.trajectory import TripSelector
+from.trajectory import TripSelector, ODSelector
 
 class NetworkWidget(QGroupBox):
     def __init__(self, data, name=None, parent=None):
@@ -113,6 +114,13 @@ class NetworkWidget(QGroupBox):
             # self.data.figure.gca().set_aspect('equal')
             # self.data.canvas.draw()
 
+    def selectOD(self):
+        OD_selector = ODSelector(self._output_reader.get_OD)
+        if OD_selector.exec_() == QDialog.Accepted:
+            args = self._output_reader.parse_args_OD(*OD_selector.values)
+            self.workerProcessTrip = Worker(process_ODs, [self, args])
+            self.workerProcessTrip.start()
+
     def clear(self):
         if self.renderer is not None:
             logger.info('Clearing Renderer trajectories')
@@ -138,6 +146,16 @@ def process_trip(networkwidget, vehid):
     end = time.time()
     logger.info(f'Done [{end-start} s]')
 
+@waitcursor
+def process_ODs(networkwidget, args_OD):
+    logger.info(f'Looking for paths and plotting it ...')
+    start = time.time()
+    od_list = networkwidget._output_reader.get_OD(*args_OD)
+    pathes = {ind:path.links for ind, path in enumerate(od_list)}
+    print(pathes)
+    networkwidget.renderer.draw_paths(pathes)
+    end = time.time()
+    logger.info(f'Done [{end-start} s]')
 
 
 def plot_network(networkwidget):
