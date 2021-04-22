@@ -43,7 +43,7 @@ class NetworkRenderer(object):
             network_coords[:, 1],
             "k",
             alpha=0.7,
-            linewidth=1,
+            linewidth=0.5,
         )
         plt.draw()
 
@@ -55,10 +55,9 @@ class NetworkRenderer(object):
             c = self.color
             self._path_plot.append(self._fig.gca().plot(coords[:, 0], coords[:, 1], c, linewidth=2)[0])
             self._path_plot.append(self._fig.gca().plot(coords[0,0], coords[0,1], 'k+')[0])
-            self._path_plot.append(self._fig.gca().annotate("O",(coords[0,0], coords[0,1])))
+            self._path_plot.append(self._fig.gca().annotate("O",(coords[0,0], coords[0,1]), color='red'))
             self._path_plot.append(self._fig.gca().plot(coords[-1,0], coords[-1,1], 'k+')[0])
-            self._path_plot.append(self._fig.gca().annotate("D",(coords[-1,0], coords[-1,1])))
-            self._path_plot.append(self._fig.gca().annotate("D",(coords[-1,0], coords[-1,1])))
+            self._path_plot.append(self._fig.gca().annotate("D",(coords[-1,0], coords[-1,1]), color='green'))
             # self._legends.append([Line2D([0], [0], color=c, lw=2), str(key)])
 
         self._show_legend()

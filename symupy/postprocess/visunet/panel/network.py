@@ -103,7 +103,7 @@ class NetworkWidget(QGroupBox):
         trip_selector = TripSelector()
         if trip_selector.exec_() == QDialog.Accepted:
             vehid = trip_selector.vehid.value()
-            self.workerProcessTrip = Worker(process_trip, [self, vehid])
+            self.workerProcessTrip = Worker(process_path, [self, vehid])
             self.workerProcessTrip.start()
             # trip = reader.get_trip(vehid)
             # print(trip.path.links)
@@ -142,10 +142,12 @@ def process_network(networkwidget):
     networkwidget.renderer = NetworkRenderer(networkwidget.network, networkwidget.data.figure)
 
 @waitcursor
-def process_trip(networkwidget, vehid):
-    logger.info(f'Looking for trip {vehid} and plotting it ...')
+def process_path(networkwidget, vehid):
+    logger.info(f'Looking for path {vehid} and plotting it ...')
     start = time.time()
     path = networkwidget._output_reader.get_path(vehid)
+    length = compute_length_path(networkwidget.network, path)
+    logger.info(f'Length of path: {length:.4f}')
     networkwidget.renderer.draw_paths({vehid:path.links})
     end = time.time()
     logger.info(f'Done [{end-start:.4f} s]')
@@ -155,8 +157,13 @@ def process_ODs(networkwidget, args_OD):
     logger.info(f'Looking for paths and plotting it ...')
     start = time.time()
     od_list = networkwidget._output_reader.get_OD(*args_OD)
+    logger.info(f'Found {len(od_list)} ODs ...')
     pathes = {ind:path.links for ind, path in enumerate(od_list)}
-    print(pathes)
+    length_pathes = [compute_length_path(networkwidget.network, p) for p in od_list]
+    logger.info(f'Length info:')
+    logger.info(f'Mean: {sum(length_pathes)/len(length_pathes):.4f}')
+    logger.info(f'Max: {max(length_pathes):.4f}')
+    logger.info(f'Min: {min(length_pathes):.4f}')
     networkwidget.renderer.draw_paths(pathes)
     end = time.time()
     logger.info(f'Done [{end-start:.4f} s]')
@@ -171,8 +178,20 @@ def plot_network(networkwidget):
     plt.axis('tight')
     networkwidget.data.figure.gca().set_aspect('equal')
     end = time.time()
-    logger.info(f'Done [{end-start} s]')
+    logger.info(f'Done [{end-start:.4f} s]')
 
+
+def compute_length_path(network, path):
+    length = 0
+    for lid in path.links:
+        link = network.links[lid]
+        if len(link.internal_points)>0:
+            length += np.linalg.norm(link['upstream_coords']-link.internal_points[0])
+            length += sum([np.linalg.norm(link.internal_points[i] - link.internal_points[i+1]) for i in range(1, len(link.internal_points)-1) ])
+            length += np.linalg.norm(link.internal_points[-1]-link['downstream_coords'])
+        else:
+            length += np.linalg.norm(link['upstream_coords']-link['downstream_coords'])
+    return length
 
 class Reader(QDialog):
     def __init__(self, type, parent=None):

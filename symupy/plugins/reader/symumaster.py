@@ -65,7 +65,7 @@ class SymuMasterFinalPPathsReader(AbstractTrafficDataReader):
     def get_path(self, userid):
         row = self.final_ppaths[self.final_ppaths.iloc[:,3]==float(userid)]
         path = row[7].to_list()[0].split('\\')
-        path = [p for p in path[1:-1][::2] if p!='Area Pattern']
+        path = [p for p in path[1:-1][::2] if p!='Area Pattern' and p!='Walk']
         return Path(path)
 
     def get_trip(self, userid):

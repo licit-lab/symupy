@@ -6,7 +6,7 @@ from symupy.tsc.vehicles import Vehicle
 @dataclass
 class Path:
     links: list = field(default_factory=list)
-    length: float = 0
+    length: float = -1
 
     def __getitem__(self, attr):
         return self.__dict__[attr]
