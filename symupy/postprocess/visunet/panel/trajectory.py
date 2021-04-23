@@ -3,7 +3,7 @@ from inspect import signature, _empty
 from symupy.postprocess.visunet.qtutils import LabelLineEdit
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (QDialog, QComboBox, QVBoxLayout, QPushButton)
+from PyQt5.QtWidgets import (QDialog, QLineEdit, QLabel, QPushButton, QFormLayout)
 
 class TripSelector(QDialog):
     def __init__(self, parent=None):
@@ -29,20 +29,19 @@ class ODSelector(QDialog):
         super().__init__(parent)
         self.setWindowTitle('Choose OD')
 
-        self.layout = QVBoxLayout()
-        self.layout.setAlignment(Qt.AlignTop)
+        self.layout = QFormLayout()
         self.setLayout(self.layout)
 
         sig = signature(func)
         self.widgets = list()
         maxsize = max([len(item) for item in sig.parameters.keys()])
-        print(maxsize)
         for name, param in sig.parameters.items():
-            w = LabelLineEdit(name+' '*(maxsize-len(name)))
-            self.widgets.append(w)
-            self.layout.addWidget(w)
+            label = QLabel(name)
+            edit = QLineEdit()
+            self.widgets.append(edit)
+            self.layout.addRow(label, edit)
             if param.default != _empty:
-                w.widget.setText(str(param.default))
+                edit.setText(str(param.default))
 
         self.button_select = QPushButton('Select')
         self.layout.addWidget(self.button_select)
@@ -52,5 +51,5 @@ class ODSelector(QDialog):
 
     def select(self):
         for line_edit in self.widgets:
-            self.values.append(line_edit.widget.text())
+            self.values.append(line_edit.text())
         self.accept()

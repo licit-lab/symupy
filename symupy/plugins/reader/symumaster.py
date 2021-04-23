@@ -108,6 +108,8 @@ class SymuMasterDistributionReader(AbstractTrafficDataReader):
 
 
         for row in rows.iterrows():
+            path = row[1][8].split("\\")[4:-4][::2]
+            path = [p for p in path[1:-1][::2] if p!='Walk']
             p = Path(row[1][8].split("\\")[4:-4][::2])
             paths.append(p)
 
