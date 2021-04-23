@@ -22,6 +22,7 @@ class MplWidget(QWidget):
         self.data.canvas = MplCanvas(self,fig=self.data.figure, width=5, height=4, dpi=100)
         self.data.canvas.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.data.figure.gca().plot()
+        self.data.figure.gca().axis('off')
 
         self.toolbar = NavigationToolbar(self.data.canvas, self)
 

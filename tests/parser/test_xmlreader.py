@@ -18,7 +18,7 @@ import pytest
 # TESTS AND DEFINITIONS
 # ============================================================================
 
-from symupy.parser.xmlreader import NetworkReader
+from symupy.parser.symuvia import SymuviaNetworkReader
 
 
 @pytest.fixture
@@ -29,19 +29,19 @@ def bottleneck_001():
 
 
 def test_getlinks(bottleneck_001):
-    reader = NetworkReader(bottleneck_001)
+    reader = SymuviaNetworkReader(bottleneck_001)
     links = reader.get_links()
     assert len(links) == 1
 
 
 def test_getnetwork(bottleneck_001):
-    reader = NetworkReader(bottleneck_001)
+    reader = SymuviaNetworkReader(bottleneck_001)
     network = reader.get_network()
     assert len(network.links) == 1
 
 
 def test_getlinkattributes(bottleneck_001):
-    reader = NetworkReader(bottleneck_001)
+    reader = SymuviaNetworkReader(bottleneck_001)
     network = reader.get_network()
     lkinfo = network.get_links_attributes("id")
     assert lkinfo.get("Zone_001") == "Zone_001"

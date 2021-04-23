@@ -15,7 +15,7 @@ import re
 # ============================================================================
 
 
-class Element:
+class XMLElement:
     def __init__(self, line, pos, filename, linenum):
         self._filename = filename
         self._pos = pos
@@ -49,7 +49,7 @@ class Element:
                         new_tag = re.findall("(?<=<)(\w+)(?=>|\s|\/)", line)[0]
                         if re.findall(self._startend_tag(new_tag), line):
                             pos = f.tell() - (len(line) + 2)
-                            yield Element(line, pos, self._filename, linenum)
+                            yield XMLElement(line, pos, self._filename, linenum)
                         elif re.findall(self._start_tag(new_tag), line):
                             pos = f.tell() - (len(line) + 2)
                             keep_line = line
@@ -59,7 +59,7 @@ class Element:
                                 line = f.readline().strip()
                                 if re.findall(self._end_tag(new_tag),line):
                                     break
-                            yield Element(keep_line, pos, self._filename, keepnum)
+                            yield XMLElement(keep_line, pos, self._filename, keepnum)
                         else:
                             break
                     linenum += 1
@@ -91,7 +91,13 @@ class Element:
         return f"^<{tag}.*\/>"
 
     def __repr__(self):
-        return f"Element({self.tag}, {self.attr.__repr__()})"
+        return f"XMLElement({self.tag}, {self.attr.__repr__()})"
+
+    def __hash__(self):
+        return hash((self._filename, self.sourceline))
+
+    def __eq__(self, another):
+        return self.sourceline == another.sourceline and self._filename == another._filename
 
 
 class XMLParser(object):
@@ -105,7 +111,7 @@ class XMLParser(object):
             while line:
                 if re.findall(f"(?<=<){elem}(?=>|\s|\/)", line):
                     pos = f.tell() - len(line)
-                    return Element(line.strip(), pos, self._filename, linenum)
+                    return XMLElement(line.strip(), pos, self._filename, linenum)
                 linenum += 1
                 line = f.readline()
 
@@ -130,7 +136,7 @@ class XMLParser(object):
                 linenum += 1
                 line = f.readline()
             pos = f.tell() - len(line)
-            return Element(line.strip(), pos, self._filename, linenum)
+            return XMLElement(line.strip(), pos, self._filename, linenum)
 
 
 if __name__ == "__main__":
