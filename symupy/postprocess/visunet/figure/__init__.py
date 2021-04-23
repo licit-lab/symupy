@@ -1,1 +1,1 @@
-from .mplfigure import MplWidget
+from .mplfigure import MplWidget, MplCanvas

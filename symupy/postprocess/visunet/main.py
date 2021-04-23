@@ -57,11 +57,15 @@ class MainWindow(QMainWindow):
         self.openTrajAction.setShortcut("Ctrl+T")
         self.renderPathAction = QAction("&Render Path...", self)
         self.renderPathAction.setDisabled(True)
-        self.renderPathAction.triggered.connect(self.panel.panel_netw.select_trip)
+        self.renderPathAction.triggered.connect(self.panel.panel_netw.select_path)
         self.trajMenu.addAction(self.renderPathAction)
         self.renderODAction = QAction("&Render OD...", self)
         self.renderODAction.triggered.connect(self.panel.panel_netw.selectOD)
         self.renderODAction.setDisabled(True)
+        self.renderTripAction = QAction("&Render Trip...", self)
+        self.renderTripAction.setDisabled(True)
+        self.renderTripAction.triggered.connect(self.panel.panel_netw.select_trip)
+        self.trajMenu.addAction(self.renderTripAction)
 
         self.trajMenu.addAction(self.renderODAction)
         self.clearAction = QAction("&Clear", self)
@@ -130,7 +134,7 @@ class MainWindow(QMainWindow):
     def openTraj(self):
         self.panel.panel_netw.load_traffic_data()
         reader = self.panel.panel_netw._output_reader
-        if hasattr(reader, "get_trip") and callable(getattr(reader, "get_path")):
+        if hasattr(reader, "get_path") and callable(getattr(reader, "get_path")):
             self.renderPathAction.setDisabled(False)
         else:
             self.renderPathAction.setDisabled(True)
@@ -138,7 +142,10 @@ class MainWindow(QMainWindow):
             self.renderODAction.setDisabled(False)
         else:
             self.renderODAction.setDisabled(True)
-
+        if hasattr(reader, "get_trip") and callable(getattr(reader, "get_trip")):
+            self.renderTripAction.setDisabled(False)
+        else:
+            self.renderTripAction.setDisabled(True)
 
 class DataContainer(object):
     def __init__(self):

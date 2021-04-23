@@ -16,11 +16,11 @@ from PyQt5.Qt import QRect
 from symupy.postprocess.visunet.qtutils import waitcursor
 from symupy.postprocess.visunet import logger
 from symupy.postprocess.visunet.qtutils import Worker
-# from symupy.parser.symuvia import SymuviaNetworkReader
+from symupy.renderer.trip import render_trip
 from symupy.renderer.network import NetworkRenderer
 from symupy.plugins.reader import load_plugins
 
-from.trajectory import TripSelector, ODSelector
+from .trajectory import TripSelector, ODSelector
 
 class NetworkWidget(QGroupBox):
     def __init__(self, data, name=None, parent=None):
@@ -94,25 +94,25 @@ class NetworkWidget(QGroupBox):
         if self.output_reader_widget.exec_() == QDialog.Accepted:
             logger.debug(f'Choose reader {self.output_reader_widget.choosen_reader}')
             self._output_reader = self.output_reader_widget.choosen_reader(self.data.file_traj)
-            # self.workerProcessNet = Worker(process_network, [self, reader])
-            # self.workerPlotNet = Worker(plot_network, [self])
-            # self.workerProcessNet.finished.connect(self.workerPlotNet.start)
-            # self.workerProcessNet.start()
 
     def select_trip(self):
         trip_selector = TripSelector()
         if trip_selector.exec_() == QDialog.Accepted:
             vehid = trip_selector.vehid.value()
-            self.workerProcessTrip = Worker(process_path, [self, vehid])
-            self.workerProcessTrip.start()
-            # trip = reader.get_trip(vehid)
-            # print(trip.path.links)
-            # self.renderer.draw_paths({vehid:trip.path.links})
-            # # self.renderer.draw()
-            # plt.axis('off')
-            # plt.axis('tight')
-            # self.data.figure.gca().set_aspect('equal')
-            # self.data.canvas.draw()
+            logger.info(f'Looking for trip {vehid} and plotting it ...')
+            start = time.time()
+            process_trip(self, vehid)
+            end = time.time()
+            logger.info(f'Done [{end-start:.4f} s]')
+
+
+
+    def select_path(self):
+        trip_selector = TripSelector()
+        if trip_selector.exec_() == QDialog.Accepted:
+            vehid = trip_selector.vehid.value()
+            self.workerProcessPath = Worker(process_path, [self, vehid])
+            self.workerProcessPath.start()
 
     def selectOD(self):
         OD_selector = ODSelector(self._output_reader.get_OD)
@@ -151,6 +151,16 @@ def process_path(networkwidget, vehid):
     networkwidget.renderer.draw_paths({vehid:path.links})
     end = time.time()
     logger.info(f'Done [{end-start:.4f} s]')
+
+
+@waitcursor
+def process_trip(networkwidget, vehid):
+    trip = networkwidget._output_reader.get_trip(vehid)
+    networkwidget.renderer.draw_paths({vehid:trip.path.links})
+    figtrip = plt.figure()
+    render_trip(figtrip, trip)
+    figtrip.show()
+
 
 @waitcursor
 def process_ODs(networkwidget, args_OD):
@@ -192,6 +202,7 @@ def compute_length_path(network, path):
         else:
             length += np.linalg.norm(link['upstream_coords']-link['downstream_coords'])
     return length
+
 
 class Reader(QDialog):
     def __init__(self, type, parent=None):

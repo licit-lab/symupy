@@ -17,7 +17,7 @@ class MplWidget(QWidget):
         super().__init__(parent=parent)
         self.data = data
 
-        self.data.figure = plt.figure(0)
+        self.data.figure = plt.figure()
         self.data.figure.gca().set_aspect('equal')
         self.data.canvas = MplCanvas(self,fig=self.data.figure, width=5, height=4, dpi=100)
         self.data.canvas.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)

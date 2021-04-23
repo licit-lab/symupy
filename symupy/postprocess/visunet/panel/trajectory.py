@@ -3,7 +3,7 @@ from inspect import signature, _empty
 from symupy.postprocess.visunet.qtutils import LabelLineEdit
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (QDialog, QLineEdit, QLabel, QPushButton, QFormLayout)
+from PyQt5.QtWidgets import (QDialog, QLineEdit, QLabel, QPushButton, QFormLayout, QVBoxLayout)
 
 class TripSelector(QDialog):
     def __init__(self, parent=None):
