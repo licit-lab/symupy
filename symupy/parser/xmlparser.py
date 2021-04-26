@@ -16,11 +16,14 @@ import re
 
 
 class XMLElement:
+    pattern_tag = re.compile("(?<=<)(\w+)(?=>|\s|\/)")
+    pattern_comment = re.compile("^<!(.*)>$")
+    pattern_args = re.compile('\s([a-zA-Z0-9_:]+)="(.*?)"')
     def __init__(self, line, pos, filename, linenum):
         self._filename = filename
         self._pos = pos
-        self.tag = re.findall("(?<=<)(\w+)(?=>|\s|\/)", line)[0]
-        self.attr = {key: val for key, val in re.findall('\s([a-zA-Z0-9_:]+)="(.*?)"', line)}
+        self.tag = XMLElement.pattern_tag.findall(line)[0]
+        self.attr = {key: val for key, val in  XMLElement.pattern_args.findall(line)}
         self.sourceline = linenum
 
         if re.findall("\/>$", line):
@@ -45,8 +48,9 @@ class XMLElement:
                     ]
                 ):
                     # Checking if line is a comment or blank
-                    if not re.findall("^<!(.*)>$", line) and line != "":
-                        new_tag = re.findall("(?<=<)(\w+)(?=>|\s|\/)", line)[0]
+                    if not XMLElement.pattern_comment.findall(line) and line != "":
+                        new_tag = XMLElement.pattern_tag.findall(line)[0]
+                        end_tag = re.compile(f"<\/{new_tag}>")
                         if re.findall(self._startend_tag(new_tag), line):
                             pos = f.tell() - (len(line) + 2)
                             yield XMLElement(line, pos, self._filename, linenum)
@@ -57,7 +61,7 @@ class XMLElement:
                             while True:
                                 linenum += 1
                                 line = f.readline().strip()
-                                if re.findall(self._end_tag(new_tag),line):
+                                if end_tag.findall(line):
                                     break
                             yield XMLElement(keep_line, pos, self._filename, keepnum)
                         else:
