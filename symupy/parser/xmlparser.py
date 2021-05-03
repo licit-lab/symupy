@@ -19,6 +19,7 @@ class XMLElement:
     pattern_tag = re.compile("(?<=<)(\w+)(?=>|\s|\/)")
     pattern_comment = re.compile("^<!(.*)>$")
     pattern_args = re.compile('\s([a-zA-Z0-9_:]+)="(.*?)"')
+    pattern_childrens = re.compile("\/>$")
     def __init__(self, line, pos, filename, linenum):
         self._filename = filename
         self._pos = pos
@@ -26,7 +27,7 @@ class XMLElement:
         self.attr = {key: val for key, val in  XMLElement.pattern_args.findall(line)}
         self.sourceline = linenum
 
-        if re.findall("\/>$", line):
+        if XMLElement.pattern_childrens.findall(line):
             self._has_childrens = False
         else:
             self._has_childrens = True

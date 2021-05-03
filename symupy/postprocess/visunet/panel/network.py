@@ -99,25 +99,24 @@ class NetworkWidget(QGroupBox):
         trip_selector = TripSelector()
         if trip_selector.exec_() == QDialog.Accepted:
             vehid = trip_selector.vehid.value()
-            logger.info(f'Looking for trip {vehid} and plotting it ...')
-            start = time.time()
-            process_trip(self, vehid)
-            end = time.time()
-            logger.info(f'Done [{end-start:.4f} s]')
-
-
+            if vehid != '':
+                logger.info(f'Looking for trip {vehid} and plotting it ...')
+                start = time.time()
+                process_trip(self, vehid)
+                end = time.time()
+                logger.info(f'Done [{end-start:.4f} s]')
 
     def select_path(self):
         trip_selector = TripSelector()
         if trip_selector.exec_() == QDialog.Accepted:
             vehid = trip_selector.vehid.value()
-            self.workerProcessPath = Worker(process_path, [self, vehid])
-            self.workerProcessPath.start()
+            if vehid != '':
+                self.workerProcessPath = Worker(process_path, [self, vehid])
+                self.workerProcessPath.start()
 
     def selectOD(self):
         OD_selector = ODSelector(self._output_reader.get_OD)
         if OD_selector.exec_() == QDialog.Accepted:
-            # args = self._output_reader.parse_args_OD(*OD_selector.values)
             for arg in OD_selector.values:
                 if arg=='None':
                     arg = None
@@ -164,19 +163,24 @@ def process_trip(networkwidget, vehid):
 
 @waitcursor
 def process_ODs(networkwidget, args_OD):
-    logger.info(f'Looking for paths and plotting it ...')
-    start = time.time()
-    od_list = networkwidget._output_reader.get_OD(*args_OD)
-    logger.info(f'Found {len(od_list)} ODs ...')
-    pathes = {ind:path.links for ind, path in enumerate(od_list)}
-    length_pathes = [compute_length_path(networkwidget.network, p) for p in od_list]
-    logger.info(f'Length info:')
-    logger.info(f'Mean: {sum(length_pathes)/len(length_pathes):.4f}')
-    logger.info(f'Max: {max(length_pathes):.4f}')
-    logger.info(f'Min: {min(length_pathes):.4f}')
-    networkwidget.renderer.draw_paths(pathes)
-    end = time.time()
-    logger.info(f'Done [{end-start:.4f} s]')
+    try:
+        logger.info(f'Looking for paths and plotting it ...')
+        start = time.time()
+        od_list = networkwidget._output_reader.get_OD(*args_OD)
+        logger.info(f'Found {len(od_list)} ODs ...')
+        pathes = {ind:path.links for ind, path in enumerate(od_list)}
+        length_pathes = [compute_length_path(networkwidget.network, p) for p in od_list]
+        logger.info(f'Length info:')
+        logger.info(f'Mean: {sum(length_pathes)/len(length_pathes):.4f}')
+        logger.info(f'Max: {max(length_pathes):.4f}')
+        logger.info(f'Min: {min(length_pathes):.4f}')
+        networkwidget.renderer.draw_paths(pathes)
+        end = time.time()
+        logger.info(f'Done [{end-start:.4f} s]')
+    except:
+        end = time.time()
+        logger.info(f'Found nothing for args:{args_OD}')
+        logger.info(f'Done [{end-start:.4f} s]')
 
 
 def plot_network(networkwidget):
