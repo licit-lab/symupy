@@ -5,8 +5,29 @@ from itertools import cycle
 import numpy as np
 
 
+def onpicklogger(event, links_ids, logger):
+    ind = event.ind
+    if len(ind) == 1:
+        ind = ind[0]
+        link = links_ids[ind]
+        logger.info("-"*30)
+        logger.info(f'id: {links_ids[ind].id}')
+        logger.info(f'upstream: {link.upstream_node} {link.upstream_coords}')
+        logger.info(f'downstream: {link.downstream_node} {link.downstream_coords}')
+
+def onpick(event, links_ids):
+    ind = event.ind
+    if len(ind) == 1:
+        ind = ind[0]
+        link = links_ids[ind]
+        print("-"*30)
+        print('id:', links_ids[ind].id)
+        print(f'upstream: {link.upstream_node} {link.upstream_coords}')
+        print(f'downstream: {link.downstream_node} {link.downstream_coords}')
+        print(event.artist)
+
 class NetworkRenderer(object):
-    def __init__(self, network, fig=None):
+    def __init__(self, network, fig=None, logger=None):
         self._network = network
         if fig is None:
             self._fig = plt.figure()
@@ -24,12 +45,20 @@ class NetworkRenderer(object):
         self._legends = list()
         self._legend = None
 
-        for id, link in self._network.links.items():
-            self._network_coords.append(
-                [link["upstream_coords"].tolist()]
-                + [arr.tolist() for arr in link["internal_points"]]
-                + [link["downstream_coords"].tolist()]
-            )
+        self._links_ids = dict()
+
+        self.logger = None
+        if logger is not None:
+            self.logger = logger
+
+        counter = 0
+        for lid, link in self._network.links.items():
+            tr_list = [link["upstream_coords"].tolist()] + [arr.tolist() for arr in link["internal_points"]] + [link["downstream_coords"].tolist()]
+            for i in range(len(tr_list)-1):
+                self._links_ids[counter+i] = link
+            self._network_coords.append(tr_list)
+            counter += len(tr_list)-1 + 2
+
 
     @property
     def color(self):
@@ -44,7 +73,12 @@ class NetworkRenderer(object):
             "k",
             alpha=0.7,
             linewidth=0.5,
+            picker=True
         )
+        if self.logger is None:
+            self._fig.canvas.mpl_connect("pick_event", lambda event: onpick(event, self._links_ids))
+        else:
+            self._fig.canvas.mpl_connect("pick_event", lambda event: onpicklogger(event, self._links_ids, self.logger))
         plt.draw()
 
     def draw_paths(self, paths:dict):
@@ -115,16 +149,15 @@ class NetworkRenderer(object):
 
 
 
+
+
 if __name__ == '__main__':
     from symupy.plugins.reader.symuvia import SymuviaNetworkReader
     file = "/Users/florian/Work/visunet/data/Lyon63V/L63V.xml"
     reader = SymuviaNetworkReader(file)
+    fig = plt.figure()
     network = reader.get_network()
-    renderer = NetworkRenderer(network)
-    # renderer.add_sensors(['MFD_692660102'])
-    # renderer.add_termination_zones(["690340602"])
-    # renderer.remove_termination_zones(["690340602"])
-    # renderer.draw_network()
-    # renderer.draw_path({1:['Rue_Crequi_SN_1', 'Cr_Lafayette_OE_6', 'Cr_Lafayette_OE_7']})
-    #
-    # renderer.plot()
+    renderer = NetworkRenderer(network, fig)
+    renderer.draw_network()
+    renderer.draw_termination_zones(["690340602"])
+    plt.show()

@@ -138,7 +138,7 @@ def process_network(networkwidget):
     end = time.time()
     logger.info(f'Done [{end-start:.4f} s]')
     networkwidget.update_label()
-    networkwidget.renderer = NetworkRenderer(networkwidget.network, networkwidget.data.figure)
+    networkwidget.renderer = NetworkRenderer(networkwidget.network, networkwidget.data.figure, logger)
 
 @waitcursor
 def process_path(networkwidget, vehid):
