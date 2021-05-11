@@ -15,19 +15,10 @@ def onpicklogger(event, links_ids, logger):
         logger.info(f'upstream: {link.upstream_node} {link.upstream_coords}')
         logger.info(f'downstream: {link.downstream_node} {link.downstream_coords}')
 
-def onpick(event, links_ids):
-    ind = event.ind
-    if len(ind) == 1:
-        ind = ind[0]
-        link = links_ids[ind]
-        print("-"*30)
-        print('id:', links_ids[ind].id)
-        print(f'upstream: {link.upstream_node} {link.upstream_coords}')
-        print(f'downstream: {link.downstream_node} {link.downstream_coords}')
-        print(event.artist)
+
 
 class NetworkRenderer(object):
-    def __init__(self, network, fig=None, logger=None):
+    def __init__(self, network, fig=None, callbackpicking=None):
         self._network = network
         if fig is None:
             self._fig = plt.figure()
@@ -47,9 +38,7 @@ class NetworkRenderer(object):
 
         self._links_ids = dict()
 
-        self.logger = None
-        if logger is not None:
-            self.logger = logger
+        self.callbackpicking = callbackpicking
 
         counter = 0
         for lid, link in self._network.links.items():
@@ -75,10 +64,7 @@ class NetworkRenderer(object):
             linewidth=0.5,
             picker=True
         )
-        if self.logger is None:
-            self._fig.canvas.mpl_connect("pick_event", lambda event: onpick(event, self._links_ids))
-        else:
-            self._fig.canvas.mpl_connect("pick_event", lambda event: onpicklogger(event, self._links_ids, self.logger))
+        self._fig.canvas.mpl_connect("pick_event", lambda event: self._onpick(event, self.callbackpicking))
         plt.draw()
 
     def draw_paths(self, paths:dict):
@@ -95,7 +81,7 @@ class NetworkRenderer(object):
             # self._legends.append([Line2D([0], [0], color=c, lw=2), str(key)])
 
         self._show_legend()
-        plt.draw()
+        self._fig.canvas.draw()
 
 
     def draw_termination_zones(self, termination_zone:list):
@@ -108,7 +94,7 @@ class NetworkRenderer(object):
             self._termination_zone_plot.append(self._fig.gca().plot(coords[:, 0], coords[:, 1], c, linewidth=2)[0])
             self._legends.append([Line2D([0], [0], color=c, lw=2), str(key)])
         self._show_legend()
-        plt.draw()
+        self._fig.canvas.draw()
 
     def draw_sensors(self, sensors:list):
         for key in sensors:
@@ -120,7 +106,7 @@ class NetworkRenderer(object):
             self._sensor_plot.append(self._fig.gca().plot(coords[:, 0], coords[:, 1], c, linewidth=2)[0])
             self._legends.append([Line2D([0], [0], color=c, lw=2), str(key)])
         self._show_legend()
-        plt.draw()
+        self._fig.canvas.draw()
 
     def _show_legend(self):
         if self._legends:
@@ -128,7 +114,18 @@ class NetworkRenderer(object):
             lab = [i[1] for i in self._legends]
             self._legend = self._fig.gca().legend(leg, lab)
 
-
+    def _onpick(self, event, callback):
+        ind = event.ind
+        if len(ind) == 1:
+            ind = ind[0]
+            link = self._links_ids[ind]
+            if callback is None:
+                print("-" * 30)
+                print('id:', self._links_ids[ind].id)
+                print(f'upstream: {link.upstream_node} {link.upstream_coords}')
+                print(f'downstream: {link.downstream_node} {link.downstream_coords}')
+            else:
+                callback(link)
 
     def clear(self):
         for plot in [self._path_plot, self._termination_zone_plot, self._sensor_plot]:
@@ -138,7 +135,7 @@ class NetworkRenderer(object):
         if self._legend:
             self._legends.clear()
             self._legend.remove()
-        plt.draw()
+        self._fig.canvas.draw()
 
     def plot(self):
         plt.title('Network')
