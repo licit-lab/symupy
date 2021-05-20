@@ -51,7 +51,11 @@ class RoutesHandler(object):
         self.reader_widget.set_file(file)
         if self.reader_widget.exec_() == QDialog.Accepted:
             logger.debug(f'Choose reader {self.reader_widget.choosen_reader}')
+            logger.info(f"Loading file {file.split('/')[-1]} ...")
+            start = time.time()
             self.reader = self.reader_widget.choosen_reader(file)
+            end = time.time()
+            logger.info(f'Done [{end - start:.4f} s]')
 
     def _process_path(self, vehid):
         logger.info(f'Looking for path {vehid} and plotting it ...')
@@ -63,17 +67,19 @@ class RoutesHandler(object):
         logger.info(f'Done [{end - start:.4f} s]')
 
     def _process_OD(self, args):
-        logger.info(f'Looking for ODs and plotting it ...')
+        logger.info(f'Looking for ODs withs args: {args}')
         start = time.time()
         od_list = self.reader.get_OD(*args)
-        logger.info(f'Found {len(od_list)} ODs ...')
-        [self.append(ind, path.links) for ind, path in enumerate(od_list)]
+        od_list = list(set(tuple(path.links) for path in od_list))
+        logger.info(f'Found {len(od_list)} unique ODs ...')
+        [self.append(ind, path) for ind, path in enumerate(od_list)]
         end = time.time()
         logger.info(f'Done [{end - start:.4f} s]')
 
     def export_csv(self):
         name = QFileDialog.getSaveFileName(parent=None, caption='Export Routes to csv', filter="csv files (*.csv)")
         if name[0] != '':
+            logger.info(f'Exporting routes in file: {name[0]}')
             with open(name[0], 'w') as f:
                 for ind, links in self.dict.items():
                     f.write(str(ind)+';'+"/".join(links)+"\n")

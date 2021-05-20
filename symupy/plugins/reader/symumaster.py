@@ -101,9 +101,9 @@ class SymuMasterDistributionReader(AbstractTrafficDataReader):
 
         mask = (self.distribution.iloc[:,4]==origin) & (self.distribution.iloc[:,5]==destination) & (self.distribution.iloc[:,8]!='Sum of user and minimum travel time for the OD')
         if period is not None:
-            mask &= (self.distribution.iloc[:,0].astype(int)==period)
+            mask &= (self.distribution.iloc[:,0].astype(int)==int(period))
         if outer_loop is not None and inner_loop is not None:
-            mask &= (self.distribution.iloc[:,1].astype(int)==outer_loop) & (self.distribution.iloc[:,2].astype(int)==inner_loop)
+            mask &= (self.distribution.iloc[:,1].astype(int)==int(outer_loop)) & (self.distribution.iloc[:,2].astype(int)==int(inner_loop))
         rows = self.distribution[mask]
 
 
