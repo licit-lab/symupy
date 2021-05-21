@@ -19,10 +19,10 @@ class RoutesHandler(object):
         self.reader = None
         self.renderer = None
 
-    def append(self, id,  tr_list):
-        self.dict[id] = tr_list
+    def append(self, tr_dict):
+        self.dict.update(tr_dict)
         if self.renderer is not None:
-            self.renderer.draw_paths({id: tr_list})
+            self.renderer.draw_paths(tr_dict)
 
     def addRenderer(self, renderer):
         self.renderer = renderer
@@ -41,7 +41,7 @@ class RoutesHandler(object):
     def addTrip(self, vehid):
         trip = self.reader.get_trip(vehid)
         if trip is not None:
-            self.append(vehid, trip.path.links)
+            self.append({vehid: trip.path.links})
             plt.draw()
             figtrip = plt.figure()
             render_trip(figtrip, trip)
@@ -62,7 +62,7 @@ class RoutesHandler(object):
         start = time.time()
         path = self.reader.get_path(vehid)
         if path is not None:
-            self.append(vehid, path.links)
+            self.append({vehid: path.links})
         end = time.time()
         logger.info(f'Done [{end - start:.4f} s]')
 
@@ -70,9 +70,9 @@ class RoutesHandler(object):
         logger.info(f'Looking for ODs withs args: {args}')
         start = time.time()
         od_list = self.reader.get_OD(*args)
-        od_list = list(set(tuple(path.links) for path in od_list))
+        od_list = list(dict.fromkeys([tuple(path.links) for path in od_list]))
         logger.info(f'Found {len(od_list)} unique ODs ...')
-        [self.append(ind, path) for ind, path in enumerate(od_list)]
+        self.append({ind: path for ind, path in enumerate(od_list)})
         end = time.time()
         logger.info(f'Done [{end - start:.4f} s]')
 

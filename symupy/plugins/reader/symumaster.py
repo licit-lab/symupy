@@ -35,17 +35,17 @@ class SymuMasterPPathsReader(AbstractTrafficDataReader):
                 path = row[1][7].split('\\')
                 readLine = True
                 if 'Area Pattern' in path:
-                    readLine &= path[2]==OD[0] and path[-3]==OD[1]
+                    readLine &= path[2]==origin and path[-3]==destination
                     path = path[3:-3][::2]
                 else:
-                    readLine &= path[0]==OD[0] and path[-1]==OD[1]
+                    readLine &= path[0]==origin and path[-1]==destination
                     path = path[1:-1][::2]
 
                 if period is not None:
                     readLine &= int(row[1][0])==period
 
-                if loop is not None:
-                    readLine &= int(row[1][1])==loop[0] and int(row[1][2])==loop[1]
+                if outer_loop is not None and inner_loop is not None:
+                    readLine &= int(row[1][1])==int(outer_loop) and int(row[1][2])==int(inner_loop)
 
                 if readLine:
                     p = Path(path)
