@@ -6,7 +6,7 @@ from symupy.tsc.vehicles import Vehicle
 @dataclass
 class Path:
     links: list = field(default_factory=list)
-    length: float = 0
+    length: float = -1
 
     def __getitem__(self, attr):
         return self.__dict__[attr]
@@ -23,7 +23,7 @@ class State:
     time: str = None
     speed: float = 0
     acceleration: float = 0
-    relative_position: float = 0
+    curvilinear_abscissa: float = 0
     absolute_position: list = field(default_factory=list)
     link: str = None
     lane: int = None
@@ -53,7 +53,7 @@ class Trip:
         self.__dict__[attr] = value
 
     def __repr__(self):
-        return f"Trip(veh={self.vehicle.id.__repr__()}, origin={self.origin.__repr__()}, destination={self.destination.__repr__()}, {len(self.states)} states)"
+        return f"Trip(veh={self.vehicle}, origin={self.origin.__repr__()}, destination={self.destination.__repr__()}, {len(self.states)} states)"
 
 
 @dataclass

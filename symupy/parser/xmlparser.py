@@ -15,24 +15,31 @@ import re
 # ============================================================================
 
 
-class Element:
-    def __init__(self, line, pos, filename):
+class XMLElement:
+    pattern_tag = re.compile("(?<=<)(\w+)(?=>|\s|\/)")
+    pattern_comment = re.compile("^<!(.*)>$")
+    pattern_args = re.compile('\s([a-zA-Z0-9_:]+)="(.*?)"')
+    pattern_childrens = re.compile("\/>$")
+    def __init__(self, line, pos, filename, linenum):
         self._filename = filename
         self._pos = pos
-        self.tag = re.findall("(?<=<)(\w+)(?=>|\s|\/)", line)[0]
-        self.attr = {key: val for key, val in re.findall('\s(\w+)="(.*?)"', line)}
+        self.tag = XMLElement.pattern_tag.findall(line)[0]
+        self.attr = {key: val for key, val in  XMLElement.pattern_args.findall(line)}
+        self.sourceline = linenum
 
-        if re.findall("\/>$", line):
+        if XMLElement.pattern_childrens.findall(line):
             self._has_childrens = False
         else:
             self._has_childrens = True
 
     def iterchildrens(self):
+        linenum = self.sourceline
         with open(self._filename) as f:
             f.seek(self._pos)
             f.readline()
 
             if self._has_childrens:
+                linenum += 1
                 line = f.readline().strip()
                 while not any(
                     bool(x)
@@ -42,22 +49,25 @@ class Element:
                     ]
                 ):
                     # Checking if line is a comment or blank
-                    if not re.findall("^<!(.*)>$", line) and line != "":
-                        new_tag = re.findall("(?<=<)(\w+)(?=>|\s|\/)", line)[0]
+                    if not XMLElement.pattern_comment.findall(line) and line != "":
+                        new_tag = XMLElement.pattern_tag.findall(line)[0]
+                        end_tag = re.compile(f"<\/{new_tag}>")
                         if re.findall(self._startend_tag(new_tag), line):
                             pos = f.tell() - (len(line) + 2)
-                            yield Element(line, pos, self._filename)
+                            yield XMLElement(line, pos, self._filename, linenum)
                         elif re.findall(self._start_tag(new_tag), line):
                             pos = f.tell() - (len(line) + 2)
                             keep_line = line
+                            keepnum = linenum
                             while True:
-                                if re.findall(
-                                    self._end_tag(new_tag), f.readline().strip()
-                                ):
+                                linenum += 1
+                                line = f.readline().strip()
+                                if end_tag.findall(line):
                                     break
-                            yield Element(keep_line, pos, self._filename)
+                            yield XMLElement(keep_line, pos, self._filename, keepnum)
                         else:
                             break
+                    linenum += 1
                     line = f.readline().strip()
             else:
                 yield from ()
@@ -86,7 +96,13 @@ class Element:
         return f"^<{tag}.*\/>"
 
     def __repr__(self):
-        return f"Element({self.tag}, {self.attr.__repr__()})"
+        return f"XMLElement({self.tag}, {self.attr.__repr__()})"
+
+    def __hash__(self):
+        return hash((self._filename, self.sourceline))
+
+    def __eq__(self, another):
+        return self.sourceline == another.sourceline and self._filename == another._filename
 
 
 class XMLParser(object):
@@ -94,12 +110,14 @@ class XMLParser(object):
         self._filename = filename
 
     def get_elem(self, elem):
+        linenum = 1
         with open(self._filename, "r") as f:
             line = f.readline()
             while line:
                 if re.findall(f"(?<=<){elem}(?=>|\s|\/)", line):
                     pos = f.tell() - len(line)
-                    return Element(line.strip(), pos, self._filename)
+                    return XMLElement(line.strip(), pos, self._filename, linenum)
+                linenum += 1
                 line = f.readline()
 
     def xpath(self, path):
@@ -114,6 +132,17 @@ class XMLParser(object):
                 elem = elem.find_children_tag(t)
         return elem
 
+    def get_root(self):
+        linenum = 1
+        with open(self._filename, "r") as f:
+            line = f.readline()
+            #Check first elem in XML but ignore header and comment
+            while not re.findall("^<[^\?|!](.*)>$", line):
+                linenum += 1
+                line = f.readline()
+            pos = f.tell() - len(line)
+            return XMLElement(line.strip(), pos, self._filename, linenum)
+
 
 if __name__ == "__main__":
     import symupy
@@ -124,4 +153,4 @@ if __name__ == "__main__":
         + "/../tests/mocks/bottlenecks/bottleneck_001.xml"
     )
     parser = XMLParser(file)
-    network = parser.get_network()
+    root = parser.get_root()
