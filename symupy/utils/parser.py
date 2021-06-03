@@ -142,7 +142,8 @@ class SimulatorRequest(Publisher):
 
         """
         for key, val in veh_data.items():
-            response[FIELD_DATA[key]] = FIELD_FORMAT[key](val)
+            if key in FIELD_FORMAT:
+                response[FIELD_DATA[key]] = FIELD_FORMAT[key](val)
         lkey = "@etat_pilotage"
         response[FIELD_DATA[lkey]] = FIELD_FORMAT[lkey](veh_data.get(lkey))
         return dict(response)
