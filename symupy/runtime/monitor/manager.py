@@ -9,7 +9,7 @@ from symupy.postprocess.visunet.qtutils import Worker
 
 
 class LineMonitorView():
-    def __init__(self, title, x_label, y_label, nb_plots=1, colors=['w', 'g', 'b', 'c', 'm', 'y', 'r'], line_labels=None, aggregation_period=1):
+    def __init__(self, title, x_label, y_label, nb_plots=1, colors=['w', 'g', 'b', 'c', 'm', 'y', 'r'], line_labels=None, aggregation_period=1, stack_value=True, xrange=None, yrange=None):
         self.plots = [None for _ in range(nb_plots)]
         self.title = title
         self.labels = (x_label, y_label)
@@ -27,9 +27,17 @@ class LineMonitorView():
             self.line_labels = line_labels
 
         self.aggregation_period = aggregation_period
+        self.stack_value = stack_value
+
+        self.xrange = xrange
+        self.yrange = yrange
 
     def add_plot(self, plot):
         plot.addLegend()
+        if self.xrange is not None:
+            plot.setXRange(*self.xrange)
+        if self.yrange is not None:
+            plot.setYRange(*self.yrange)
         for i in range(len(self.plots)):
             self.plots[i] = plot.plot([], [], self._plot_kwargs, name=self.line_labels[i])
 
@@ -38,8 +46,12 @@ class LineMonitorView():
         for i, p in enumerate(self.plots):
             x_val, y_val = self.update(step, string, i)
             if (x_val, y_val) != (None, None):
-                self.x[i].append(x_val)
-                self.y[i].append(y_val)
+                if self.stack_value:
+                    self.x[i].append(x_val)
+                    self.y[i].append(y_val)
+                else:
+                    self.x[i] = x_val
+                    self.y[i] = y_val
 
                 kwargs = {"pen":self.colors[i]}
                 kwargs.update(self._plot_kwargs)
@@ -51,8 +63,8 @@ class LineMonitorView():
 
 
 class ScatterMonitorView(LineMonitorView):
-    def __init__(self, title, x_label, y_label, symbol="+", nb_plots=1, aggregation_period=1):
-        super(ScatterMonitorView, self).__init__(title, x_label, y_label, nb_plots=nb_plots, aggregation_period=aggregation_period)
+    def __init__(self, title, x_label, y_label, symbol="+", nb_plots=1, aggregation_period=1, stack_value=True, xrange=None, yrange=None):
+        super(ScatterMonitorView, self).__init__(title, x_label, y_label, nb_plots=nb_plots, aggregation_period=aggregation_period, stack_value=stack_value, xrange=xrange, yrange=yrange)
         self._plot_kwargs = {"pen":None, "symbol":symbol}
 
 

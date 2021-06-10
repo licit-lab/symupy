@@ -17,7 +17,7 @@ def _get_trajs(string):
     return trajs
 
 
-def launch_simuvia(file):
+def launch_simuvia(file) -> tuple:
     sim_instance = Simulator.from_path(file, DEFAULT_PATH_SYMUVIA)
     sim_instance.trace_flow = True
     sim_instance.step_launch_mode = "full"
@@ -181,7 +181,6 @@ class SymuviaMonitorFlux(LineMonitorView):
                     self.influx += 1
                     self.invehs.add(t["id"])
             val = self.influx
-            print("in", val)
             if step % self.aggregation_period == 0:
                 self.influx= 0
         else:
@@ -191,10 +190,8 @@ class SymuviaMonitorFlux(LineMonitorView):
                 if t not in curr_vehs:
                     self.outflux += 1
                     to_del.add(t)
-            print(to_del, self.outflux)
             self.invehs = self.invehs.difference(to_del)
             val = self.outflux
-            print("out",val)
             if step % self.aggregation_period == 0:
                 self.outflux= 0
 
@@ -204,15 +201,32 @@ class SymuviaMonitorFlux(LineMonitorView):
             return None, None
 
 
+class SymuviaMonitorFlow(ScatterMonitorView):
+    def __init__(self, xrange=None, yrange=None):
+        super(SymuviaMonitorFlow, self).__init__('Flow', 'X', 'Y', stack_value=False, symbol="o", xrange=xrange, yrange=yrange)
+        self.ord_pattern = re.compile('ord="(.*?)"')
+        self.abs_pattern = re.compile('abs="(.*?)"')
+
+    def update(self, step, instants, ind):
+        ord = [float(v) for v in self.ord_pattern.findall(instants)]
+        abs = [float(v) for v in self.abs_pattern.findall(instants)]
+
+        if ord:
+            return abs, ord
+        else:
+            return None, None
+
+
 if __name__ == "__main__":
     from symupy.runtime.monitor.manager import MonitorApp
 
     manager = MonitorApp()
-    manager.add_monitor(SymuviaMonitorMFD(), 0, 0)
-    manager.add_monitor(SymuviaMonitorAccumulation(), 0, 1)
-    manager.add_monitor(SymuviaMonitorVEH([3,58], "speed"), 1, 0)
-    manager.add_monitor(SymuviaMonitorTTT(["L_0"], aggregation_period=1), 1, 1)
-    manager.add_monitor(SymuviaMonitorTTD(["L_0"], aggregation_period=1), 0, 2, rowspan=2)
-    manager.add_monitor(SymuviaMonitorFlux(["L_0"], aggregation_period=10), 2, 0, colspan=3)
-    manager.set_feeder(launch_simuvia("/Users/florian/Work/visunet/data/SingleLink_symuvia_withcapacityrestriction.xml"))
+    manager.add_monitor(SymuviaMonitorFlow(xrange=[843144.596349, 843771.29197], yrange=[6519780.054134,6520021.662851]), 0, 0)
+    # manager.add_monitor(SymuviaMonitorMFD(), 0, 0)
+    # manager.add_monitor(SymuviaMonitorAccumulation(), 0, 1)
+    # manager.add_monitor(SymuviaMonitorVEH([3,58], "speed"), 1, 0)
+    # manager.add_monitor(SymuviaMonitorTTT(["L_0"], aggregation_period=1), 1, 1)
+    # manager.add_monitor(SymuviaMonitorTTD(["L_0"], aggregation_period=1), 0, 2, rowspan=2)
+    # manager.add_monitor(SymuviaMonitorFlux(["L_0"], aggregation_period=10), 2, 0, colspan=3)
+    manager.set_feeder(launch_simuvia("/Users/florian.gacon/Dropbox (LICIT_LAB)/Data/LafayetteV8_OS.xml"))
     manager.launch_app()
