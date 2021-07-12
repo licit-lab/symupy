@@ -38,7 +38,7 @@ class SymuviaMonitorMFD(ScatterMonitorView):
         nbveh = int(self.nbveh_pattern.findall(instants)[0])
         speeds = [float(v) for v in self.vit_pattern.findall(instants)]
         if speeds:
-            mean_speed = sum(speeds)/len(speeds)
+            mean_speed = np.mean(speeds)
             return nbveh, mean_speed*nbveh
         else:
             return None, None
@@ -65,27 +65,27 @@ class SymuviaMonitorVEH(LineMonitorView):
 
         self.indicator = indicator
 
-        self._dst = 0
-        self._lastpos = None
+        self._dst = [0]*len(ids)
+        self._lastpos = [None]*len(ids)
 
         self.line_labels = [str(id) for id in ids]
 
 
-    def _update_speed(self, traj):
+    def _update_speed(self, traj, ind):
         return float(traj["vit"])
 
-    def _update_acceleration(self, traj):
+    def _update_acceleration(self, traj, ind):
         return float(traj["acc"])
 
-    def _update_distance(self, trajs):
+    def _update_distance(self, trajs, ind):
         curr_pos = np.array([float(trajs["abs"]), float(trajs["ord"])])
-        if self._lastpos is None:
-            self._lastpos = curr_pos
+        if self._lastpos[ind] is None:
+            self._lastpos[ind] = curr_pos
         else:
-            curr_dst = np.linalg.norm(curr_pos-self._lastpos)
-            self._dst += curr_dst
-            self._lastpos = curr_pos
-        return self._dst
+            curr_dst = np.linalg.norm(curr_pos-self._lastpos[ind])
+            self._dst[ind] += curr_dst
+            self._lastpos[ind] = curr_pos
+        return self._dst[ind]
 
     def update(self, step, instants, ind):
         trajs = _get_trajs(instants)
@@ -97,7 +97,7 @@ class SymuviaMonitorVEH(LineMonitorView):
                 break
 
         if veh_state is not None:
-            y = self._indicators[self.indicator](veh_state)
+            y = self._indicators[self.indicator](veh_state, ind)
             return step, y
         else:
             return None, None
@@ -228,5 +228,5 @@ if __name__ == "__main__":
     # manager.add_monitor(SymuviaMonitorTTT(["L_0"], aggregation_period=1), 1, 1)
     # manager.add_monitor(SymuviaMonitorTTD(["L_0"], aggregation_period=1), 0, 2, rowspan=2)
     # manager.add_monitor(SymuviaMonitorFlux(["L_0"], aggregation_period=10), 2, 0, colspan=3)
-    manager.set_feeder(launch_simuvia("/Users/florian.gacon/Dropbox (LICIT_LAB)/Data/LafayetteV8_OS.xml"))
+    manager.set_feeder(launch_simuvia("/Users/florian.gacon/Dropbox (LICIT_LAB)/Data/Lafayette/LafayetteV8_OS.xml"))
     manager.launch_app()
