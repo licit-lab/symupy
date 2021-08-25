@@ -1,5 +1,5 @@
-""" 
-    This module details the implementation of a ``Simulator`` object in charge of handling the connection between the traffic simulator and this interface. The connection with the traffic simulator is handled by an object called ``Connector`` which establishes a messaging protocol with the traffic simulator. 
+"""
+    This module details the implementation of a ``Simulator`` object in charge of handling the connection between the traffic simulator and this interface. The connection with the traffic simulator is handled by an object called ``Connector`` which establishes a messaging protocol with the traffic simulator.
 
     Example:
         To use the ``Simulator`` declare in a string the ``path`` to the simulator ::
@@ -10,11 +10,11 @@
 
     Other parameters can also be send to the simulator in order to provide other configurations:
 
-    Example: 
+    Example:
         To send make increase the *buffer size* to a specific size:
-            
+
             >>> simulator = Simulator(bufferSize = 1000000)
-        
+
         To increase change the flag that traces the flow:
 
             >>> simulator = Simulator(trace_flow = True)
@@ -590,6 +590,27 @@ class Simulator(Configurator, RuntimeDevice):
                 spd.append(10)  # minimum speed?
         return tuple(spd)
 
+    def get_vehicle_inside_area(self, sensors_mfd: list = []):
+        """Obtains the set of vehicles inside a list
+
+        Args:
+            sensors_mfd (list, optional): Sensor name. Defaults to [].
+
+        Returns:
+            [type]: [description]
+        """
+        if isinstance(sensors_mfd, str):
+            return tuple(
+                (
+                    self.__library.SymGetListofVehicleIdsEx(
+                        sensors_mfd.encode("UTF8")
+                    )
+                )
+                .decode("UTF8")
+                .split(" ")
+            )
+        return tuple()
+
     def add_control_probability_zone_mfd(
         self, access_probability: dict, minimum_distance: dict
     ):
@@ -688,6 +709,7 @@ class Simulator(Configurator, RuntimeDevice):
         """
         self.load_symuvia()
         self.load_network()
+        self.__library.SymGetListofVehicleIdsEx.restype = c_char_p
         self.next_state(True)
 
     def __performInitialize(self) -> None:
