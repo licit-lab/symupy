@@ -392,6 +392,32 @@ class Simulator(Configurator, RuntimeDevice):
         self.request_answer()
         return dr_state
 
+    def drive_vehicle_new_route(self, vehid: int, new_route: str) -> int:
+        """Modifies the current path of a vehicle by stablishing the new route
+
+        Args:
+            vehid (int): vehicle id
+            new_route (str): string contained links separated by spaces with the path to be taken by the vehicle
+
+        Returns:
+            int: 	Value containing one of the following values 
+
+                ===========  =================================
+                **Value**    **Description**
+                -----------  ---------------------------------
+                0             The function is successfully executed
+                -1            No network loaded
+                -2            The vehicle doesn't exist
+                -3            The new route is empty
+                -4            A link of the new route not in network
+                -5            New route is unattainable links are not connected
+                -6            New route destination is different from original
+                -7            New route cannot be reached by the vehicle     
+                ===========  =================================
+       
+        """
+        return self.__library.SymAlterRouteEx(vehid, new_route.encode("UTF8"))
+
     def drive_vehicle_with_control(
         self, vehcontrol, vehid: int, destination: str = None, lane: str = 1
     ):
