@@ -607,7 +607,7 @@ class Simulator(Configurator, RuntimeDevice):
                     )
                 )
                 .decode("UTF8")
-                .split(" ")
+                .split(" ")[:-1]
             )
         return tuple()
 
