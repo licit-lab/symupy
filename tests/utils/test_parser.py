@@ -66,9 +66,9 @@ def three_vehicle_xml():
 
 
 @pytest.fixture
-def no_trajectory_dct(no_trajectory_xml):
+def no_trajectory_dct():
     """ Dictionary expected answer """
-    return parse(no_trajectory_xml)
+    return ()
 
 
 @pytest.fixture
@@ -86,13 +86,13 @@ def two_vehicle_dct(two_vehicle_xml):
 @pytest.fixture
 def no_trajectory_vehicle_data():
     """ No trajectory vehicle data """
-    return []
+    return ()
 
 
 @pytest.fixture
 def one_trajectory_vehicle_data():
     """ One trajectory vehicle data """
-    return [
+    return (
         {
             "abscissa": 25.0,
             "acceleration": 0.0,
@@ -105,14 +105,14 @@ def one_trajectory_vehicle_data():
             "speed": 25.0,
             "vehid": 0,
             "vehtype": "VL",
-        }
-    ]
+        },
+    )
 
 
 @pytest.fixture
 def two_trajectory_vehicle_data():
     """ Two trajectory vehicle data """
-    return [
+    return (
         {
             "abscissa": 75.0,
             "acceleration": 0.0,
@@ -139,7 +139,7 @@ def two_trajectory_vehicle_data():
             "vehid": 1,
             "vehtype": "VL",
         },
-    ]
+    )
 
 
 @pytest.fixture
@@ -148,12 +148,12 @@ def simrequest():
 
 
 def test_constructor_request(simrequest):
-    assert simrequest.query.value == create_string_buffer(BUFFER_STRING).value
+    assert simrequest.query == ""
 
 
 def test_parse_nodata(simrequest):
     response = simrequest.data_query
-    assert response == {}
+    assert response == ()
 
 
 def test_parse_notrajectory(simrequest, no_trajectory_xml, no_trajectory_dct):
@@ -162,16 +162,20 @@ def test_parse_notrajectory(simrequest, no_trajectory_xml, no_trajectory_dct):
     assert response == no_trajectory_dct
 
 
-def test_parse_1_vehicle(simrequest, one_vehicle_xml, one_vehicle_dct):
+def test_parse_1_vehicle(
+    simrequest, one_vehicle_xml, one_trajectory_vehicle_data
+):
     simrequest.query = one_vehicle_xml
     response = simrequest.data_query
-    assert response == one_vehicle_dct
+    assert response == one_trajectory_vehicle_data
 
 
-def test_parse_2_vehicle(simrequest, two_vehicle_xml, two_vehicle_dct):
+def test_parse_2_vehicle(
+    simrequest, two_vehicle_xml, two_trajectory_vehicle_data
+):
     simrequest.query = two_vehicle_xml
     response = simrequest.data_query
-    assert response == two_vehicle_dct
+    assert response == two_trajectory_vehicle_data
 
 
 def test_parse_notrajectory_vehicle_data(
@@ -182,13 +186,17 @@ def test_parse_notrajectory_vehicle_data(
     assert veh_data == no_trajectory_vehicle_data
 
 
-def test_parse_1_vehicle_data(simrequest, one_vehicle_xml, one_trajectory_vehicle_data):
+def test_parse_1_vehicle_data(
+    simrequest, one_vehicle_xml, one_trajectory_vehicle_data
+):
     simrequest.query = one_vehicle_xml
     veh_data = simrequest.get_vehicle_data()
     assert veh_data == one_trajectory_vehicle_data
 
 
-def test_parse_2_vehicle_data(simrequest, two_vehicle_xml, two_trajectory_vehicle_data):
+def test_parse_2_vehicle_data(
+    simrequest, two_vehicle_xml, two_trajectory_vehicle_data
+):
     simrequest.query = two_vehicle_xml
     veh_data = simrequest.get_vehicle_data()
     assert veh_data == two_trajectory_vehicle_data
@@ -236,7 +244,9 @@ def test_parse_1_vehicle_filter_property(simrequest, one_vehicle_xml):
     assert veh_data == ("VL",)
     veh_data = simrequest.filter_vehicle_property("vehid", 0)
     assert veh_data == (0,)
-    veh_data = simrequest.filter_vehicle_property("id", 0)  # unexistent property
+    veh_data = simrequest.filter_vehicle_property(
+        "id", 0
+    )  # unexistent property
     assert veh_data == (None,)
 
     # Unexisting vehicle
@@ -244,7 +254,9 @@ def test_parse_1_vehicle_filter_property(simrequest, one_vehicle_xml):
     assert veh_data == tuple()
     veh_data = simrequest.filter_vehicle_property("vehid", 1)
     assert veh_data == tuple()
-    veh_data = simrequest.filter_vehicle_property("id", 1)  # unexistent property
+    veh_data = simrequest.filter_vehicle_property(
+        "id", 1
+    )  # unexistent property
     assert veh_data == tuple()
 
     # Multiple vehicles
@@ -252,7 +264,9 @@ def test_parse_1_vehicle_filter_property(simrequest, one_vehicle_xml):
     assert veh_data == ("VL",)
     veh_data = simrequest.filter_vehicle_property("vehid", 0, 1)
     assert veh_data == (0,)
-    veh_data = simrequest.filter_vehicle_property("id", 0, 1)  # unexistent property
+    veh_data = simrequest.filter_vehicle_property(
+        "id", 0, 1
+    )  # unexistent property
     assert veh_data == (None,)
 
 
@@ -262,7 +276,9 @@ def test_parse_2_vehicle_filter_property(simrequest, two_vehicle_xml):
     assert veh_data == ("VL",)
     veh_data = simrequest.filter_vehicle_property("vehid", 0)
     assert veh_data == (0,)
-    veh_data = simrequest.filter_vehicle_property("id", 0)  # unexistent property
+    veh_data = simrequest.filter_vehicle_property(
+        "id", 0
+    )  # unexistent property
     assert veh_data == (None,)
 
     # Unexisting vehicle
@@ -270,7 +286,9 @@ def test_parse_2_vehicle_filter_property(simrequest, two_vehicle_xml):
     assert veh_data == ("VL",)
     veh_data = simrequest.filter_vehicle_property("vehid", 1)
     assert veh_data == (1,)
-    veh_data = simrequest.filter_vehicle_property("id", 1)  # unexistent property
+    veh_data = simrequest.filter_vehicle_property(
+        "id", 1
+    )  # unexistent property
     assert veh_data == (None,)
 
     # Multiple vehicles
@@ -278,7 +296,9 @@ def test_parse_2_vehicle_filter_property(simrequest, two_vehicle_xml):
     assert veh_data == ("VL", "VL")
     veh_data = simrequest.filter_vehicle_property("vehid", 0, 1)
     assert veh_data == (0, 1)
-    veh_data = simrequest.filter_vehicle_property("id", 0, 1)  # unexistent property
+    veh_data = simrequest.filter_vehicle_property(
+        "id", 0, 1
+    )  # unexistent property
     assert veh_data == (None, None)
 
 

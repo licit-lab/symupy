@@ -31,7 +31,6 @@ with open("HISTORY.md", "r", encoding="UTF8") as history_file:
 requirements = [
     "numpy>=1.16",
     "lxml>=4.3.3",
-    "xmltodict>=0.12",
     "networkx>=2.5",
     "matplotlib>=3.0.0",
     "sqlalchemy>=1.3.5",
@@ -39,6 +38,7 @@ requirements = [
     "scipy>=1.4.1",
     "click>=7.0",
     "python-decouple>=3.3",
+    "PyQt5>=5.15.4",
 ]
 
 test_requirements = [
