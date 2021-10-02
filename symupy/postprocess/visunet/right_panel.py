@@ -8,6 +8,7 @@ from symupy.postprocess.visunet.qtutils import ConsoleWindowLogHandler
 
 from symupy.postprocess.visunet import logger
 
+
 class RightPanelWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -19,8 +20,8 @@ class RightPanelWidget(QWidget):
         self.labels = QGroupBox()
         self.labels.layout = QVBoxLayout()
         self.labels.setLayout(self.labels.layout)
-        self.label_file_netw = QLabel('Network:')
-        self.label_file_traj = QLabel('TrafficData:')
+        self.label_file_netw = QLabel("Network:")
+        self.label_file_traj = QLabel("TrafficData:")
         self.label_file_netw.setAlignment(Qt.AlignTop | Qt.AlignLeft)
         self.label_file_traj.setAlignment(Qt.AlignTop | Qt.AlignLeft)
         self.labels.layout.addWidget(self.label_file_netw)
@@ -39,7 +40,7 @@ class RightPanelWidget(QWidget):
         # self.layout.addWidget(self.panel_traj)
 
     def update_label_network(self, filename):
-        self.label_file_netw.setText('Network: '+filename)
+        self.label_file_netw.setText("Network: " + filename)
 
     def update_label_traffic_data(self, filename):
-        self.label_file_traj.setText('TrafficData: ' + filename)
+        self.label_file_traj.setText("TrafficData: " + filename)

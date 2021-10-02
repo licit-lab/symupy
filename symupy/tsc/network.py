@@ -127,7 +127,7 @@ class Network(NetworkElement):
             downstream_coords=np.array(downstream_coords),
             nb_lanes=nb_lanes,
             authorized_mode=authorized_mode,
-            speed_limit=speed_limit
+            speed_limit=speed_limit,
         )
 
         self.links[id] = l
