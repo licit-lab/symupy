@@ -3,9 +3,21 @@ import logging
 from inspect import signature, _empty
 
 from PyQt5.QtCore import QThread, Qt, QObject, pyqtSignal
-from PyQt5.QtWidgets import (QApplication, QWidget, QHBoxLayout, QSlider, QLabel,
-                             QComboBox, QLineEdit, QDialog, QFormLayout, QPushButton, QVBoxLayout)
+from PyQt5.QtWidgets import (
+    QApplication,
+    QWidget,
+    QHBoxLayout,
+    QSlider,
+    QLabel,
+    QComboBox,
+    QLineEdit,
+    QDialog,
+    QFormLayout,
+    QPushButton,
+    QVBoxLayout,
+)
 from PyQt5.QtGui import QIntValidator
+
 
 def waitcursor(func):
     @functools.wraps(func)
@@ -14,15 +26,17 @@ def waitcursor(func):
         value = func(*args, **kwargs)
         QApplication.restoreOverrideCursor()
         return value
+
     return wrapper
 
 
 class ConsoleWindowLogHandler(logging.Handler, QObject):
     sigLog = pyqtSignal(str)
+
     def __init__(self):
         logging.Handler.__init__(self)
         QObject.__init__(self)
-        self.setFormatter(logging.Formatter('%(levelname)s: %(message)s'))
+        self.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
 
     def emit(self, logRecord):
         logRecord = self.format(logRecord)
@@ -31,7 +45,7 @@ class ConsoleWindowLogHandler(logging.Handler, QObject):
 
 
 class Slider(QWidget):
-    def __init__(self, name=' ', parent=None):
+    def __init__(self, name=" ", parent=None):
         super().__init__(parent)
 
         self.layout = QHBoxLayout()
@@ -49,13 +63,12 @@ class Slider(QWidget):
 
         self.slider.valueChanged.connect(self.updateLabel)
 
-        self.line_edit = QLineEdit('', self)
+        self.line_edit = QLineEdit("", self)
         self.line_edit.setFixedWidth(40)
         self.line_edit.setValidator(QIntValidator())
         self.line_edit.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
         self.line_edit.editingFinished.connect(self.updateSlider)
         # self.line_edit.setMinimumWidth(80)
-
 
         # self.layout.addSpacing(5)
         self.layout.addWidget(self.line_edit)
@@ -80,7 +93,7 @@ class Slider(QWidget):
 
 
 class LabelComboBox(QWidget):
-    def __init__(self, name=' ', parent=None):
+    def __init__(self, name=" ", parent=None):
         super().__init__(parent)
 
         self.layout = QHBoxLayout()
@@ -108,7 +121,7 @@ class LabelComboBox(QWidget):
 
 
 class LabelLineEdit(QWidget):
-    def __init__(self, name=' ', parent=None):
+    def __init__(self, name=" ", parent=None):
         super().__init__(parent)
 
         self.layout = QHBoxLayout()
@@ -139,15 +152,15 @@ class Worker(QThread):
 class TripSelector(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle('Choose Trip')
+        self.setWindowTitle("Choose Trip")
 
         self.layout = QVBoxLayout()
         self.layout.setAlignment(Qt.AlignTop)
         self.setLayout(self.layout)
 
-        self.vehid = LabelLineEdit('VEH id')
+        self.vehid = LabelLineEdit("VEH id")
         self.layout.addWidget(self.vehid)
-        self.button_select = QPushButton('Select')
+        self.button_select = QPushButton("Select")
         self.layout.addWidget(self.button_select)
         self.button_select.clicked.connect(self.select)
 
@@ -158,7 +171,7 @@ class TripSelector(QDialog):
 class ODSelector(QDialog):
     def __init__(self, func, parent=None):
         super().__init__(parent)
-        self.setWindowTitle('Choose OD')
+        self.setWindowTitle("Choose OD")
 
         self.layout = QFormLayout()
         self.setLayout(self.layout)
@@ -174,7 +187,7 @@ class ODSelector(QDialog):
             if param.default != _empty:
                 edit.setText(str(param.default))
 
-        self.button_select = QPushButton('Select')
+        self.button_select = QPushButton("Select")
         self.layout.addWidget(self.button_select)
         self.button_select.clicked.connect(self.select)
 

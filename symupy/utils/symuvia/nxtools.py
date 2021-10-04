@@ -6,9 +6,9 @@ from collections import defaultdict
 
 def export_to_nx(file):
     troncons = defaultdict(dict)
-    junctions = dict(caf=defaultdict(dict),
-                     rep=defaultdict(dict),
-                     gir=defaultdict(dict))
+    junctions = dict(
+        caf=defaultdict(dict), rep=defaultdict(dict), gir=defaultdict(dict)
+    )
 
     parser = etree.XMLParser(remove_comments=True)
     contents = etree.parse(file, parser=parser)
@@ -26,13 +26,17 @@ def export_to_nx(file):
         for tr_child in tr_elem.iterchildren():
             if tr_child.tag == "POINTS_INTERNES":
                 for internal_points in tr_child.iterchildren():
-                    points.append(np.fromstring(internal_points.attrib["coordonnees"], sep=" "))
+                    points.append(
+                        np.fromstring(internal_points.attrib["coordonnees"], sep=" ")
+                    )
             if tr_child.tag == "VOIES_INTERDITES":
                 for lane_elem in tr_child.iterchildren():
                     if lane_elem.attrib["id_typesvehicules"] == "VL":
                         reserved_lane.append(lane_elem.attrib["num_voie"])
         points.append(coords_aval)
-        length = np.sum([np.linalg.norm(points[i + 1] - points) for i in range(len(points) - 1)])
+        length = np.sum(
+            [np.linalg.norm(points[i + 1] - points) for i in range(len(points) - 1)]
+        )
         data["length"] = length
 
         if len(reserved_lane) < int(tr_elem.attrib.get("nb_voie", 1)):
@@ -78,7 +82,10 @@ def export_to_nx(file):
     for data in [junctions["rep"], junctions["caf"]]:
         for ind, connect in data.items():
             for tr_amont, tr_avals in connect.items():
-                [G.add_edge("NAV_"+tr_amont, "NAM_"+tr_av, length=0) for tr_av in tr_avals]
+                [
+                    G.add_edge("NAV_" + tr_amont, "NAM_" + tr_av, length=0)
+                    for tr_av in tr_avals
+                ]
 
     for ind, tr_list in junctions["gir"].items():
         avals = list()
@@ -94,5 +101,3 @@ def export_to_nx(file):
                 G.add_edge("NAV_" + tr_av, "NAM_" + tr_am, length=0)
 
     return G
-
-

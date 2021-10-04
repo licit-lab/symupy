@@ -1,17 +1,15 @@
-""" 
-Stream Parser 
+"""
+Stream Parser
 =============
-This module handles the Simulation response converting it into proper formats for querying data afterwards. 
+This module handles the Simulation response converting it into proper formats for querying data afterwards.
 
-The parser object converts a request from the simulator into the correct format for the 
+The parser object converts a request from the simulator into the correct format for the
 """
 
 # ============================================================================
 # STANDARD  IMPORTS
 # ============================================================================
 
-from xmltodict import parse
-from xml.parsers.expat import ExpatError
 from ctypes import create_string_buffer
 from typing import Union, Dict, List, Tuple
 from collections import defaultdict
@@ -22,24 +20,19 @@ from collections import defaultdict
 
 from symupy.runtime.logic.publisher import Publisher
 from symupy.tsc.vehicles import Vehicle, VehicleList
-
+from symupy.parser.xmlparser import XMLTrajectory
+from symupy.utils.exceptions import SymupyError
 from symupy.utils.constants import BUFFER_STRING, FIELD_DATA, FIELD_FORMAT
 
 # ============================================================================
 # CLASS AND DEFINITIONS
 # ============================================================================
 
-vtypes = Union[float, int, str]
-vdata = Tuple[vtypes]
-vmaps = Dict[str, vtypes]
-vlists = List[vmaps]
-response = defaultdict(lambda: False)
-
 
 class SimulatorRequest(Publisher):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self._str_response = create_string_buffer(BUFFER_STRING)
+        self.datatraj = XMLTrajectory(b"")
 
     def __repr__(self):
         return f"{self.__class__.__name__}()"
@@ -60,21 +53,21 @@ class SimulatorRequest(Publisher):
     @property
     def query(self):
         """String response from the simulator"""
-        return self._str_response
+        return self.datatraj._xml
 
     @query.setter
-    def query(self, response: str):
-        self._str_response = response
+    def query(self, response: bytes):
+        self.datatraj = XMLTrajectory(response)
         for c in self._channels:
             self.dispatch(c)
 
     @property
     def current_time(self) -> float:
-        return float(self.data_query.get("INST").get("@val"))
+        return self.datatraj.inst
 
     @property
     def current_nbveh(self) -> int:
-        return int(self.data_query.get("INST").get("@nbVeh"))
+        return self.datatraj.nbveh
 
     @property
     def data_query(self):
@@ -83,84 +76,35 @@ class SimulatorRequest(Publisher):
         Returns:
             simdata (OrderedDict): Simulator data parsed from XML
         """
-        try:
-            dataveh = parse(self._str_response)
-            # Transform ordered dictionary into new keys
-            return dataveh
-        except ExpatError:
-            return {}
-        except AttributeError:
-            return {}
+
+        return self.datatraj.todict
 
     # =========================================================================
     # METHODS
     # =========================================================================
 
-    def get_vehicle_data(self) -> vlists:
+    def get_vehicle_data(self) -> tuple:
         """Extracts vehicles information from simulators response
 
         Returns:
             t_veh_data (list): list of dictionaries containing vehicle data with correct formatting
 
         """
-        if self.data_query.get("INST", {}).get("TRAJS") is not None:
-            veh_data = self.data_query.get("INST").get("TRAJS")
-            if isinstance(veh_data["TRAJ"], list):
-                return [SimulatorRequest.transform(d) for d in veh_data["TRAJ"]]
-            return [SimulatorRequest.transform(veh_data["TRAJ"])]
-        return []
+        return self.data_query
 
-    @staticmethod
-    def transform(veh_data: dict):
-        """Transform vehicle data from string format to coherent format
-
-        Args:
-            veh_data (dict): vehicle data as received from simulator
-
-        Returns:
-            t_veh_data (dict): vehicle data with correct formatting
-
-
-        Example:
-            As an example, for an input of the following style ::
-
-            >>> v = OrderedDict([('@abs', '25.00'), ('@acc', '0.00'), ('@dst', '25.00'), ('@id', '0'), ('@ord', '0.00'), ('@tron', 'Zone_001'), ('@type', 'VL'), ('@vit', '25.00'), ('@voie', '1'),('@z', '0')])
-            >>> tv = SimulatorRequest.transform(v)
-            >>> # Transforms into
-            >>> tv == {
-            >>>     "abscissa": 25.0,
-            >>>     "acceleration": 0.0,
-            >>>     "distance": 25.0,
-            >>>     "elevation": 0.0,
-            >>>     "lane": 1,
-            >>>     "link": "Zone_001",
-            >>>     "ordinate": 0.0,
-            >>>     "speed": 25.0,
-            >>>     "vehid": 0,
-            >>>     "vehtype": "VL",
-            >>> },
-
-        """
-        for key, val in veh_data.items():
-            if key in FIELD_FORMAT:
-                response[FIELD_DATA[key]] = FIELD_FORMAT[key](val)
-        lkey = "@etat_pilotage"
-        response[FIELD_DATA[lkey]] = FIELD_FORMAT[lkey](veh_data.get(lkey))
-        return dict(response)
-
-    def get_vehicles_property(self, property: str) -> vdata:
+    def get_vehicles_property(self, property_key: str) -> tuple:
         """Extracts a specific property and returns a tuple containing this
         property for all vehicles in the buffer string
 
         Args:
-            property (str):
+            property_key (str):
                 one of the following options abscissa, acceleration, distance, elevation, lane, link, ordinate, speed, vehid, vehtype,
 
         Returns:
             values (tuple):
                 tuple with corresponding values e.g (0,1), (0,),(None,)
         """
-        return tuple(veh.get(property) for veh in self.get_vehicle_data())
+        return tuple(x.get(property_key) for x in self.data_query)
 
     def filter_vehicle_property(self, property: str, *args):
         """Filter out a property for a subset of vehicles
@@ -212,7 +156,7 @@ class SimulatorRequest(Publisher):
         vehids = set((vehid, *args))
         return set(vehids).issubset(set(all_vehs))
 
-    def vehicles_in_link(self, link: str, lane: int = 1) -> vdata:
+    def vehicles_in_link(self, link: str, lane: int = 1) -> tuple:
         """Returns a tuple containing vehicle ids traveling on the same
         (link,lane) at current state
 

@@ -3,6 +3,7 @@ from typing import Any, Union
 from symupy.tsc.network import Zone, Node, Link
 from symupy.tsc.vehicles import Vehicle
 
+
 @dataclass
 class Path:
     links: list = field(default_factory=list)

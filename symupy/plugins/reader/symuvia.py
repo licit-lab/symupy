@@ -48,7 +48,8 @@ class SymuviaNetworkReader(AbstractNetworkReader):
         Description of attribute `_ext`.
 
     """
-    _ext = 'xml'
+
+    _ext = "xml"
 
     def __init__(self, file, remove_comments=True):
         super().__init__()
@@ -59,7 +60,7 @@ class SymuviaNetworkReader(AbstractNetworkReader):
 
         root = self._parser.get_root()
         if root.tag == "OUT":
-            self._prefix ="OUT/IN"
+            self._prefix = "OUT/IN"
         elif root.tag == "ROOT_SYMUBRUIT":
             self._prefix = "ROOT_SYMUBRUIT"
 
@@ -103,11 +104,15 @@ class SymuviaNetworkReader(AbstractNetworkReader):
 
     @cached_property
     def _giratoire(self):
-        return self._parser.xpath(f"{self._prefix}/RESEAUX/RESEAU/CONNEXIONS/GIRATOIRES")
+        return self._parser.xpath(
+            f"{self._prefix}/RESEAUX/RESEAU/CONNEXIONS/GIRATOIRES"
+        )
 
     @cached_property
     def _extremity(self):
-        return self._parser.xpath(f"{self._prefix}/RESEAUX/RESEAU/CONNEXIONS/EXTREMITES")
+        return self._parser.xpath(
+            f"{self._prefix}/RESEAUX/RESEAU/CONNEXIONS/EXTREMITES"
+        )
 
     def iter_links(self):
         return self._links.iterchildrens()
@@ -145,8 +150,8 @@ class SymuviaNetworkReader(AbstractNetworkReader):
                 np.fromstring(tr.attr["extremite_amont"], sep=" "),
                 np.fromstring(tr.attr["extremite_aval"], sep=" "),
             )
-            if 'vit_reg' in tr.attr.keys():
-                net.links[tr.attr["id"]]["speed_limit"] = float(tr.attr['vit_reg'])
+            if "vit_reg" in tr.attr.keys():
+                net.links[tr.attr["id"]]["speed_limit"] = float(tr.attr["vit_reg"])
             internal_points = tr.find_children_tag("POINTS_INTERNES")
             if internal_points is not None:
                 elt = internal_points.getchildrens()
@@ -246,7 +251,8 @@ class SymuviaTrafficDataReader(AbstractTrafficDataReader):
         Description of attribute `_ext`.
 
     """
-    _ext = 'xml'
+
+    _ext = "xml"
 
     def __init__(self, traficdatafile, lru_cache_size=None):
         super().__init__()
@@ -254,15 +260,16 @@ class SymuviaTrafficDataReader(AbstractTrafficDataReader):
         self.parser = XMLParser(self._file)
         sim = self.parser.xpath("OUT/SIMULATION")
         for elem in sim.iterchildrens():
-            if elem.tag == 'INSTANTS':
+            if elem.tag == "INSTANTS":
                 self._inst = elem
-            elif elem.tag == 'VEHS':
+            elif elem.tag == "VEHS":
                 self._vehs = elem
                 break
-        self._start_sim = Date(sim.attr['debut'])
-        self.get_ids_from_inst = lru_cache(maxsize=lru_cache_size)(self._get_ids_from_inst)
+        self._start_sim = Date(sim.attr["debut"])
+        self.get_ids_from_inst = lru_cache(maxsize=lru_cache_size)(
+            self._get_ids_from_inst
+        )
         self.get_veh_element = lru_cache(maxsize=lru_cache_size)(self._get_veh_element)
-
 
     def _get_veh_element(self, vehid):
         return self._vehs.find_children_attr("id", str(vehid))
@@ -273,21 +280,25 @@ class SymuviaTrafficDataReader(AbstractTrafficDataReader):
             trajs = self.get_ids_from_inst(inst)
             if vehid in trajs.keys():
                 vehtraj = trajs[vehid]
-                abs = float(vehtraj.attr['abs'])
-                ord = float(vehtraj.attr['ord'])
-                acc = float(vehtraj.attr['acc'])
-                vit = float(vehtraj.attr['vit'])
-                voie = int(vehtraj.attr['voie'])
-                curv_pos = float(vehtraj.attr['dst'])
-                tron = vehtraj.attr['tron']
-                time = Date(float(inst.attr['val']))+self._start_sim
-                states.append(State(time=time,
-                                    absolute_position=np.array([abs, ord]),
-                                    curvilinear_abscissa=curv_pos,
-                                    acceleration=acc,
-                                    speed=vit,
-                                    lane=voie,
-                                    link=tron))
+                abs = float(vehtraj.attr["abs"])
+                ord = float(vehtraj.attr["ord"])
+                acc = float(vehtraj.attr["acc"])
+                vit = float(vehtraj.attr["vit"])
+                voie = int(vehtraj.attr["voie"])
+                curv_pos = float(vehtraj.attr["dst"])
+                tron = vehtraj.attr["tron"]
+                time = Date(float(inst.attr["val"])) + self._start_sim
+                states.append(
+                    State(
+                        time=time,
+                        absolute_position=np.array([abs, ord]),
+                        curvilinear_abscissa=curv_pos,
+                        acceleration=acc,
+                        speed=vit,
+                        lane=voie,
+                        link=tron,
+                    )
+                )
         return states
 
     def get_OD(self, origin, destination, start_period=None, end_period=None):
@@ -295,58 +306,77 @@ class SymuviaTrafficDataReader(AbstractTrafficDataReader):
         result = list()
         if start_period is None and end_period is None:
             for el in self._vehs.iterchildrens():
-                if OD==(el.attr['entree'], el.attr['sortie']):
-                    veh_el = self.get_veh_element(el.attr['id'])
-                    path = Path(veh_el.attr['itineraire'].split(" "))
+                if OD == (el.attr["entree"], el.attr["sortie"]):
+                    veh_el = self.get_veh_element(el.attr["id"])
+                    path = Path(veh_el.attr["itineraire"].split(" "))
                     result.append(path)
         else:
             start = Date(start_period)
             end = Date(end_period)
             for el in self._vehs.iterchildrens():
-                inst = Date(float(el.attr.get('instE',el.attr['instC'])))+self._start_sim
-                if OD==(el.attr['entree'], el.attr['sortie']) and (start<=inst<=end):
-                    veh_el = self.get_veh_element(el.attr['id'])
-                    path = Path(veh_el.attr['itineraire'].split(" "))
+                inst = (
+                    Date(float(el.attr.get("instE", el.attr["instC"])))
+                    + self._start_sim
+                )
+                if OD == (el.attr["entree"], el.attr["sortie"]) and (
+                    start <= inst <= end
+                ):
+                    veh_el = self.get_veh_element(el.attr["id"])
+                    path = Path(veh_el.attr["itineraire"].split(" "))
                     result.append(path)
         return result
 
     def count_OD(self, period=None):
         if period is None:
-            c = Counter([(el.attr['entree'], el.attr['sortie']) for el in self._vehs.iterchildrens()])
+            c = Counter(
+                [
+                    (el.attr["entree"], el.attr["sortie"])
+                    for el in self._vehs.iterchildrens()
+                ]
+            )
         else:
             start = Date(period[0])
             end = Date(period[1])
-            c = Counter([(el.attr['entree'], el.attr['sortie']) for el in self._vehs.iterchildrens() if start<=Date(float(el.attr.get('instE',el.attr['instC'])))+self._start_sim<=end])
+            c = Counter(
+                [
+                    (el.attr["entree"], el.attr["sortie"])
+                    for el in self._vehs.iterchildrens()
+                    if start
+                    <= Date(float(el.attr.get("instE", el.attr["instC"])))
+                    + self._start_sim
+                    <= end
+                ]
+            )
         return c
 
     def get_trip(self, vehid):
         states = self._get_states(vehid)
         veh_el = self.get_veh_element(vehid)
-        path = Path(veh_el.attr['itineraire'].split(" "))
-        origin = veh_el.attr['entree']
-        dest = veh_el.attr['sortie']
-        departure_time = veh_el.attr.get('instE')
-        arrival_time = veh_el.attr['instS']
+        path = Path(veh_el.attr["itineraire"].split(" "))
+        origin = veh_el.attr["entree"]
+        dest = veh_el.attr["sortie"]
+        departure_time = veh_el.attr.get("instE")
+        arrival_time = veh_el.attr["instS"]
 
-        return Trip(states=states,
-                    path=path,
-                    departure_time=departure_time,
-                    arrival_time=arrival_time,
-                    origin=origin,
-                    destination=dest,
-                    vehicle=vehid)
+        return Trip(
+            states=states,
+            path=path,
+            departure_time=departure_time,
+            arrival_time=arrival_time,
+            origin=origin,
+            destination=dest,
+            vehicle=vehid,
+        )
 
     def get_path(self, vehid):
         veh_el = self.get_veh_element(vehid)
-        path = Path(veh_el.attr['itineraire'].split(" "))
+        path = Path(veh_el.attr["itineraire"].split(" "))
 
         return path
 
     def clear_cache(self):
         self.get_ids_from_inst.cache_clear()
         self.get_veh_element.cache_clear()
-
-
 
     def _get_ids_from_inst(self, inst):
         """From XMLElement of INSTANT return a dict of TRAJ.
@@ -362,8 +392,9 @@ class SymuviaTrafficDataReader(AbstractTrafficDataReader):
             dict with veh id as key and TRAJ XMLElement as value
 
         """
-        trajs = inst.find_children_tag('TRAJS')
-        return {el.attr['id']:el for el in trajs.iterchildrens()}
+        trajs = inst.find_children_tag("TRAJS")
+        return {el.attr["id"]: el for el in trajs.iterchildrens()}
+
 
 if __name__ == "__main__":
     import symupy
@@ -372,7 +403,7 @@ if __name__ == "__main__":
     # file = os.path.dirname(symupy.__file__)+'/../tests/mocks/bottlenecks/bottleneck_001.xml'
     file = "/Users/florian.gacon/Work/SymuTools/data/ref_153000_163000_traf.xml"
     reader = SymuviaTrafficDataReader(file)
-    c = reader.get_OD(('A_Init_L1_OE', 'CAF_Laf_Duguesclin'))
+    c = reader.get_OD(("A_Init_L1_OE", "CAF_Laf_Duguesclin"))
     c = reader.count_OD()
     cp = reader.count_OD(("15:30:00", "15:30:05"))
     # t1 = reader.get_trip('1')

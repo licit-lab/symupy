@@ -29,6 +29,7 @@ class Date(object):
         Description of attribute `_second_to_hhmmss`.
 
     """
+
     def __init__(self, date):
         self.hours = None
         self.minutes = None
@@ -40,29 +41,43 @@ class Date(object):
             self._hhmmss_to_second()
         elif isinstance(date, (int, float)):
             assert date < 86400
-            self._significant_digit = len(str(date).split('.')[-1])
+            self._significant_digit = len(str(date).split(".")[-1])
             self._total_sec = float(date)
             self._second_to_hhmmss()
 
     def _second_to_hhmmss(self):
         frac = self._total_sec - int(self._total_sec)
-        frac = float('.' + str(self._total_sec).split('.')[-1][:self._significant_digit])
+        frac = float(
+            "." + str(self._total_sec).split(".")[-1][: self._significant_digit]
+        )
         mm, ss = divmod(int(self._total_sec), 60)
         hh, mm = divmod(mm, 60)
         self.hours = int(hh)
         self.minutes = int(mm)
-        self.seconds = float(str(ss+frac).split('.')[0] + '.' + str(ss+frac).split('.')[1][:self._significant_digit])
-        str_hh = '0' + str(self.hours) if len(str(self.hours))==1  else str(self.hours)
-        str_mm = '0' + str(self.minutes) if len(str(self.minutes))==1  else str(self.minutes)
-        str_ss = '0' + str(self.seconds) if len(str(self.seconds).split('.')[0])==1  else str(self.seconds)
+        self.seconds = float(
+            str(ss + frac).split(".")[0]
+            + "."
+            + str(ss + frac).split(".")[1][: self._significant_digit]
+        )
+        str_hh = "0" + str(self.hours) if len(str(self.hours)) == 1 else str(self.hours)
+        str_mm = (
+            "0" + str(self.minutes)
+            if len(str(self.minutes)) == 1
+            else str(self.minutes)
+        )
+        str_ss = (
+            "0" + str(self.seconds)
+            if len(str(self.seconds).split(".")[0]) == 1
+            else str(self.seconds)
+        )
         self._date = f"{str_hh}:{str_mm}:{str_ss}"
 
     def _hhmmss_to_second(self):
-        hh, mm, ss = self._date.split(':')
+        hh, mm, ss = self._date.split(":")
         self.hours = int(hh)
         self.minutes = int(mm)
         self.seconds = float(ss)
-        self._total_sec = (int(hh)*60+int(mm))*60+float(ss)
+        self._total_sec = (int(hh) * 60 + int(mm)) * 60 + float(ss)
 
     def to_seconds(self):
         return self._total_sec
@@ -100,7 +115,8 @@ class Date(object):
     def __ge__(self, other):
         return self._total_sec >= other._total_sec
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     d1 = Date("01:01:02")
     d2 = Date("01:01:01")
     d3 = d1 - d2

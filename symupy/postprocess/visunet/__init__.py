@@ -1,3 +1,3 @@
 import logging
 
-logger = logging.getLogger('visunet')
+logger = logging.getLogger("visunet")

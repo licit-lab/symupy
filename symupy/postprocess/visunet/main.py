@@ -2,9 +2,19 @@ import sys
 import logging
 
 
-from PyQt5.QtWidgets import (QHBoxLayout, QGroupBox, QDesktopWidget, QMainWindow,
-                             QApplication, QMenu, QAction, QFileDialog, QSplitter,
-                             QActionGroup, QDialog)
+from PyQt5.QtWidgets import (
+    QHBoxLayout,
+    QGroupBox,
+    QDesktopWidget,
+    QMainWindow,
+    QApplication,
+    QMenu,
+    QAction,
+    QFileDialog,
+    QSplitter,
+    QActionGroup,
+    QDialog,
+)
 from PyQt5.QtCore import Qt
 
 from symupy.postprocess.visunet import logger
@@ -16,8 +26,8 @@ from symupy.postprocess.visunet.routes import RoutesHandler
 
 logger.setLevel(logging.INFO)
 
-class MainWindow(QMainWindow):
 
+class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.resize(QDesktopWidget().availableGeometry(self).size() * 0.7)
@@ -25,7 +35,7 @@ class MainWindow(QMainWindow):
         self.layout = QSplitter(Qt.Horizontal)
         self.setCentralWidget(self.layout)
 
-        self.setWindowTitle('VisuNet')
+        self.setWindowTitle("VisuNet")
 
         self.netWidget = NetworkWidget(parent=self)
         self.layout.addWidget(self.netWidget)
@@ -77,14 +87,14 @@ class MainWindow(QMainWindow):
 
         self.pluginMenu = QMenu("&Plugins", self)
         self.menubar.addMenu(self.pluginMenu)
-        self.submenuReader = self.pluginMenu.addMenu('&Reader')
+        self.submenuReader = self.pluginMenu.addMenu("&Reader")
         self.addFolderAction = QAction("&Add folder...", self)
         self.submenuReader.addAction(self.addFolderAction)
         self.addFolderAction.triggered.connect(self.add_plugins)
 
         self.logMenu = QMenu("&Log", self)
         self.menubar.addMenu(self.logMenu)
-        self.submenuLogger = self.logMenu.addMenu('&Level')
+        self.submenuLogger = self.logMenu.addMenu("&Level")
         self.levelGroup = QActionGroup(self)
         self.levelDBGAction = QAction("&Debug", self)
         self.levelINFAction = QAction("&Info", self)
@@ -112,19 +122,23 @@ class MainWindow(QMainWindow):
         self.clearLogAction.triggered.connect(self.clearLog)
 
     def open_network(self):
-        file, _ = QFileDialog.getOpenFileName(self, "Load Network", options=QFileDialog.DontUseNativeDialog)
+        file, _ = QFileDialog.getOpenFileName(
+            self, "Load Network", options=QFileDialog.DontUseNativeDialog
+        )
 
-        if file != '':
+        if file != "":
             self.netWidget.choose_reader(file)
-            self.panel.update_label_network(file.split('/')[-1])
+            self.panel.update_label_network(file.split("/")[-1])
 
     def open_traffic_data(self):
-        file, _ = QFileDialog.getOpenFileName(self, "Load Traffic Data", options=QFileDialog.DontUseNativeDialog)
+        file, _ = QFileDialog.getOpenFileName(
+            self, "Load Traffic Data", options=QFileDialog.DontUseNativeDialog
+        )
         self.routes.clear()
         self.routes.addRenderer(self.netWidget.renderer)
-        if file != '':
+        if file != "":
             self.routes.choose_reader(file)
-            self.panel.update_label_traffic_data(file.split('/')[-1])
+            self.panel.update_label_traffic_data(file.split("/")[-1])
             reader = self.routes.reader
             if hasattr(reader, "get_path") and callable(getattr(reader, "get_path")):
                 self.renderPathAction.setDisabled(False)
@@ -143,28 +157,32 @@ class MainWindow(QMainWindow):
         trip_selector = TripSelector()
         if trip_selector.exec_() == QDialog.Accepted:
             vehid = trip_selector.vehid.value()
-            if vehid != '':
-                logger.info(f'Looking for path {vehid} and plotting it ...')
+            if vehid != "":
+                logger.info(f"Looking for path {vehid} and plotting it ...")
                 self.routes.addPath(vehid)
 
     def select_trip(self):
         trip_selector = TripSelector()
         if trip_selector.exec_() == QDialog.Accepted:
             vehid = trip_selector.vehid.value()
-            if vehid != '':
-                logger.info(f'Looking for trip {vehid} and plotting it ...')
+            if vehid != "":
+                logger.info(f"Looking for trip {vehid} and plotting it ...")
                 self.routes.addTrip(vehid)
 
     def selectOD(self):
         OD_selector = ODSelector(self.routes.reader.get_OD)
         if OD_selector.exec_() == QDialog.Accepted:
-            args = [None if arg=='None' else arg for arg in OD_selector.values]
+            args = [None if arg == "None" else arg for arg in OD_selector.values]
             self.routes.addOD(args)
 
     def add_plugins(self):
-        options = QFileDialog.Options(QFileDialog.Options(QFileDialog.DontUseNativeDialog))
-        folder = str(QFileDialog.getExistingDirectory(self, "Load Plugins", "", options=options))
-        if folder != '':
+        options = QFileDialog.Options(
+            QFileDialog.Options(QFileDialog.DontUseNativeDialog)
+        )
+        folder = str(
+            QFileDialog.getExistingDirectory(self, "Load Plugins", "", options=options)
+        )
+        if folder != "":
             add_dir_to_plugin(folder)
 
     def setLoggerLevelDBG(self):
@@ -188,10 +206,11 @@ def launch_app(file=None):
     w = MainWindow()
     w.show()
     if file is not None:
-        w.data.file_network=file
+        w.data.file_network = file
         w.panel.panel_netw.plot_network()
 
     app.exec_()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     launch_app()
