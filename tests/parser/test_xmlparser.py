@@ -161,33 +161,35 @@ def multiple_traces_hybrid_tuple():
 
 def test_xml_trajectory_parse_regular(multiple_traces, multiple_traces_tuple):
     z = XMLTrajectory(multiple_traces)
+    ids = [x[4] for x in multiple_traces_tuple]
     assert z.traj == multiple_traces_tuple
-    assert z.abs == tuple(x[0] for x in multiple_traces_tuple)
-    assert z.acceleration == tuple(x[1] for x in multiple_traces_tuple)
-    assert z.dst == tuple(x[2] for x in multiple_traces_tuple)
-    assert z.driven == tuple(x[3] for x in multiple_traces_tuple)
-    assert z.id == tuple(x[4] for x in multiple_traces_tuple)
-    assert z.ord == tuple(x[5] for x in multiple_traces_tuple)
-    assert z.link == tuple(x[6] for x in multiple_traces_tuple)
-    assert z.type == tuple(x[7] for x in multiple_traces_tuple)
-    assert z.vit == tuple(x[8] for x in multiple_traces_tuple)
-    assert z.lane == tuple(x[9] for x in multiple_traces_tuple)
-    assert z.z == tuple(x[10] for x in multiple_traces_tuple)
+    assert z.abs == dict(zip(ids, [x[0] for x in multiple_traces_tuple]))
+    assert z.acceleration == dict(zip(ids, [x[1] for x in multiple_traces_tuple]))
+    assert z.dst == dict(zip(ids, [x[2] for x in multiple_traces_tuple]))
+    assert z.driven == dict(zip(ids, [x[3] for x in multiple_traces_tuple]))
+    assert z.id == tuple(ids)
+    assert z.ord == dict(zip(ids, [x[5] for x in multiple_traces_tuple]))
+    assert z.link == dict(zip(ids, [x[6] for x in multiple_traces_tuple]))
+    assert z.type == dict(zip(ids, [x[7] for x in multiple_traces_tuple]))
+    assert z.vit == dict(zip(ids, [x[8] for x in multiple_traces_tuple]))
+    assert z.lane == dict(zip(ids, [x[9] for x in multiple_traces_tuple]))
+    assert z.z == dict(zip(ids, [x[10] for x in multiple_traces_tuple]))
 
 
 def test_xml_trajectory_parse_hybrid(
     multiple_traces_hybrid, multiple_traces_hybrid_tuple
 ):
     z = XMLTrajectory(multiple_traces_hybrid)
+    ids = [x[4] for x in multiple_traces_hybrid_tuple]
     assert z.traj == multiple_traces_hybrid_tuple
-    assert z.abs == tuple(x[0] for x in multiple_traces_hybrid_tuple)
-    assert z.acc == tuple(x[1] for x in multiple_traces_hybrid_tuple)
-    assert z.dst == tuple(x[2] for x in multiple_traces_hybrid_tuple)
-    assert z.driven == tuple(x[3] for x in multiple_traces_hybrid_tuple)
-    assert z.id == tuple(x[4] for x in multiple_traces_hybrid_tuple)
-    assert z.ord == tuple(x[5] for x in multiple_traces_hybrid_tuple)
-    assert z.link == tuple(x[6] for x in multiple_traces_hybrid_tuple)
-    assert z.type == tuple(x[7] for x in multiple_traces_hybrid_tuple)
-    assert z.vit == tuple(x[8] for x in multiple_traces_hybrid_tuple)
-    assert z.lane == tuple(x[9] for x in multiple_traces_hybrid_tuple)
-    assert z.z == tuple(x[10] for x in multiple_traces_hybrid_tuple)
+    assert z.abs == dict(zip(ids, [x[0] for x in multiple_traces_hybrid_tuple]))
+    assert z.acceleration == dict(zip(ids, [x[1] for x in multiple_traces_hybrid_tuple]))
+    assert z.dst == dict(zip(ids, [x[2] for x in multiple_traces_hybrid_tuple]))
+    assert z.driven == dict(zip(ids, [x[3] for x in multiple_traces_hybrid_tuple]))
+    assert z.id == tuple(ids)
+    assert z.ord == dict(zip(ids, [x[5] for x in multiple_traces_hybrid_tuple]))
+    assert z.link == dict(zip(ids, [x[6] for x in multiple_traces_hybrid_tuple]))
+    assert z.type == dict(zip(ids, [x[7] for x in multiple_traces_hybrid_tuple]))
+    assert z.vit == dict(zip(ids, [x[8] for x in multiple_traces_hybrid_tuple]))
+    assert z.lane == dict(zip(ids, [x[9] for x in multiple_traces_hybrid_tuple]))
+    assert z.z == dict(zip(ids, [x[10] for x in multiple_traces_hybrid_tuple]))
