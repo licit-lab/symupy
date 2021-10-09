@@ -400,19 +400,6 @@ class Simulator(Configurator, RuntimeDevice):
         new_pos = vehcontrol.new_position
         return self.drive_vehicle(vehid, new_pos, destination, lane)
 
-    def get_vehicle_context(self, vehid: str):
-        ## TODO: Implement this
-        raise NotImplementedError
-
-    # def log_vehicle_in_network(self, veh: Vehicle, network: NetworkType):
-    #     # veh = Vehicle(vehid)
-    #     ## TODO: Finish
-    #     network.register_vehicle(veh)
-
-    # def log_vehid_in_network(self, vehid: str, network: NetworkType):
-    #     ## TODO: Optional
-    #     pass
-
     def init_symbol_states(self):
         """Initializes symbols before call of a runtime for access in memory"""
 
