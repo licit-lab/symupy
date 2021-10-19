@@ -9,7 +9,6 @@
 
 from ctypes import create_string_buffer
 import pytest
-from xmltodict import parse
 
 # ============================================================================
 # INTERNAL IMPORTS
