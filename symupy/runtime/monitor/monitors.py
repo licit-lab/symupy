@@ -24,7 +24,6 @@ class SymuviaMonitorMFD(ScatterMonitorView):
 
     def update(self, step, instants, ind):
         nbveh = instants.nbveh
-        # print(instants.traj)
         if instants.vit:
             mean_speed = np.mean(list(instants.vit.values()))
             return nbveh, mean_speed*nbveh
@@ -46,7 +45,7 @@ class SymuviaMonitorVEH(LineMonitorView):
                             "acceleration": self._update_acceleration,
                             "distance": self._update_distance}
         assert indicator in self._indicators
-        super(SymuviaMonitorVEH, self).__init__(f'VEH{ids} {indicator}', 'Instant', indicator, nb_plots=len(ids))
+        super(SymuviaMonitorVEH, self).__init__(f'VEH {indicator}', 'Instant', indicator, nb_plots=len(ids))
         self.ids = ids
 
         self.indicator = indicator
@@ -180,8 +179,6 @@ class SymuviaMonitorFlux(LineMonitorView):
 class SymuviaMonitorFlow(ScatterMonitorView):
     def __init__(self, xrange=None, yrange=None):
         super(SymuviaMonitorFlow, self).__init__('Flow', 'X', 'Y', stack_value=False, symbol="o", xrange=xrange, yrange=yrange)
-        # self.ord_pattern = re.compile('ord="(.*?)"')
-        # self.abs_pattern = re.compile('abs="(.*?)"')
 
     def update(self, step, instants, ind):
         ord = [float(v) for v in instants.ord.values()]
@@ -193,16 +190,3 @@ class SymuviaMonitorFlow(ScatterMonitorView):
             return None, None
 
 
-if __name__ == "__main__":
-    from symupy.runtime.monitor.manager import MonitorApp
-
-    manager = MonitorApp()
-    # manager.add_monitor(SymuviaMonitorFlow(xrange=[843144.596349, 843771.29197], yrange=[6519780.054134,6520021.662851]), 0, 0)
-    manager.add_monitor(SymuviaMonitorMFD(), 0, 0)
-    manager.add_monitor(SymuviaMonitorAccumulation(), 0, 1)
-    manager.add_monitor(SymuviaMonitorVEH([3,58], "speed"), 1, 0)
-    manager.add_monitor(SymuviaMonitorTTT(["L_0"], aggregation_period=1), 1, 1)
-    manager.add_monitor(SymuviaMonitorTTD(["L_0"], aggregation_period=1), 0, 2, rowspan=2)
-    manager.add_monitor(SymuviaMonitorFlux(["L_0"], aggregation_period=10), 2, 0, colspan=3)
-    manager.set_feeder(launch_simuflow(r"/Users/florian.gacon/Dropbox (LICIT_LAB)/Data/SingleLink_symuvia_withcapacityrestriction.xml"))
-    manager.launch_app()
