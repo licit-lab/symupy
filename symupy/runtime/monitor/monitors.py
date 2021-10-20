@@ -6,18 +6,8 @@ from symupy.runtime.api import Simulator
 from symupy.runtime.monitor.manager import ScatterMonitorView, LineMonitorView
 from symupy.utils.constants import DEFAULT_PATH_SYMUVIA
 
-_PATTERN_TRAJ = re.compile("<TRAJ\s(.*?)\/>")
-_PATTERN_ATTR  = re.compile('(\w+)="(.*?)"')
-_PATTERN_TIME = re.compile('val="(.*?)">')
 
-
-def _get_trajs(string):
-    trajs = _PATTERN_TRAJ.findall(string)
-    trajs = [{key:val for key, val in _PATTERN_ATTR.findall(t)} for t in trajs]
-    return trajs
-
-
-def launch_simuvia(file) -> tuple:
+def launch_simuflow(file) -> tuple:
     sim_instance = Simulator.from_path(file, DEFAULT_PATH_SYMUVIA)
     sim_instance.trace_flow = True
     sim_instance.step_launch_mode = "full"
@@ -25,20 +15,18 @@ def launch_simuvia(file) -> tuple:
     with sim_instance as s:
         while s.do_next:
           s.run_step()
-          yield sim_instance.simulationstep, sim_instance.request.query.decode("UTF8")
+          yield sim_instance.simulationstep, sim_instance.request.datatraj
 
 
 class SymuviaMonitorMFD(ScatterMonitorView):
     def __init__(self):
         super(SymuviaMonitorMFD, self).__init__('MFD', 'Accumulation', 'production')
-        self.nbveh_pattern = re.compile('<INST nbVeh="(.*?)"\s')
-        self.vit_pattern = re.compile('vit="(.*?)"')
 
     def update(self, step, instants, ind):
-        nbveh = int(self.nbveh_pattern.findall(instants)[0])
-        speeds = [float(v) for v in self.vit_pattern.findall(instants)]
-        if speeds:
-            mean_speed = np.mean(speeds)
+        nbveh = instants.nbveh
+        # print(instants.traj)
+        if instants.vit:
+            mean_speed = np.mean(list(instants.vit.values()))
             return nbveh, mean_speed*nbveh
         else:
             return None, None
@@ -47,11 +35,9 @@ class SymuviaMonitorMFD(ScatterMonitorView):
 class SymuviaMonitorAccumulation(LineMonitorView):
     def __init__(self):
         super(SymuviaMonitorAccumulation, self).__init__('Accumulation', 'Instant', 'VEH number')
-        self.nbveh_pattern = re.compile('<INST nbVeh="(.*?)"\s')
 
     def update(self, step, instants, ind):
-        nbveh = int(self.nbveh_pattern.findall(instants)[0])
-        return step, nbveh
+        return step, instants.nbveh
 
 
 class SymuviaMonitorVEH(LineMonitorView):
@@ -67,18 +53,18 @@ class SymuviaMonitorVEH(LineMonitorView):
 
         self._dst = [0]*len(ids)
         self._lastpos = [None]*len(ids)
-
         self.line_labels = [str(id) for id in ids]
 
 
-    def _update_speed(self, traj, ind):
-        return float(traj["vit"])
+    def _update_speed(self, instants, ind):
+        return instants.vit[self.ids[ind]]
 
-    def _update_acceleration(self, traj, ind):
-        return float(traj["acc"])
+    def _update_acceleration(self, instants, ind):
+        return instants.acc[self.ids[ind]]
 
-    def _update_distance(self, trajs, ind):
-        curr_pos = np.array([float(trajs["abs"]), float(trajs["ord"])])
+    def _update_distance(self, instants, ind):
+        curr_pos = np.array([instants.abs[self.ids[ind]], instants.ord[self.ids[ind]]])
+
         if self._lastpos[ind] is None:
             self._lastpos[ind] = curr_pos
         else:
@@ -88,16 +74,10 @@ class SymuviaMonitorVEH(LineMonitorView):
         return self._dst[ind]
 
     def update(self, step, instants, ind):
-        trajs = _get_trajs(instants)
+        veh_ids = instants.id
         veh_state = None
-        #time = float(_PATTERN_TIME.findall(instants)[0])
-        for t in trajs:
-            if int(t["id"]) == self.ids[ind]:
-                veh_state = t
-                break
-
-        if veh_state is not None:
-            y = self._indicators[self.indicator](veh_state, ind)
+        if self.ids[ind] in veh_ids:
+            y = self._indicators[self.indicator](instants, ind)
             return step, y
         else:
             return None, None
@@ -114,16 +94,15 @@ class SymuviaMonitorTTT(LineMonitorView):
 
     def update(self, step, instants, ind):
         if step%self.aggregation_period==0:
-            time = float(_PATTERN_TIME.findall(instants)[0])
-            trajs = _get_trajs(instants)
+            time = instants.inst
             curr_t = set()
-            for t in trajs:
-                if t["tron"] in self.zone and t["id"] in self.vehs:
-                    self.ttt += time - self.vehs[t["id"]]
-                    self.vehs[t["id"]] = time
-                if t["tron"] in self.zone:
-                    curr_t.add(t["id"])
-                    self.vehs[t["id"]] = time
+            for vehid, tron in instants.tron.items():
+                if tron in self.zone and vehid in self.vehs:
+                    self.ttt += time - self.vehs[vehid]
+                    self.vehs[vehid] = time
+                if tron in self.zone:
+                    curr_t.add(vehid)
+                    self.vehs[vehid] = time
 
             [self.vehs.pop(t) for t in list(self.vehs.keys()) if t not in curr_t]
 
@@ -143,16 +122,15 @@ class SymuviaMonitorTTD(LineMonitorView):
 
     def update(self, step, instants, ind):
         if step%self.aggregation_period==0:
-            trajs = _get_trajs(instants)
             curr_t = set()
-            for t in trajs:
-                pos = np.array([float(t["abs"]), float(t["ord"])])
-                if t["tron"] in self.zone and t["id"] in self.vehs:
-                    self.ttd += np.linalg.norm(pos - self.vehs[t["id"]])
-                    self.vehs[t["id"]] = pos
-                if t["tron"] in self.zone:
-                    curr_t.add(t["id"])
-                    self.vehs[t["id"]] = pos
+            for vehid, tron, abs, ord in zip(instants.id, instants.tron.values(), instants.abs.values(), instants.ord.values()):
+                pos = np.array([abs, ord])
+                if tron in self.zone and vehid in self.vehs:
+                    self.ttd += np.linalg.norm(pos - self.vehs[vehid])
+                    self.vehs[vehid] = pos
+                if tron in self.zone:
+                    curr_t.add(vehid)
+                    self.vehs[vehid] = pos
 
             [self.vehs.pop(t) for t in list(self.vehs.keys()) if t not in curr_t]
 
@@ -173,18 +151,16 @@ class SymuviaMonitorFlux(LineMonitorView):
         self.invehs = set()
 
     def update(self, step, instants, ind):
-        trajs = _get_trajs(instants)
-
         if ind == 0:
-            for t in trajs:
-                if t["id"] not in self.invehs and t["tron"] in self.zone:
+            for vehid, tron in instants.tron.items():
+                if vehid not in self.invehs and tron in self.zone:
                     self.influx += 1
-                    self.invehs.add(t["id"])
+                    self.invehs.add(vehid)
             val = self.influx
             if step % self.aggregation_period == 0:
                 self.influx= 0
         else:
-            curr_vehs = [t["id"] for t in trajs]
+            curr_vehs = list(instants.tron.keys())
             to_del = set()
             for t in self.invehs:
                 if t not in curr_vehs:
@@ -204,12 +180,12 @@ class SymuviaMonitorFlux(LineMonitorView):
 class SymuviaMonitorFlow(ScatterMonitorView):
     def __init__(self, xrange=None, yrange=None):
         super(SymuviaMonitorFlow, self).__init__('Flow', 'X', 'Y', stack_value=False, symbol="o", xrange=xrange, yrange=yrange)
-        self.ord_pattern = re.compile('ord="(.*?)"')
-        self.abs_pattern = re.compile('abs="(.*?)"')
+        # self.ord_pattern = re.compile('ord="(.*?)"')
+        # self.abs_pattern = re.compile('abs="(.*?)"')
 
     def update(self, step, instants, ind):
-        ord = [float(v) for v in self.ord_pattern.findall(instants)]
-        abs = [float(v) for v in self.abs_pattern.findall(instants)]
+        ord = [float(v) for v in instants.ord.values()]
+        abs = [float(v) for v in instants.abs.values()]
 
         if ord:
             return abs, ord
@@ -221,12 +197,12 @@ if __name__ == "__main__":
     from symupy.runtime.monitor.manager import MonitorApp
 
     manager = MonitorApp()
-    manager.add_monitor(SymuviaMonitorFlow(xrange=[843144.596349, 843771.29197], yrange=[6519780.054134,6520021.662851]), 0, 0)
-    # manager.add_monitor(SymuviaMonitorMFD(), 0, 0)
-    # manager.add_monitor(SymuviaMonitorAccumulation(), 0, 1)
-    # manager.add_monitor(SymuviaMonitorVEH([3,58], "speed"), 1, 0)
-    # manager.add_monitor(SymuviaMonitorTTT(["L_0"], aggregation_period=1), 1, 1)
-    # manager.add_monitor(SymuviaMonitorTTD(["L_0"], aggregation_period=1), 0, 2, rowspan=2)
-    # manager.add_monitor(SymuviaMonitorFlux(["L_0"], aggregation_period=10), 2, 0, colspan=3)
-    manager.set_feeder(launch_simuvia("/Users/florian.gacon/Dropbox (LICIT_LAB)/Data/Lafayette/LafayetteV8_OS.xml"))
+    # manager.add_monitor(SymuviaMonitorFlow(xrange=[843144.596349, 843771.29197], yrange=[6519780.054134,6520021.662851]), 0, 0)
+    manager.add_monitor(SymuviaMonitorMFD(), 0, 0)
+    manager.add_monitor(SymuviaMonitorAccumulation(), 0, 1)
+    manager.add_monitor(SymuviaMonitorVEH([3,58], "speed"), 1, 0)
+    manager.add_monitor(SymuviaMonitorTTT(["L_0"], aggregation_period=1), 1, 1)
+    manager.add_monitor(SymuviaMonitorTTD(["L_0"], aggregation_period=1), 0, 2, rowspan=2)
+    manager.add_monitor(SymuviaMonitorFlux(["L_0"], aggregation_period=10), 2, 0, colspan=3)
+    manager.set_feeder(launch_simuflow(r"/Users/florian.gacon/Dropbox (LICIT_LAB)/Data/SingleLink_symuvia_withcapacityrestriction.xml"))
     manager.launch_app()

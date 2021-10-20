@@ -134,4 +134,4 @@ class MonitorApp(QMainWindow):
 
     def launch_app(self):
         self.show()
-        sys.exit(MonitorApp._app.exec_())
+        sys.exit(self._app.exec_())

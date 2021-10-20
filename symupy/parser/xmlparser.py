@@ -156,7 +156,7 @@ PATTERN = {
     "acc": re.compile(r'acc="(.*?)"'),
     "dst": re.compile(r'dst="(.*?)"'),
     "etat_pilotage": re.compile(r'dst="([\d\.]*?)"( etat_pilotage=".*?")? id="(.*?)"'),
-    "id": re.compile(r'dst="([\d\.]*?)"( etat_pilotage=".*?")? id="(.*?)" ord="(.*?)"'),
+    "id": re.compile(r'id="(\d+)"'),
     "ord": re.compile(r'ord="(.*?)"'),
     "tron": re.compile(r'tron="(.*?)"'),
     "type": re.compile(r'tron="(.*?)" type="(.*?)" vit="(.*?)"'),
@@ -168,6 +168,7 @@ PATTERN = {
     ),
     "inst": re.compile(r'val="(.*?)"'),
     "nbveh": re.compile(r'nbVeh="(.*?)"'),
+    "extract_traj_balise": re.compile('<TRAJS>(.*?)<\/TRAJS>')
 }
 
 CAV_TYPE = tuple(value for key, value in FIELD_FORMAT.items())
@@ -191,6 +192,11 @@ class XMLTrajectory:
 
     def __init__(self, xml: bytes):
         self._xml = xml.decode("UTF8")
+        self._trajs = ''
+        if len(self._xml)>0:
+            pattern = PATTERN['extract_traj_balise'].findall(self._xml)
+            if len(pattern)>0:
+                self._trajs = pattern[0]
 
     def __getattr__(self, name):
         if name == "aliases":
@@ -209,7 +215,7 @@ class XMLTrajectory:
         abs = tuple(
             map(
                 FIELD_FORMAT["abs"],
-                PATTERN.get("abs").findall(self._xml),
+                PATTERN.get("abs").findall(self._trajs),
             )
         )
 
@@ -223,7 +229,7 @@ class XMLTrajectory:
         Returns:
             tuple: cached `acc` values
         """
-        acc =  tuple(map(FIELD_FORMAT["acc"], PATTERN.get("acc").findall(self._xml)))
+        acc =  tuple(map(FIELD_FORMAT["acc"], PATTERN.get("acc").findall(self._trajs)))
 
         return dict(zip(self.id, acc))
 
@@ -234,7 +240,7 @@ class XMLTrajectory:
         Returns:
             tuple: cached `dst` values
         """
-        dst = tuple(map(FIELD_FORMAT["dst"], PATTERN.get("dst").findall(self._xml)))
+        dst = tuple(map(FIELD_FORMAT["dst"], PATTERN.get("dst").findall(self._trajs)))
 
         return  dict(zip(self.id, dst))
 
@@ -250,7 +256,7 @@ class XMLTrajectory:
         Returns:
             tuple: cached `etat_pilotage` values
         """
-        drv = PATTERN.get("etat_pilotage").findall(self._xml)
+        drv = PATTERN.get("etat_pilotage").findall(self._trajs)
         if drv:
             drv = tuple(map(FIELD_FORMAT["etat_pilotage"], [x[1] for x in drv]))
             return dict(zip(self.id, drv))
@@ -265,7 +271,7 @@ class XMLTrajectory:
         return tuple(
             map(
                 FIELD_FORMAT["id"],
-                [x[-2] for x in PATTERN.get("id").findall(self._xml)],
+                [x for x in PATTERN.get("id").findall(self._trajs)],
             )
         )
 
@@ -276,7 +282,7 @@ class XMLTrajectory:
         Returns:
             tuple: cached `ord` values
         """
-        ord = tuple(map(FIELD_FORMAT["ord"], PATTERN.get("ord").findall(self._xml)))
+        ord = tuple(map(FIELD_FORMAT["ord"], PATTERN.get("ord").findall(self._trajs)))
         return dict(zip(self.id, ord))
 
     @cached_property
@@ -286,7 +292,7 @@ class XMLTrajectory:
         Returns:
             tuple: cached `tron` values
         """
-        tron = tuple(PATTERN.get("tron").findall(self._xml))
+        tron = tuple(PATTERN.get("tron").findall(self._trajs))
         return dict(zip(self.id, tron))
 
     @cached_property
@@ -296,7 +302,7 @@ class XMLTrajectory:
         Returns:
             tuple: cached `type` values
         """
-        types = tuple(x[1] for x in PATTERN.get("type").findall(self._xml))
+        types = tuple(x[1] for x in PATTERN.get("type").findall(self._trajs))
         return dict(zip(self.id, types))
 
     @cached_property
@@ -306,7 +312,7 @@ class XMLTrajectory:
         Returns:
             tuple: cached `vit` values
         """
-        vit = tuple(map(FIELD_FORMAT["vit"], PATTERN.get("vit").findall(self._xml)))
+        vit = tuple(map(FIELD_FORMAT["vit"], PATTERN.get("vit").findall(self._trajs)))
         return dict(zip(self.id, vit))
 
     @cached_property
@@ -316,7 +322,7 @@ class XMLTrajectory:
         Returns:
             tuple: cached `voie` values
         """
-        voie = tuple(map(FIELD_FORMAT["voie"], PATTERN.get("voie").findall(self._xml)))
+        voie = tuple(map(FIELD_FORMAT["voie"], PATTERN.get("voie").findall(self._trajs)))
         return dict(zip(self.id, voie))
 
     @cached_property
@@ -326,7 +332,7 @@ class XMLTrajectory:
         Returns:
             tuple: cached `z` values
         """
-        z = tuple(map(float, PATTERN.get("z").findall(self._xml)))
+        z = tuple(map(float, PATTERN.get("z").findall(self._trajs)))
         return dict(zip(self.id, z))
 
     @cached_property
@@ -338,7 +344,7 @@ class XMLTrajectory:
         """
         return tuple(
             XMLTrajectory._typeconvert(x)
-            for x in PATTERN.get("traj").findall(self._xml)
+            for x in PATTERN.get("traj").findall(self._trajs)
         )
 
     @cached_property
