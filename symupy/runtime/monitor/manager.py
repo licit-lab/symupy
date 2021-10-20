@@ -94,12 +94,17 @@ class MonitorApp(QMainWindow):
         self.layout = QVBoxLayout(self.central_widget)
         self.setCentralWidget(self.central_widget)
 
+        self.button_handler = QHBoxLayout()
+        self.layout.addLayout(self.button_handler)
+
         self.run = QPushButton("Run")
         self.stop = QPushButton("Stop")
         self.run.clicked.connect(self.launch_simulation)
         self.stop.clicked.connect(self.set_stop)
-        self.layout.addWidget(self.run)
-        self.layout.addWidget(self.stop)
+        self.button_handler.addWidget(self.run)
+        self.button_handler.addWidget(self.stop)
+        self.button_handler.setSpacing(100)
+        self.button_handler.setContentsMargins(100, 0, 100, 0)
 
         self.monitor_manager = MonitorManager()
         self.layout.addWidget(self.monitor_manager.widget)
