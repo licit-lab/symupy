@@ -1,9 +1,9 @@
-""" 
-Stream Parser 
+"""
+Stream Parser
 =============
-This module handles the Simulation response converting it into proper formats for querying data afterwards. 
+This module handles the Simulation response converting it into proper formats for querying data afterwards.
 
-The parser object converts a request from the simulator into the correct format for the 
+The parser object converts a request from the simulator into the correct format for the
 """
 
 # ============================================================================

@@ -33,6 +33,7 @@ requirements:
         - ipython
         - symuvia=1.0.0
         - pyqt
+        - pyqtgraph
 
 test:
     requires:
