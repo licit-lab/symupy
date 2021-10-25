@@ -49,11 +49,11 @@ project = "Symupy"
 copyright = "2020, Andres Ladino"
 author = "Andres Ladino"
 
-from symupy.utils.constants import DEFAULT_PATH_SYMUVIA
+from symupy.utils.constants import DEFAULT_PATH_SYMUFLOW
 
 print("LIB: Library Check")
 print("===============================")
-print(DEFAULT_PATH_SYMUVIA)
+print(DEFAULT_PATH_SYMUFLOW)
 
 import symupy
 
@@ -172,7 +172,7 @@ latex_elements = {
 # (source start file, target name, title, author, documentclass
 # [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, "symupy.tex", "SymuVia Python API", "Andres Ladino", "manual")
+    (master_doc, "symupy.tex", "SymuFlow Python API", "Andres Ladino", "manual")
 ]
 
 
@@ -180,7 +180,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "symupy", "SymuVia Python API", [author], 1)]
+man_pages = [(master_doc, "symupy", "SymuFlow Python API", [author], 1)]
 
 
 # -- Options for Texinfo output ----------------------------------------
@@ -192,7 +192,7 @@ texinfo_documents = [
     (
         master_doc,
         "symupy",
-        "SymuVia Python API",
+        "SymuFlow Python API",
         author,
         "symupy",
         "A module to process and launch traffic simulations.",

@@ -24,7 +24,7 @@ from symupy.postprocess.visunet.main import launch_app
 
 help_text = """Symupy
 
-A package to launch traffic simulations using SymuVia
+A package to launch traffic simulations using SymuFlow
 
 This is a Command Line Interface to provide functionalities related to specific task executions and
 
@@ -67,7 +67,7 @@ def launch(scenario: str) -> None:
     "-f",
     "--file",
     default=None,
-    help="SymuVia network.",
+    help="SymuFlow network.",
 )
 def visu(file) -> None:
     """Launches VisuNet app """

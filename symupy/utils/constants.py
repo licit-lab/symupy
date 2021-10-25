@@ -88,9 +88,9 @@ else:
 
 # Default names/platform
 DCT_LIBOSNAME = {
-    "Darwin": "libSymuVia.dylib",
-    "Linux": "libSymuVia.so",
-    "Windows": "libSymuVia.dll",
+    "Darwin": "libSymuFlow.dylib",
+    "Linux": "libSymuFlow.so",
+    "Windows": "libSymuFlow.dll",
 }
 
 

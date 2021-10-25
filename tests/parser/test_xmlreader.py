@@ -18,7 +18,7 @@ import pytest
 # TESTS AND DEFINITIONS
 # ============================================================================
 
-from symupy.plugins.reader.symuvia import SymuviaNetworkReader
+from symupy.plugins.reader.symuflow import SymuviaNetworkReader
 
 
 @pytest.fixture

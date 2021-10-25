@@ -69,8 +69,8 @@ setup(
     author_email="aladinoster@gmail.com",
     maintainer="Andres Ladino",
     maintainer_email="aladinoster@gmail.com",
-    url="https://github.com/symuvia/symupy",
-    download_url="https://github.com/symuvia/symupy",
+    url="https://github.com/symuflow/symupy",
+    download_url="https://github.com/symuflow/symupy",
     packages=find_packages(
         include=["symupy", "symupy.*", "*.ini", "*.xml", "*.xsd"]
     ),

@@ -17,13 +17,13 @@ dependencies:
   - pytest
   - coverage
   - ipython
-  - symuvia=1.0.0
+  - symuflow=1.0.0
   - pandoc
   - sphinx
   - recommonmark
   - nbsphinx
   - sphinx-book-theme
   - ipykernel
-  - pip 
+  - pip
   - pip:
     - --editable ..

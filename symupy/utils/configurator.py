@@ -3,7 +3,7 @@
     relevant to make the evolution of a simulation. The objective is to
     introduce flexibility when configuring the the simulator platform
     and the runtime execution possibilities offered by exposed functions
-    from the c library of SymuVia
+    from the c library of SymuFlow
 """
 # ============================================================================
 # STANDARD  IMPORTS

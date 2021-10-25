@@ -90,5 +90,5 @@
 
 ## 0.5.1 (2021-02-15)
 
-* Now detection of symuvia is based on default installation of symuvia (via conda)
+* Now detection of symuflow is based on default installation of symuflow (via conda)
 * Pining python version

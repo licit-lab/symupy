@@ -69,7 +69,7 @@ TupleFloat = Union[float, tuple]
 
 class Simulator(Configurator, RuntimeDevice):
     """
-    Simulator class for containing object to connect and  command a simulation in SymuVia
+    Simulator class for containing object to connect and  command a simulation in SymuFlow
 
     Example:
         Call of the default simulator ::
@@ -92,7 +92,7 @@ class Simulator(Configurator, RuntimeDevice):
     This object describes is a configurator manager for the interface between the traffic simulator and the python interface. For more details on the optinal keyword parameters please refer to :py:class:`~symupy.utils.configurator.Configurator` class.
 
     :raises SymupyLoadLibraryError:
-        Error raised whenever the SymuVia library is not found
+        Error raised whenever the SymuFlow library is not found
 
     :raises SymupyFileLoadError:
         Error raised whenever the provided path for an scenario cannot be loaded into the Simulator
@@ -124,7 +124,7 @@ class Simulator(Configurator, RuntimeDevice):
     # =========================================================================
 
     def load_symuvia(self):
-        """Load SymuVia shared library"""
+        """Load SymuFlow shared library"""
         try:
             lib_symuvia = cdll.LoadLibrary(self.library_path)
         except OSError:
@@ -132,7 +132,7 @@ class Simulator(Configurator, RuntimeDevice):
         self.__library = lib_symuvia
 
     def load_network(self) -> int:
-        """Load SymuVia Simulation File"""
+        """Load SymuFlow Simulation File"""
         if not hasattr(self, "_sim"):
             raise SymupyFileLoadError("File not provided", "")
         valid = self.__library.SymLoadNetworkEx(self.scenarioFilename("UTF8"))
@@ -240,7 +240,7 @@ class Simulator(Configurator, RuntimeDevice):
         Example:
             One example to create a vehicle is as follows ::
 
-            >>> with symuvia as s:
+            >>> with symuflow as s:
             >>>     while s.do_next:
             >>>         s.request_answer()  # Initialize
             >>>         s.request_answer()  # Vehicle 0
@@ -358,7 +358,7 @@ class Simulator(Configurator, RuntimeDevice):
         Example:
             One example to drive a vehicle as follows ::
 
-            >>> with symuvia as s:
+            >>> with symuflow as s:
             >>>     while s.do_next:
             >>>         s.run_step()
             >>>         if s.request.is_vehicle_in_network("0"):
@@ -642,7 +642,7 @@ class Simulator(Configurator, RuntimeDevice):
         """
         Scenario filenamme
 
-        :return: Absolute path towards the XML input for SymuVia
+        :return: Absolute path towards the XML input for SymuFlow
         :rtype: str
         """
         return self.simulation.filename(encoding)

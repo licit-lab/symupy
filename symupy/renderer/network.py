@@ -119,7 +119,7 @@ class NetworkRenderer(object):
             troncons = self._network.sensors[key]["links"]
             troncons_id = [self._network_keys.index(id) for id in troncons]
             coords = np.array(self._network_coords, dtype=object)[troncons_id]
-            coords = np.row_stack([arr + [[None, None]] for arr in coords])
+            coords = np.row_stack([arr.tolist() + [[None, None]] for arr in coords])
             c = self.color
             self._sensor_plot.append(
                 self._fig.gca().plot(coords[:, 0], coords[:, 1], c, linewidth=2)[0]
@@ -166,7 +166,7 @@ class NetworkRenderer(object):
 
 
 if __name__ == "__main__":
-    from symupy.plugins.reader.symuvia import SymuviaNetworkReader
+    from symupy.plugins.reader.symuflow import SymuviaNetworkReader
 
     file = "/Users/florian/Work/visunet/data/Lyon63V/L63V.xml"
     reader = SymuviaNetworkReader(file)

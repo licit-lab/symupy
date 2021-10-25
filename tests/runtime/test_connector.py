@@ -62,52 +62,52 @@ def test_load_symuvia_via_api(symuvia_library_path):
 
 
 def test_load_bottleneck_001(bottleneck_001):
-    symuvia = Simulation(bottleneck_001)
-    assert symuvia.filename() == bottleneck_001
+    symuflow = Simulation(bottleneck_001)
+    assert symuflow.filename() == bottleneck_001
 
 
 def test_default_load_constructor_bottleneck_001(bottleneck_001):
-    symuvia = Simulator()
-    symuvia.register_simulation(bottleneck_001)
-    symuvia.load_symuvia()
-    valid = symuvia.load_network()
+    symuflow = Simulator()
+    symuflow.register_simulation(bottleneck_001)
+    symuflow.load_symuvia()
+    valid = symuflow.load_network()
     assert valid == 1
 
 
 def test_load_constructor_bottleneck_001(bottleneck_001, symuvia_library_path):
-    symuvia = Simulator.from_path(bottleneck_001, symuvia_library_path)
-    symuvia.load_symuvia()
-    valid = symuvia.load_network()
+    symuflow = Simulator.from_path(bottleneck_001, symuvia_library_path)
+    symuflow.load_symuvia()
+    valid = symuflow.load_network()
     assert valid == 1
 
 
 def test_run_bottleneck_001(bottleneck_001, symuvia_library_path):
-    symuvia = Simulator.from_path(bottleneck_001, symuvia_library_path)
-    symuvia.run()
+    symuflow = Simulator.from_path(bottleneck_001, symuvia_library_path)
+    symuflow.run()
 
 
 def test_runbystep_bottleneck_001(bottleneck_001, symuvia_library_path):
-    symuvia = Simulator.from_path(bottleneck_001, symuvia_library_path)
-    with symuvia as s:
+    symuflow = Simulator.from_path(bottleneck_001, symuvia_library_path)
+    with symuflow as s:
         while s.do_next:
             s.run_step()
         assert s.do_next == False
 
 
 def test_create_vehicle_bottleneck_001(bottleneck_001, symuvia_library_path):
-    symuvia = Simulator.from_path(bottleneck_001, symuvia_library_path)
+    symuflow = Simulator.from_path(bottleneck_001, symuvia_library_path)
 
-    symuvia._set_manual_initialization()
-    veh_id = symuvia.create_vehicle("VL", "Ext_In", "Ext_Out")
+    symuflow._set_manual_initialization()
+    veh_id = symuflow.create_vehicle("VL", "Ext_In", "Ext_Out")
 
     assert veh_id == 0
 
 
 def test_create_drive_vehicle_bottleneck_001(bottleneck_001, symuvia_library_path):
-    symuvia = Simulator(library_path=symuvia_library_path, step_launch_mode="full")
-    symuvia.register_simulation(bottleneck_001)
+    symuflow = Simulator(library_path=symuvia_library_path, step_launch_mode="full")
+    symuflow.register_simulation(bottleneck_001)
 
-    with symuvia as s:
+    with symuflow as s:
         while s.do_next:
             s.request_answer()  # Initialize
             s.request_answer()  # Vehicle 0
@@ -131,10 +131,10 @@ def test_create_drive_vehicle_bottleneck_001(bottleneck_001, symuvia_library_pat
 
 
 def test_drive_vehicle_bottleneck_001(bottleneck_001, symuvia_library_path):
-    symuvia = Simulator(library_path=symuvia_library_path, step_launch_mode="full")
-    symuvia.register_simulation(bottleneck_001)
+    symuflow = Simulator(library_path=symuvia_library_path, step_launch_mode="full")
+    symuflow.register_simulation(bottleneck_001)
 
-    with symuvia as s:
+    with symuflow as s:
         while s.do_next:
             s.run_step()
             if s.request.is_vehicle_in_network(0):
@@ -155,33 +155,33 @@ def test_drive_vehicle_bottleneck_001(bottleneck_001, symuvia_library_path):
 
 
 def test_load_bottleneck_002(bottleneck_002):
-    symuvia = Simulation(bottleneck_002)
-    assert symuvia.filename() == bottleneck_002
+    symuflow = Simulation(bottleneck_002)
+    assert symuflow.filename() == bottleneck_002
 
 
 def test_default_load_constructor_bottleneck_002(bottleneck_002):
-    symuvia = Simulator()
-    symuvia.register_simulation(bottleneck_002)
-    symuvia.load_symuvia()
-    valid = symuvia.load_network()
+    symuflow = Simulator()
+    symuflow.register_simulation(bottleneck_002)
+    symuflow.load_symuvia()
+    valid = symuflow.load_network()
     assert valid == 1
 
 
 def test_load_constructor_bottleneck_002(bottleneck_002, symuvia_library_path):
-    symuvia = Simulator.from_path(bottleneck_002, symuvia_library_path)
-    symuvia.load_symuvia()
-    valid = symuvia.load_network()
+    symuflow = Simulator.from_path(bottleneck_002, symuvia_library_path)
+    symuflow.load_symuvia()
+    valid = symuflow.load_network()
     assert valid == 1
 
 
 def test_run_bottleneck_002(bottleneck_002, symuvia_library_path):
-    symuvia = Simulator.from_path(bottleneck_002, symuvia_library_path)
-    symuvia.run()
+    symuflow = Simulator.from_path(bottleneck_002, symuvia_library_path)
+    symuflow.run()
 
 
 def test_runbystep_bottleneck_002(bottleneck_002, symuvia_library_path):
-    symuvia = Simulator.from_path(bottleneck_002, symuvia_library_path)
-    with symuvia as s:
+    symuflow = Simulator.from_path(bottleneck_002, symuvia_library_path)
+    with symuflow as s:
         while s.do_next:
             s.run_step()
         assert s.do_next == False
