@@ -166,10 +166,10 @@ class NetworkRenderer(object):
 
 
 if __name__ == "__main__":
-    from symupy.plugins.reader.symuflow import SymuviaNetworkReader
+    from symupy.plugins.reader.symuflow import SymuFlowNetworkReader
 
     file = "/Users/florian/Work/visunet/data/Lyon63V/L63V.xml"
-    reader = SymuviaNetworkReader(file)
+    reader = SymuFlowNetworkReader(file)
     fig = plt.figure()
     network = reader.get_network()
     renderer = NetworkRenderer(network, fig)

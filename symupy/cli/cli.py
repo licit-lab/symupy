@@ -37,7 +37,7 @@ Please visit: symupy.readthedocs.io/ for more information.
 @click.group()
 @click.option("-v", "--verbose", is_flag=True, help="Increase verbosity.")
 def main(verbose: bool) -> int:
-    """Symuvia main CLI launcher"""
+    """SymuFlow main CLI launcher"""
     if verbose:
         log_verify(help_text)
     return 0
