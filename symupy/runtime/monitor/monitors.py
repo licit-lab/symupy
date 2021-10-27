@@ -4,11 +4,11 @@ import numpy as np
 
 from symupy.runtime.api import Simulator
 from symupy.runtime.monitor.manager import ScatterMonitorView, LineMonitorView
-from symupy.utils.constants import DEFAULT_PATH_SYMUVIA
+from symupy.utils.constants import DEFAULT_PATH_SYMUFLOW
 
 
 def launch_simuflow(file) -> tuple:
-    sim_instance = Simulator.from_path(file, DEFAULT_PATH_SYMUVIA)
+    sim_instance = Simulator.from_path(file, DEFAULT_PATH_SYMUFLOW)
     sim_instance.trace_flow = True
     sim_instance.step_launch_mode = "full"
 

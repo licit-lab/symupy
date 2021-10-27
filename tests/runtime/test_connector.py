@@ -23,7 +23,7 @@ import symupy.utils.constants as CT
 
 @pytest.fixture
 def symuvia_library_path():
-    return CT.DEFAULT_PATH_SYMUVIA
+    return CT.DEFAULT_PATH_SYMUFLOW
 
 
 @pytest.fixture

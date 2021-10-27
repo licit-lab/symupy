@@ -21,7 +21,7 @@ from symupy.utils.constants import (
     BUFFER_STRING,
     WRITE_XML,
     TRACE_FLOW,
-    DEFAULT_PATH_SYMUVIA,
+    DEFAULT_PATH_SYMUFLOW,
     TOTAL_SIMULATION_STEPS,
     LAUNCH_MODE,
 )
@@ -67,7 +67,7 @@ class Configurator:
     buffer_string: c_char = create_string_buffer(BUFFER_STRING)
     write_xml: c_bool = c_bool(WRITE_XML)
     trace_flow: bool = TRACE_FLOW
-    library_path: str = DEFAULT_PATH_SYMUVIA
+    library_path: str = DEFAULT_PATH_SYMUFLOW
     total_steps: int = TOTAL_SIMULATION_STEPS
     step_launch_mode: str = LAUNCH_MODE
 
