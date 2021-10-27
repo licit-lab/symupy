@@ -1,4 +1,4 @@
-name: symupy_doc
+name: symupy-doc
 channels:
   - licit-lab
   - conda-forge
@@ -18,6 +18,11 @@ dependencies:
   - coverage
   - ipython
   - symuflow=1.0.0
+  - pyqt
+  - pyqtgraph
+  - pytest
+  - coverage
+  - ipython
   - pandoc
   - sphinx
   - recommonmark
@@ -25,5 +30,3 @@ dependencies:
   - sphinx-book-theme
   - ipykernel
   - pip
-  - pip:
-    - --editable ..

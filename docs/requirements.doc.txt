@@ -1,0 +1,6 @@
+pandoc
+sphinx
+recommonmark
+nbsphinx
+sphinx-book-theme
+ipykernel
