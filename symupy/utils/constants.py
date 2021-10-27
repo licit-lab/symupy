@@ -103,11 +103,15 @@ def find_path(roots):
 for path in find_path(PATHS_2_SEARCH):
     DEFAULT_PATH_SYMUFLOW = path
 
-print(f"Default path: {DEFAULT_PATH_SYMUFLOW}")
 
-if not DEFAULT_PATH_SYMUFLOW:
+try:
+    print(f"Default path: {DEFAULT_PATH_SYMUFLOW}")
+except NameError:
     DEFAULT_PATH_SYMUFLOW = ""
-    raise SymupyWarning("No Simulator could be defined")
+    SymupyWarning("No Simulator could be defined")
+    print(f"Default path: {DEFAULT_PATH_SYMUFLOW}")
+    
+
 
 
 # =============================================================================
