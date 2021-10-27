@@ -20,6 +20,14 @@ symupy.abstractions.observer module
    :undoc-members:
    :show-inheritance:
 
+symupy.abstractions.reader module
+---------------------------------
+
+.. automodule:: symupy.abstractions.reader
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 symupy.abstractions.subject module
 ----------------------------------
 

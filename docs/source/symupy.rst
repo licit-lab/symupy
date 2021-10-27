@@ -10,6 +10,7 @@ Subpackages
    symupy.abstractions
    symupy.cli
    symupy.parser
+   symupy.plugins
    symupy.postprocess
    symupy.preprocess
    symupy.renderer

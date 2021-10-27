@@ -12,6 +12,14 @@ symupy.tsc.dynamics module
    :undoc-members:
    :show-inheritance:
 
+symupy.tsc.journey module
+-------------------------
+
+.. automodule:: symupy.tsc.journey
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 symupy.tsc.network module
 -------------------------
 

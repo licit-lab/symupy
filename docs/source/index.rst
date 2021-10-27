@@ -12,7 +12,7 @@ This is the documentation for the package use. For more details please visit the
    :maxdepth: 2
    :caption: Contents
 
-   README.md
+   .. mdinclude:: ../../README.md
 
 .. toctree::
    :maxdepth: 1

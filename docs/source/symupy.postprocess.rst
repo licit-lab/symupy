@@ -1,6 +1,14 @@
 symupy.postprocess package
 ==========================
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   symupy.postprocess.visunet
+
 Submodules
 ----------
 

@@ -4,18 +4,18 @@ symupy.parser package
 Submodules
 ----------
 
-symupy.parser.xmlparser module
+symupy.parser.csvparser module
 ------------------------------
 
-.. automodule:: symupy.parser.xmlparser
+.. automodule:: symupy.parser.csvparser
    :members:
    :undoc-members:
    :show-inheritance:
 
-symupy.parser.xmlreader module
+symupy.parser.xmlparser module
 ------------------------------
 
-.. automodule:: symupy.parser.xmlreader
+.. automodule:: symupy.parser.xmlparser
    :members:
    :undoc-members:
    :show-inheritance:

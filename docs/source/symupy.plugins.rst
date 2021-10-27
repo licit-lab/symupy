@@ -1,4 +1,4 @@
-symupy.runtime package
+symupy.plugins package
 ======================
 
 Subpackages
@@ -7,14 +7,12 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   symupy.runtime.api
-   symupy.runtime.logic
-   symupy.runtime.monitor
+   symupy.plugins.reader
 
 Module contents
 ---------------
 
-.. automodule:: symupy.runtime
+.. automodule:: symupy.plugins
    :members:
    :undoc-members:
    :show-inheritance:
