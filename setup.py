@@ -39,6 +39,7 @@ requirements = [
     "click>=7.0",
     "python-decouple>=3.3",
     "PyQt5>=5.15.4",
+    "pyqtgraph>=0.12",
 ]
 
 test_requirements = [
