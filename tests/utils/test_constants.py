@@ -21,7 +21,7 @@ import decouple
 # INTERNAL IMPORTS
 # ============================================================================
 
-from symupy.utils.constants import DEFAULT_PATH_SYMUVIA
+from symupy.utils.constants import DEFAULT_PATH_SYMUFLOW
 
 # ============================================================================
 # TESTS AND DEFINITIONS
@@ -30,7 +30,7 @@ from symupy.utils.constants import DEFAULT_PATH_SYMUVIA
 
 @pytest.fixture
 def env_path_default():
-    path_env = DEFAULT_PATH_SYMUVIA
+    path_env = DEFAULT_PATH_SYMUFLOW
     return path_env
 
 
