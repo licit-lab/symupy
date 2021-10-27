@@ -6,7 +6,7 @@ from symupy.runtime.api import Simulation, Simulator
 import platform
 
 # DCT_PATH = {"Darwin": "osx-64"}
-# DCT_LFN = {"Darwin": "libSymuVia.dylib"}
+# DCT_LFN = {"Darwin": "libSymuFlow.dylib"}
 # _platform = platform.system()
 # _libpath = DCT_PATH.get(_platform)
 # _libfilen = DCT_LFN.get(_platform)

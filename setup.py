@@ -39,6 +39,7 @@ requirements = [
     "click>=7.0",
     "python-decouple>=3.3",
     "PyQt5>=5.15.4",
+    "pyqtgraph>=0.12",
 ]
 
 test_requirements = [
@@ -62,15 +63,15 @@ dev_requirements = [
 setup(
     name="symupy",
     version="0.5.1",
-    description="A module for Symuvia inside Python",
+    description="A module for SymuFlow inside Python",
     long_description=LONG_DESCRIPTION + "\n\n" + HISTORY,
     long_description_content_type="text/markdown",
     author="Andres Ladino",
     author_email="aladinoster@gmail.com",
     maintainer="Andres Ladino",
     maintainer_email="aladinoster@gmail.com",
-    url="https://github.com/symuvia/symupy",
-    download_url="https://github.com/symuvia/symupy",
+    url="https://github.com/symuflow/symupy",
+    download_url="https://github.com/symuflow/symupy",
     packages=find_packages(
         include=["symupy", "symupy.*", "*.ini", "*.xml", "*.xsd"]
     ),

@@ -24,7 +24,7 @@ from symupy.abstractions.reader import AbstractNetworkReader, AbstractTrafficDat
 # ============================================================================
 
 
-class SymuviaNetworkReader(AbstractNetworkReader):
+class SymuFlowNetworkReader(AbstractNetworkReader):
     """Short summary.
 
     Parameters
@@ -225,13 +225,13 @@ class SymuviaNetworkReader(AbstractNetworkReader):
             yield from ()
 
 
-class SymuviaTrafficDataReader(AbstractTrafficDataReader):
-    """Reader for output of Symuvia simulation.
+class SymuFlowTrafficDataReader(AbstractTrafficDataReader):
+    """Reader for output of SymuFlow simulation.
 
     Parameters
     ----------
     traficdatafile : str
-        Path to the Symuvia output xml file.
+        Path to the SymuFlow output xml file.
     lru_cache_size : int
         Description of parameter `lru_cache_size`.
 
@@ -402,7 +402,7 @@ if __name__ == "__main__":
 
     # file = os.path.dirname(symupy.__file__)+'/../tests/mocks/bottlenecks/bottleneck_001.xml'
     file = "/Users/florian.gacon/Work/SymuTools/data/ref_153000_163000_traf.xml"
-    reader = SymuviaTrafficDataReader(file)
+    reader = SymuFlowTrafficDataReader(file)
     c = reader.get_OD(("A_Init_L1_OE", "CAF_Laf_Duguesclin"))
     c = reader.count_OD()
     cp = reader.count_OD(("15:30:00", "15:30:05"))

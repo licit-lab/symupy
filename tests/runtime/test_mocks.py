@@ -13,7 +13,7 @@ import pytest
 # ============================================================================
 
 from symupy.runtime.api import Simulation, Simulator
-from symupy.utils.constants import DEFAULT_PATH_SYMUVIA
+from symupy.utils.constants import DEFAULT_PATH_SYMUFLOW
 
 # ============================================================================
 # TESTS AND DEFINITIONS
@@ -22,7 +22,7 @@ from symupy.utils.constants import DEFAULT_PATH_SYMUVIA
 
 @pytest.fixture
 def symuvia_library_path():
-    return DEFAULT_PATH_SYMUVIA
+    return DEFAULT_PATH_SYMUFLOW
 
 
 @pytest.fixture

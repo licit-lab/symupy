@@ -24,7 +24,7 @@ from symupy.postprocess.visunet.main import launch_app
 
 help_text = """Symupy
 
-A package to launch traffic simulations using SymuVia
+A package to launch traffic simulations using SymuFlow
 
 This is a Command Line Interface to provide functionalities related to specific task executions and
 
@@ -37,7 +37,7 @@ Please visit: symupy.readthedocs.io/ for more information.
 @click.group()
 @click.option("-v", "--verbose", is_flag=True, help="Increase verbosity.")
 def main(verbose: bool) -> int:
-    """Symuvia main CLI launcher"""
+    """SymuFlow main CLI launcher"""
     if verbose:
         log_verify(help_text)
     return 0
@@ -67,7 +67,7 @@ def launch(scenario: str) -> None:
     "-f",
     "--file",
     default=None,
-    help="SymuVia network.",
+    help="SymuFlow network.",
 )
 def visu(file) -> None:
     """Launches VisuNet app """

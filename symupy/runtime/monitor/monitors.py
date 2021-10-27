@@ -4,11 +4,11 @@ import numpy as np
 
 from symupy.runtime.api import Simulator
 from symupy.runtime.monitor.manager import ScatterMonitorView, LineMonitorView
-from symupy.utils.constants import DEFAULT_PATH_SYMUVIA
+from symupy.utils.constants import DEFAULT_PATH_SYMUFLOW
 
 
 def launch_simuflow(file) -> tuple:
-    sim_instance = Simulator.from_path(file, DEFAULT_PATH_SYMUVIA)
+    sim_instance = Simulator.from_path(file, DEFAULT_PATH_SYMUFLOW)
     sim_instance.trace_flow = True
     sim_instance.step_launch_mode = "full"
 
@@ -18,9 +18,9 @@ def launch_simuflow(file) -> tuple:
           yield sim_instance.simulationstep, sim_instance.request.datatraj
 
 
-class SymuviaMonitorMFD(ScatterMonitorView):
+class SymuFlowMonitorMFD(ScatterMonitorView):
     def __init__(self):
-        super(SymuviaMonitorMFD, self).__init__('MFD', 'Accumulation', 'production')
+        super(SymuFlowMonitorMFD, self).__init__('MFD', 'Accumulation', 'production')
 
     def update(self, step, instants, ind):
         nbveh = instants.nbveh
@@ -31,21 +31,21 @@ class SymuviaMonitorMFD(ScatterMonitorView):
             return None, None
 
 
-class SymuviaMonitorAccumulation(LineMonitorView):
+class SymuFlowMonitorAccumulation(LineMonitorView):
     def __init__(self):
-        super(SymuviaMonitorAccumulation, self).__init__('Accumulation', 'Instant', 'VEH number')
+        super(SymuFlowMonitorAccumulation, self).__init__('Accumulation', 'Instant', 'VEH number')
 
     def update(self, step, instants, ind):
         return step, instants.nbveh
 
 
-class SymuviaMonitorVEH(LineMonitorView):
+class SymuFlowMonitorVEH(LineMonitorView):
     def __init__(self, ids, indicator):
         self._indicators = {"speed": self._update_speed,
                             "acceleration": self._update_acceleration,
                             "distance": self._update_distance}
         assert indicator in self._indicators
-        super(SymuviaMonitorVEH, self).__init__(f'VEH {indicator}', 'Instant', indicator, nb_plots=len(ids))
+        super(SymuFlowMonitorVEH, self).__init__(f'VEH {indicator}', 'Instant', indicator, nb_plots=len(ids))
         self.ids = ids
 
         self.indicator = indicator
@@ -82,9 +82,9 @@ class SymuviaMonitorVEH(LineMonitorView):
             return None, None
 
 
-class SymuviaMonitorTTT(LineMonitorView):
+class SymuFlowMonitorTTT(LineMonitorView):
     def __init__(self, zone, aggregation_period=1):
-        super(SymuviaMonitorTTT, self).__init__('Total Travel Time', 'Instant', 'Time')
+        super(SymuFlowMonitorTTT, self).__init__('Total Travel Time', 'Instant', 'Time')
         self.zone = set(zone)
         self.aggregation_period = aggregation_period
 
@@ -110,9 +110,9 @@ class SymuviaMonitorTTT(LineMonitorView):
             return None, None
 
 
-class SymuviaMonitorTTD(LineMonitorView):
+class SymuFlowMonitorTTD(LineMonitorView):
     def __init__(self, zone, aggregation_period=1):
-        super(SymuviaMonitorTTD, self).__init__('Total Travel Distance', 'Instant', 'Distance')
+        super(SymuFlowMonitorTTD, self).__init__('Total Travel Distance', 'Instant', 'Distance')
         self.zone = set(zone)
         self.aggregation_period = aggregation_period
 
@@ -138,9 +138,9 @@ class SymuviaMonitorTTD(LineMonitorView):
             return None, None
 
 
-class SymuviaMonitorFlux(LineMonitorView):
+class SymuFlowMonitorFlux(LineMonitorView):
     def __init__(self, zone, aggregation_period=1):
-        super(SymuviaMonitorFlux, self).__init__('Flux', 'Instant', 'Number', nb_plots=2, line_labels=["InFlux", "OutFlux"])
+        super(SymuFlowMonitorFlux, self).__init__('Flux', 'Instant', 'Number', nb_plots=2, line_labels=["InFlux", "OutFlux"])
         self.zone = set(zone)
         self.aggregation_period = aggregation_period
 
@@ -176,9 +176,9 @@ class SymuviaMonitorFlux(LineMonitorView):
             return None, None
 
 
-class SymuviaMonitorFlow(ScatterMonitorView):
+class SymuFlowMonitorFlow(ScatterMonitorView):
     def __init__(self, xrange=None, yrange=None):
-        super(SymuviaMonitorFlow, self).__init__('Flow', 'X', 'Y', stack_value=False, symbol="o", xrange=xrange, yrange=yrange)
+        super(SymuFlowMonitorFlow, self).__init__('Flow', 'X', 'Y', stack_value=False, symbol="o", xrange=xrange, yrange=yrange)
 
     def update(self, step, instants, ind):
         ord = [float(v) for v in instants.ord.values()]
@@ -188,5 +188,3 @@ class SymuviaMonitorFlow(ScatterMonitorView):
             return abs, ord
         else:
             return None, None
-
-

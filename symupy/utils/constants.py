@@ -88,9 +88,9 @@ else:
 
 # Default names/platform
 DCT_LIBOSNAME = {
-    "Darwin": "libSymuVia.dylib",
-    "Linux": "libSymuVia.so",
-    "Windows": "libSymuVia.dll",
+    "Darwin": "libSymuFlow.dylib",
+    "Linux": "libSymuFlow.so",
+    "Windows": "libSymuFlow.dll",
 }
 
 
@@ -101,12 +101,12 @@ def find_path(roots):
 
 
 for path in find_path(PATHS_2_SEARCH):
-    DEFAULT_PATH_SYMUVIA = path
+    DEFAULT_PATH_SYMUFLOW = path
 
-print(f"Default path: {DEFAULT_PATH_SYMUVIA}")
+print(f"Default path: {DEFAULT_PATH_SYMUFLOW}")
 
-if not DEFAULT_PATH_SYMUVIA:
-    DEFAULT_PATH_SYMUVIA = ""
+if not DEFAULT_PATH_SYMUFLOW:
+    DEFAULT_PATH_SYMUFLOW = ""
     raise SymupyWarning("No Simulator could be defined")
 
 
@@ -262,4 +262,4 @@ ENGINE_CONSTANT = 0.2
 RADIOUS_ANT = 500
 
 if __name__ == "__main__":
-    print(DEFAULT_PATH_SYMUVIA)
+    print(DEFAULT_PATH_SYMUFLOW)

@@ -25,9 +25,9 @@ def render_trip(fig, trip):
 
 
 if __name__ == "__main__":
-    from symupy.plugins.reader.symuvia import SymuviaTrafficDataReader
+    from symupy.plugins.reader.symuflow import SymuFlowTrafficDataReader
 
     # file = os.path.dirname(symupy.__file__)+'/../tests/mocks/bottlenecks/bottleneck_001.xml'
     # file = "/Users/florian/Work/visunet/data/Lyon63V/OUT5_less/defaultOut_063000_073000_traf.xml"
-    # reader = SymuviaTrafficDataReader(file)
+    # reader = SymuFlowTrafficDataReader(file)
     # t = reader.get_trip('23')

@@ -169,7 +169,7 @@ def fix_values(element: ET.ElementTree, dct_values: dict) -> ET.ElementTree:
 
 
 class XMLGenerator(object):
-    """A class to handle XML generator for SymuVia"""
+    """A class to handle XML generator for SymuFlow"""
 
     xmlns = "http://www.w3.org/2001/XMLSchema-instance"
     namespace = "noNamespaceSchemaLocation"

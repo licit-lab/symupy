@@ -1,7 +1,7 @@
 """
 CSV Parser
 ==========
-A module to parse information from Symuvia output CSVs
+A module to parse information from SymuFlow output CSVs
 """
 # ============================================================================
 # STANDARD  IMPORTS

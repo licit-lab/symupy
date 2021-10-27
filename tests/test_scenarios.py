@@ -26,7 +26,7 @@ from symupy.utils.constants import TRACE_FLOW
 
 @pytest.fixture
 def symuvia_library_path():
-    return CT.DCT_DEFAULT_PATHS[("symuvia", platform.system())]
+    return CT.DCT_DEFAULT_PATHS[("symuflow", platform.system())]
 
 
 @pytest.fixture
