@@ -45,4 +45,4 @@ This code is licensed via an [MIT license](LICENSE)
 
 ## Contact 
 
-If you run into problems or bugs, please let us know by [creating an issue](https://github.com/licit-lab/symupy/issues/new/choose) an issue in this repository.
+If you run into problems or bugs, please let us know by [creating an issue](https://github.com/licit-lab/symupy/issues/new/choose) in this repository.
