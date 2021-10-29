@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 
 
 class AbstractNetworkReader(ABC):
+    """ Abstraction of Network Reader"""
     _ext = None
 
     def __init__(self):

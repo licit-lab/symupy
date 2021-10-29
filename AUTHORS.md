@@ -2,8 +2,9 @@
 
 ## Development Team
 
-* Andres Ladino <andres.ladino@ifsttar.fr>
-
+* Andres Ladino <andres.ladino@univ-eiffel.fr>
+* Cecile Becarie <cecile.becarie@univ-eiffel.fr>
+* Florian Gacon <florian.gacon@univ-eiffel.fr>
 
 ## Contributors
 

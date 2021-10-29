@@ -26,6 +26,7 @@ dependencies:
   - pandoc
   - sphinx
   - recommonmark
+  - myst-parser
   - nbsphinx
   - sphinx-book-theme
   - ipykernel

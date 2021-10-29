@@ -5,11 +5,14 @@ sphinx:
   configuration: docs/source/conf.py
 
 conda:
-  environment: docs/environment_doc.yml
+  environment: docs/environment.doc.yml
 
 python:
-  version: 3.8
+  version: 3.9
   install:
     # install symupy itself
     - method: pip
       path: .
+
+build:
+  image: testing
