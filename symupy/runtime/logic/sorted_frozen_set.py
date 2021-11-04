@@ -28,7 +28,7 @@ class SortedFrozenSet(Sequence, Set):
     """
 
     def __init__(self, items=None):
-        self._items = tuple(
+        self._items = list(
             sorted(
                 set(items) if (items is not None) else set(),
                 key=lambda x: x.vehid,
