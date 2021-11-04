@@ -26,7 +26,13 @@
 
 import os
 from itertools import repeat
-from ctypes import cdll, create_string_buffer, c_int, byref, c_bool, c_double
+from ctypes import (
+    cdll,
+    c_int,
+    byref,
+    c_double,
+    c_char_p,
+)
 import click
 import platform
 
@@ -394,42 +400,138 @@ class Simulator(Configurator, RuntimeDevice):
         new_pos = vehcontrol.new_position
         return self.drive_vehicle(vehid, new_pos, destination, lane)
 
-    def get_vehicle_context(self, vehid: str):
-        ## TODO: Implement this
-        raise NotImplementedError
+    def init_symbol_states(self):
+        """Initializes symbols before call of a runtime for access in memory"""
 
-    # def log_vehicle_in_network(self, veh: Vehicle, network: NetworkType):
-    #     # veh = Vehicle(vehid)
-    #     ## TODO: Finish
-    #     network.register_vehicle(veh)
-
-    # def log_vehid_in_network(self, vehid: str, network: NetworkType):
-    #     ## TODO: Optional
-    #     pass
-
-    def init_total_travel_time(self):
-        """Counter initializer for total travel time"""
-        # TODO: Improvement → Better organizadtion
+        # Total network information
         self.__library.SymGetTotalTravelTimeEx.restype = c_double
-
-    def init_total_travel_distance(self):
-        """Counter initializer for total travel time"""
-        # TODO: Improvement → Better organizadtion
         self.__library.SymGetTotalTravelDistanceEx.restype = c_double
 
-    def get_total_travel_time(self, sensors_mfd: list = []):
-        """Computes the total travel time of vehicles in a MFD region
+        # Vehicle information
+        self.__library.SymGetVehicleAcc.restype = c_double
+        self.__library.SymGetVehicleSpeed.restype = c_double
+        self.__library.SymGetVehicleLink.restype = c_char_p
+        self.__library.SymGetVehicleAbscissa.restype = c_double
+        self.__library.SymGetVehicleOrdinate.restype = c_double
+        self.__library.SymGetVehicleLane.restype = c_int
+        self.__library.SymGetVehicleRelativePositionOnLink.restype = c_double
+        self.__library.SymGetVehicleTravelDistance.restype = c_double
+        self.__library.SymGetVehicleTravelTime.restype = c_double
 
-        :param zone_id: MFD sensor id, defaults to None
-        :type zone_id: str, optional
+    def get_vehicle_acceleration(self, vehid: int) -> float:
+        """Extract information related to the vehicle's acceleration
 
-        :return ttt: Associated total travel time
-        :type ttt: float
+        Args:
+            vehid (int): vehicle identifier
 
+        Returns:
+            float: vehicle acceleration [m/s²]
+        """
+        return self.__library.SymGetVehicleAcc(c_int(vehid))
+
+    def get_vehicle_speed(self, vehid: int) -> float:
+        """Extract information related to the vehicle's speed
+
+        Args:
+            vehid (int): vehicle identifier
+
+        Returns:
+            float: vehicle speed [m/s]
+        """
+        return self.__library.SymGetVehicleSpeed(c_int(vehid))
+
+    def get_vehicle_link(self, vehid: int) -> str:
+        """Extract information related to the vehicle's link
+
+        Args:
+            vehid (int): vehicle identifier
+
+        Returns:
+            str: vehicle link [string]
+        """
+        response = self.__library.SymGetVehicleLink(c_int(vehid))
+        return "" if response is None else response.decode("UTF8")
+
+    def get_vehicle_abscissa(self, vehid: int) -> float:
+        """Extract information related to the vehicle's abscissa
+
+        Args:
+            vehid (int): vehicle identifier
+
+        Returns:
+            float: vehicle abcissa (x) position [m]
+        """
+        return float(self.__library.SymGetVehicleAbscissa(c_int(vehid)))
+
+    def get_vehicle_ordinate(self, vehid: int) -> float:
+        """Extract information related to the vehicle's ordinate
+
+        Args:
+            vehid (int): vehicle identifier
+
+        Returns:
+            float: vehicle ordinate (y) position [m]
+        """
+        return self.__library.SymGetVehicleOrdinate(c_int(vehid))
+
+    def get_vehicle_lane(self, vehid: int) -> int:
+        """Extract information related to the vehicle's lane
+
+        Args:
+            vehid (int): vehicle identifier
+
+        Returns:
+            int: vehicle lane position (0) right most lane [int]
+        """
+        return self.__library.SymGetVehicleLane(c_int(vehid))
+
+    def get_vehicle_distance(self, vehid: int) -> float:
+        """Extract information related to the vehicle's distance
+
+        Args:
+            vehid (int): vehicle identifier
+
+        Returns:
+            float: vehicle distance in link position [m]
+        """
+        return self.__library.SymGetVehicleRelativePositionOnLink(c_int(vehid))
+
+    def get_vehicle_total_travel_distance(self, vehid: int) -> float:
+        """Extract information related to the vehicle's total
+
+        Args:
+            vehid (int): vehicle identifier
+
+        Returns:
+            float: vehicle total traveled distance [m]
+        """
+        return self.__library.SymGetVehicleTravelDistance(c_int(vehid))
+
+    def get_vehicle_total_travel_time(self, vehid: int) -> float:
+        """Extract information related to the vehicle's total
+
+        Args:
+            vehid (int): vehicle identifier
+
+        Returns:
+            float: vehicle total traveled time [s]
+        """
+        return self.__library.SymGetVehicleTravelTime(c_int(vehid))
+
+    def get_total_travel_time(self, sensors_mfd: list = []) -> TupleFloat:
+        """Extracts the total travel time of vehicles in a specific MFD region
+
+        Args:
+            sensors_mfd (list, optional): MFD sensor ids, defaults to [].
+
+        Returns:
+            TupleFloat: Associated total travel time
         """
         # TODO: Improvement → Better organizadtion
         if isinstance(sensors_mfd, str):
-            return self.__library.SymGetTotalTravelTimeEx(sensors_mfd.encode("UTF8"))
+            return self.__library.SymGetTotalTravelTimeEx(
+                sensors_mfd.encode("UTF8")
+            )
 
         if not sensors_mfd:
             sensors_mfd = self.simulation.get_mfd_sensor_names()
@@ -439,15 +541,14 @@ class Simulator(Configurator, RuntimeDevice):
             for sensor in sensors_mfd
         )
 
-    def get_total_travel_distance(self, sensors_mfd: list = []):
-        """Computes the total travel distance of vehicles in a MFD region
+    def get_total_travel_distance(self, sensors_mfd: list = []) -> TupleFloat:
+        """Extracts total travel distance of vehicles in a specific MFD region
 
-        :param sensors_mfd: MFD sensor ids, defaults to None
-        :type sensors_mfd: list, optional
+        Args:
+            sensors_mfd (list, optional): MFD sensor ids, defaults to [].
 
-        :return ttd: Associated total travel distance
-        :type ttd: float, tuple
-
+        Returns:
+            TupleFloat: Associated total travel distance
         """
         if isinstance(sensors_mfd, str):
             return self.__library.SymGetTotalTravelDistanceEx(
@@ -462,15 +563,14 @@ class Simulator(Configurator, RuntimeDevice):
             for sensor in sensors_mfd
         )
 
-    def get_mfd_speed(self, sensors_mfd: list = []):
-        """Computes the total speed of vehicles in a MFD region
+    def get_mfd_speed(self, sensors_mfd: list = []) -> TupleFloat:
+        """Estimates the spatial speed of vehicles in a specific MFD region
 
-        :param sensors_mfd: MFD sensor ids, defaults to None
-        :type sensors_mfd: list, optional
+        Args:
+            sensors_mfd (list, optional): [MFD sensor id, defaults to [].
 
-        :return spd: speed computed as ttt/ttd
-        :type spd: float, tuple
-
+        Returns:
+            TupleFloat: Estimated speed computed as ttt/ttd
         """
         if isinstance(sensors_mfd, str):
             d = self.get_total_travel_distance(sensors_mfd)
@@ -601,8 +701,7 @@ class Simulator(Configurator, RuntimeDevice):
         self._bContinue = True
         self.vehicles = VehicleList(self.request)
 
-        self.init_total_travel_distance()
-        self.init_total_travel_time()
+        self.init_symbol_states()
         self.build_dynamic_param()
 
         self.next_state(self.do_next)
