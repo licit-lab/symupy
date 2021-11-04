@@ -12,6 +12,7 @@
 from ctypes import create_string_buffer, c_bool, c_char
 from dataclasses import dataclass
 import click
+from symupy.utils.screen import log_verify
 
 # ============================================================================
 # INTERNAL IMPORTS
@@ -96,6 +97,13 @@ class Configurator:
         click.echo("Configurator: Initialization")
         for key, value in kwargs.items():
             setattr(self, key, value)
+        try:
+            if kwargs["library_path"] != DEFAULT_PATH_SYMUFLOW:
+                log_verify("Using user defined library path: ", kwargs["library_path"],)
+        except KeyError:
+            log_verify("Using default defined library path")
+        finally:
+            return
 
     def __repr__(self):
         data_dct = ", ".join(f"{k}={v}" for k, v in self.__dict__.items())
