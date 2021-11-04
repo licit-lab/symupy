@@ -400,7 +400,7 @@ class Simulator(Configurator, RuntimeDevice):
             new_route (str): string contained links separated by spaces with the path to be taken by the vehicle
 
         Returns:
-            int: 	Value containing one of the following values 
+            int: 	Value containing one of the following values
 
                 ===========  =================================
                 **Value**    **Description**
@@ -412,9 +412,9 @@ class Simulator(Configurator, RuntimeDevice):
                 -4            A link of the new route not in network
                 -5            New route is unattainable links are not connected
                 -6            New route destination is different from original
-                -7            New route cannot be reached by the vehicle     
+                -7            New route cannot be reached by the vehicle
                 ===========  =================================
-       
+
         """
         return self.__library.SymAlterRouteEx(vehid, new_route.encode("UTF8"))
 
@@ -684,7 +684,7 @@ class Simulator(Configurator, RuntimeDevice):
         self.__library.SymApplyControlZonesEx(-1)
         return self.dctidzone
 
-    def __enter__(self) -> None:
+    def __enter__(self):
         """
         This method initializes the usage of the ``Simulator`` class as a context manager.
 
