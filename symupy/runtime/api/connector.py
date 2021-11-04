@@ -429,7 +429,9 @@ class Simulator(Configurator, RuntimeDevice):
     def init_symbol_states(self):
         """Initializes symbols before call of a runtime for access in memory"""
 
+
         # Total network information
+        self.__library.SymGetListofVehicleIdsEx.restype = c_char_p
         self.__library.SymGetTotalTravelTimeEx.restype = c_double
         self.__library.SymGetTotalTravelDistanceEx.restype = c_double
 
