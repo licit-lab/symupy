@@ -5,7 +5,7 @@ sphinx:
   configuration: docs/source/conf.py
 
 conda:
-  environment: docs/environment.doc.yml
+  environment: docs/environment.doc.yaml
 
 python:
   version: 3.9
