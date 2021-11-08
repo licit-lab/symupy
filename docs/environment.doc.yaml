@@ -16,7 +16,7 @@ dependencies:
   - pytest
   - coverage
   - ipython
-  - symuflow=1.0.0
+  - symuflow=1.1.0
   - pyqt
   - pyqtgraph
   - pytest
