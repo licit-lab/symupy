@@ -249,3 +249,12 @@ class SimulatorRequest(Publisher):
         neighpos = self.filter_vehicle_property("distance", *neigh)
 
         return tuple(nbh for nbh, npos in zip(neigh, neighpos) if npos < vehpos)
+
+    def get_vehicle_in_link(self) -> dict:
+        """Get a map of vehicle ids and their correspnding link.
+
+        Returns:
+            map (dict):
+                zone - ids of vehicles
+        """
+        return {str(i["vehid"]): i["link"] for i in self.get_vehicle_data()}

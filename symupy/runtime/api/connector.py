@@ -392,6 +392,32 @@ class Simulator(Configurator, RuntimeDevice):
         self.request_answer()
         return dr_state
 
+    def drive_vehicle_new_route(self, vehid: int, new_route: str) -> int:
+        """Modifies the current path of a vehicle by stablishing the new route
+
+        Args:
+            vehid (int): vehicle id
+            new_route (str): string contained links separated by spaces with the path to be taken by the vehicle
+
+        Returns:
+            int: 	Value containing one of the following values
+
+                ===========  =================================
+                **Value**    **Description**
+                -----------  ---------------------------------
+                0             The function is successfully executed
+                -1            No network loaded
+                -2            The vehicle doesn't exist
+                -3            The new route is empty
+                -4            A link of the new route not in network
+                -5            New route is unattainable links are not connected
+                -6            New route destination is different from original
+                -7            New route cannot be reached by the vehicle
+                ===========  =================================
+
+        """
+        return self.__library.SymAlterRouteEx(vehid, new_route.encode("UTF8"))
+
     def drive_vehicle_with_control(
         self, vehcontrol, vehid: int, destination: str = None, lane: str = 1
     ):
@@ -403,7 +429,9 @@ class Simulator(Configurator, RuntimeDevice):
     def init_symbol_states(self):
         """Initializes symbols before call of a runtime for access in memory"""
 
+
         # Total network information
+        self.__library.SymGetListofVehicleIdsEx.restype = c_char_p
         self.__library.SymGetTotalTravelTimeEx.restype = c_double
         self.__library.SymGetTotalTravelDistanceEx.restype = c_double
 
@@ -590,6 +618,27 @@ class Simulator(Configurator, RuntimeDevice):
                 spd.append(10)  # minimum speed?
         return tuple(spd)
 
+    def get_vehicle_inside_area(self, sensors_mfd: list = []):
+        """Obtains the set of vehicles inside a list
+
+        Args:
+            sensors_mfd (list, optional): Sensor name. Defaults to [].
+
+        Returns:
+            [type]: [description]
+        """
+        if isinstance(sensors_mfd, str):
+            return tuple(
+                (
+                    self.__library.SymGetListofVehicleIdsEx(
+                        sensors_mfd.encode("UTF8")
+                    )
+                )
+                .decode("UTF8")
+                .split(" ")[:-1]
+            )
+        return tuple()
+
     def add_control_probability_zone_mfd(
         self, access_probability: dict, minimum_distance: dict
     ):
@@ -638,7 +687,7 @@ class Simulator(Configurator, RuntimeDevice):
         self.__library.SymApplyControlZonesEx(-1)
         return self.dctidzone
 
-    def __enter__(self) -> None:
+    def __enter__(self):
         """
         This method initializes the usage of the ``Simulator`` class as a context manager.
 
@@ -689,6 +738,7 @@ class Simulator(Configurator, RuntimeDevice):
         """
         self.load_symuvia()
         self.load_network()
+        self.__library.SymGetListofVehicleIdsEx.restype = c_char_p
         self.next_state(True)
 
     def __performInitialize(self) -> None:

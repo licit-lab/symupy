@@ -48,6 +48,7 @@ from collections import defaultdict
 # =============================================================================
 
 from symupy.utils.exceptions import SymupyError, SymupyWarning
+from symupy.utils.screen import log_success,log_warning
 from symupy import __version__
 
 # =============================================================================
@@ -105,9 +106,10 @@ for path in find_path(PATHS_2_SEARCH):
 
 
 try:
-    print(f"Default path: {DEFAULT_PATH_SYMUFLOW}")
+    log_success(f"Default path: {DEFAULT_PATH_SYMUFLOW}")
 except NameError:
     DEFAULT_PATH_SYMUFLOW = ""
+    log_warning("Setting `DEFAULT_PATH_SYMUFLOW` to an empty string")
     SymupyWarning("No Simulator could be defined")
     print(f"Default path: {DEFAULT_PATH_SYMUFLOW}")
 
