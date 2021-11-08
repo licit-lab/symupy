@@ -16,7 +16,7 @@ u_ffs = 20
 
 class TestParameter(unittest.TestCase):
     """
-        Test for consistency of Traffic parameters
+    Test for consistency of Traffic parameters
     """
 
     def test_default_creation(self):
@@ -26,7 +26,8 @@ class TestParameter(unittest.TestCase):
         veh_par = VehParameter()
 
         self.assertEqual(
-            veh_par.cpcty * veh_par.t_dsp, veh_par.u_ffs / (veh_par.w_cgt + veh_par.u_ffs)
+            veh_par.cpcty * veh_par.t_dsp,
+            veh_par.u_ffs / (veh_par.w_cgt + veh_par.u_ffs),
         )
 
     def test_constructor_symuvia(self):
@@ -36,7 +37,8 @@ class TestParameter(unittest.TestCase):
         veh_par = VehParameter.VehParameterSym()
         # print(veh_par)
         self.assertEqual(
-            veh_par.cpcty * veh_par.t_dsp, veh_par.u_ffs / (veh_par.w_cgt + veh_par.u_ffs)
+            veh_par.cpcty * veh_par.t_dsp,
+            veh_par.u_ffs / (veh_par.w_cgt + veh_par.u_ffs),
         )
 
     def test_parameter_creation(self):
@@ -59,7 +61,8 @@ class TestParameter(unittest.TestCase):
         veh_par = VehParameter(u_ffs, l_veh, x_gap, cpcty=cpcty)
         # print(veh_par)
         self.assertEqual(
-            veh_par.cpcty * veh_par.t_dsp, veh_par.u_ffs / (veh_par.w_cgt + veh_par.u_ffs)
+            veh_par.cpcty * veh_par.t_dsp,
+            veh_par.u_ffs / (veh_par.w_cgt + veh_par.u_ffs),
         )
 
     def test_consistence_parameter_w_cgt(self):
@@ -69,7 +72,8 @@ class TestParameter(unittest.TestCase):
         veh_par = VehParameter(u_ffs, l_veh, x_gap, w_cgt=w_cgt)
         # print(veh_par)
         self.assertEqual(
-            veh_par.cpcty * veh_par.t_dsp, veh_par.u_ffs / (veh_par.w_cgt + veh_par.u_ffs)
+            veh_par.cpcty * veh_par.t_dsp,
+            veh_par.u_ffs / (veh_par.w_cgt + veh_par.u_ffs),
         )
 
 

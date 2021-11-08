@@ -7,10 +7,15 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   symupy.api
-   symupy.components
-   symupy.logic
-   symupy.metaclass
+   symupy.abstractions
+   symupy.cli
+   symupy.parser
+   symupy.plugins
+   symupy.postprocess
+   symupy.preprocess
+   symupy.renderer
+   symupy.runtime
+   symupy.tsc
    symupy.utils
 
 Module contents

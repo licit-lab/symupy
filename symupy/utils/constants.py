@@ -37,7 +37,8 @@
 import os
 from datetime import date, datetime, timedelta
 import platform
-from decouple import config, UndefinedValueError
+
+from decouple import UndefinedValueError, config
 from numpy import array, float64, int32
 from pathlib import Path
 from collections import defaultdict
@@ -46,8 +47,9 @@ from collections import defaultdict
 # INTERNAL IMPORTS
 # =============================================================================
 
-from .exceptions import SymupyError, SymupyWarning
-
+from symupy.utils.exceptions import SymupyError, SymupyWarning
+from symupy.utils.screen import log_success,log_warning
+from symupy import __version__
 
 # =============================================================================
 # CLASS AND DEFINITIONS
@@ -59,44 +61,60 @@ from .exceptions import SymupyError, SymupyWarning
 # DEFAULT PATHS TO FIND SIMULATOR PLATFORMS
 # =============================================================================
 
-DEFAULT_LIB_OSX = os.path.join(
-    os.getenv("CONDA_PREFIX"), "lib", "libSymuVia.dylib"
-)
+# RTD Setup
+LIBABSPATH = ""
+if os.environ.get("READTHEDOCS"):
+    FILE_PATH = os.path.realpath(__file__)
+    DIR_NAME = os.path.dirname(FILE_PATH)
+    CKNAME = os.path.basename(DIR_NAME)
+    LIBRELPATH = os.path.join("..", "..", "conda", CKNAME, "lib")
+    LIBPATH = os.path.realpath(LIBRELPATH)
+    LIBABSPATH = os.path.normpath(os.path.join(DIR_NAME, LIBRELPATH))
 
-DEFAULT_LIB_LINUX = os.path.join(
-    os.getenv("CONDA_PREFIX"), "lib", "libSymuVia.so"
-)
 
-DEFAULT_LIB_WINDOWS = os.path.join(
-    os.getenv("CONDA_PREFIX"), "lib", "libSymuVia.dll"
-)
+print(f"{LIBABSPATH}")
 
-if platform.system() == "Darwin":
-    try:
-        if Path(DEFAULT_LIB_OSX).exists():
-            DEFAULT_PATH_SYMUVIA = DEFAULT_LIB_OSX
-        else:
-            DEFAULT_PATH_SYMUVIA = config("DEFAULT_LIB_OSX")
-    except UndefinedValueError:
-        SymupyWarning("No Simulator could be defined")
-        DEFAULT_PATH_SYMUVIA = ""
-elif platform.system() == "Linux":
-    try:
-        if Path(DEFAULT_LIB_LINUX).exists():
-            DEFAULT_PATH_SYMUVIA = DEFAULT_LIB_LINUX
-        else:
-            DEFAULT_PATH_SYMUVIA = config("DEFAULT_LIB_LINUX")
-    except UndefinedValueError:
-        SymupyWarning("No Simulator could be defined")
-        DEFAULT_PATH_SYMUVIA = ""
-elif platform.system() == "Windows":
-    try:
-        DEFAULT_PATH_SYMUVIA = config("DEFAULT_LIB_WINDOWS")
-    except UndefinedValueError:
-        SymupyWarning("No Simulator could be defined")
-        DEFAULT_PATH_SYMUVIA = ""
+if not os.path.isdir(LIBABSPATH):
+
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+    # Solving conda (local,RTD)
+    RTDPATH = config("RTD_ENV", cast=str)
+    CONDA_PREFIX = os.getenv("CONDA_PREFIX", RTDPATH)
+
+    PATHS_2_SEARCH = (CONDA_PREFIX,)
+
 else:
-    raise SymupyError("Platform could not be determined")
+    PATHS_2_SEARCH = (LIBABSPATH,)
+
+# Default names/platform
+DCT_LIBOSNAME = {
+    "Darwin": "libSymuFlow.dylib",
+    "Linux": "libSymuFlow.so",
+    "Windows": "libSymuFlow.dll",
+}
+
+
+def find_path(roots):
+    for root in roots:
+        if (p := Path(root)).is_dir():
+            yield from p.glob(f"**/{DCT_LIBOSNAME[platform.system()]}")
+
+
+for path in find_path(PATHS_2_SEARCH):
+    DEFAULT_PATH_SYMUFLOW = path
+
+
+try:
+    log_success(f"Default path: {DEFAULT_PATH_SYMUFLOW}")
+except NameError:
+    DEFAULT_PATH_SYMUFLOW = ""
+    log_warning("Setting `DEFAULT_PATH_SYMUFLOW` to an empty string")
+    SymupyWarning("No Simulator could be defined")
+    print(f"Default path: {DEFAULT_PATH_SYMUFLOW}")
+
+
+
 
 # =============================================================================
 # DEFAULT SIMULATOR/ OS ASSOCIATION
@@ -117,31 +135,31 @@ LAUNCH_MODE = "lite"
 TOTAL_SIMULATION_STEPS = 0
 
 FIELD_DATA = {
-    "@abs": "abscissa",
-    "@acc": "acceleration",
-    "@dst": "distance",
-    "@id": "vehid",
-    "@ord": "ordinate",
-    "@tron": "link",
-    "@type": "vehtype",
-    "@vit": "speed",
-    "@voie": "lane",
-    "@z": "elevation",
-    "@etat_pilotage": "driven",
+    "abs": "abscissa",
+    "acc": "acceleration",
+    "dst": "distance",
+    "etat_pilotage": "driven",
+    "id": "vehid",
+    "ord": "ordinate",
+    "tron": "link",
+    "type": "vehtype",
+    "vit": "speed",
+    "voie": "lane",
+    "z": "elevation",
 }
 
 FIELD_FORMAT = {
-    "@abs": float,
-    "@acc": float,
-    "@dst": float,
-    "@id": int,
-    "@ord": float,
-    "@tron": str,
-    "@type": str,
-    "@vit": float,
-    "@voie": int,
-    "@z": float,
-    "@etat_pilotage": bool,
+    "abs": float,
+    "acc": float,
+    "dst": float,
+    "etat_pilotage": bool,
+    "id": int,
+    "ord": float,
+    "tron": str,
+    "type": str,
+    "vit": float,
+    "voie": int,
+    "z": float,
 }
 
 FLOATFORMAT = float64
@@ -153,8 +171,8 @@ FIELD_FORMATAGG = {
     "distance": (array, FLOATFORMAT),
     "vehid": (array, INTFORMAT),
     "ordinate": (array, FLOATFORMAT),
-    "link": (list, None),
-    "vehtype": (list, None),
+    "link": (list, str),
+    "vehtype": (list, str),
     "speed": (array, FLOATFORMAT),
     "lane": (array, INTFORMAT),
     "elevation": (array, FLOATFORMAT),
@@ -248,3 +266,6 @@ ENGINE_CONSTANT = 0.2
 # =============================================================================
 
 RADIOUS_ANT = 500
+
+if __name__ == "__main__":
+    print(DEFAULT_PATH_SYMUFLOW)

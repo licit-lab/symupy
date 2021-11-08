@@ -1,0 +1,32 @@
+name: symupy-doc
+channels:
+  - licit-lab
+  - conda-forge
+dependencies:
+  - python=3.9
+  - numpy>=1.16
+  - lxml>=4.3.3
+  - networkx>=2.5
+  - matplotlib>=3.0.0
+  - sqlalchemy>=1.3.5
+  - pandas>=1.0.0
+  - scipy>=1.4.1
+  - click>=7.0
+  - python-decouple>=3.3
+  - pytest
+  - coverage
+  - ipython
+  - symuflow=1.1.0
+  - pyqt
+  - pyqtgraph
+  - pytest
+  - coverage
+  - ipython
+  - pandoc
+  - sphinx
+  - recommonmark
+  - myst-parser
+  - nbsphinx
+  - sphinx-book-theme
+  - ipykernel
+  - pip

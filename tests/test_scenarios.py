@@ -1,5 +1,5 @@
 """
-    Unit tests for symupy.api.scenario 
+    Unit tests for symupy.runtime.scenario 
 """
 # ============================================================================
 # STANDARD  IMPORTS
@@ -15,7 +15,7 @@ from ctypes import create_string_buffer
 # INTERNAL IMPORTS
 # ============================================================================
 
-from symupy.api import Simulation, Simulator
+from symupy.runtime.api import Simulation, Simulator
 import symupy.utils.constants as CT
 from symupy.utils.constants import TRACE_FLOW
 
@@ -26,7 +26,7 @@ from symupy.utils.constants import TRACE_FLOW
 
 @pytest.fixture
 def symuvia_library_path():
-    return CT.DCT_DEFAULT_PATHS[("symuvia", platform.system())]
+    return CT.DCT_DEFAULT_PATHS[("symuflow", platform.system())]
 
 
 @pytest.fixture

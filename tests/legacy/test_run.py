@@ -1,6 +1,6 @@
 import os
 import unittest
-from symupy.api import Simulation, Simulator
+from symupy.runtime.api import Simulation, Simulator
 import platform
 
 
@@ -141,7 +141,9 @@ class TestBottleneck001(unittest.TestCase):
 
         self.assertGreaterEqual(veh_id, 0)
         self.assertEqual(drive_status, 1)
-        self.assertAlmostEqual(float(sim_instance.state.query_vehicle_position("1")[0]), 20.0)
+        self.assertAlmostEqual(
+            float(sim_instance.state.query_vehicle_position("1")[0]), 20.0
+        )
 
     @unittest.skip("Skipping momentary")
     def test_drive_vehicle_bottleneck_001(self):
@@ -162,7 +164,9 @@ class TestBottleneck001(unittest.TestCase):
                 else:
                     continue
             self.assertEqual(drive_status, 1)
-            self.assertAlmostEqual(float(sim_instance.state.query_vehicle_position("0")[0]), 1.0)
+            self.assertAlmostEqual(
+                float(sim_instance.state.query_vehicle_position("0")[0]), 1.0
+            )
 
 
 class TestBottleneck002(unittest.TestCase):
@@ -209,7 +213,7 @@ class TestBottleneck002(unittest.TestCase):
             while s.do_next:
                 s.run_step()
                 if s.state.is_vehicle_in_network("2"):
-                    nup, = s.state.vehicle_upstream_of("1")
+                    (nup,) = s.state.vehicle_upstream_of("1")
                     s.stop_step()
                     continue
                 else:
@@ -226,7 +230,7 @@ class TestBottleneck002(unittest.TestCase):
             while s.do_next:
                 s.run_step()
                 if s.state.is_vehicle_in_network("2"):
-                    ndown, = s.state.vehicle_downstream_of("1")
+                    (ndown,) = s.state.vehicle_downstream_of("1")
                     s.stop_step()
                     continue
                 else:

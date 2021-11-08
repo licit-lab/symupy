@@ -2323,7 +2323,7 @@ Par défaut, le z-level est appliqué sur tout le tronçon</xsd:documentation>
                     </xsd:attribute>
                     <xsd:attribute default="0" name="priorite" type="xsd:nonNegativeInteger">
                       <xsd:annotation>
-                        <xsd:documentation>Niveau de priorité du tronçon (1 priorité la plus forte puis plus le niveau augmente, plus la priorité diminue, 0 correspond à une priorité non définie). Si deux tronçons possèdent le même niveau de priorité, SymuVia applique la règle de priorité à droite</xsd:documentation>
+                        <xsd:documentation>Niveau de priorité du tronçon (1 priorité la plus forte puis plus le niveau augmente, plus la priorité diminue, 0 correspond à une priorité non définie). Si deux tronçons possèdent le même niveau de priorité, SymuFlow applique la règle de priorité à droite</xsd:documentation>
                       </xsd:annotation>
                     </xsd:attribute>
                     <xsd:attribute default="20" name="pos_cpt" type="typeFloatPositif"
@@ -2901,7 +2901,7 @@ Le VGP disparaît du réseau après avoir atteint le dernier arrêt de la ligne,
                   </xsd:element>
                   <xsd:element minOccurs="0" name="REP_TYPEVEHICULES" type="typeRepTypeVehicules">
                     <xsd:annotation>
-                      <xsd:documentation>Description des variantes temporelles de la répartition du flux par type de véhicule (cette répartition est utilisée pour calculer le type de véhicule lors de sa création). Si ce noeud est absent, SymuVia utilise une équirépartition des types de véhicules définis dans les noeuds PARAMETRAGE_TYPE_VEHICULE définis dans le noeud PARAMETRAGE_VEHICULES_GUIDES, ou à défaut le premier type de véhicule défini dans TYPES_DE_VEHICULES.</xsd:documentation>
+                      <xsd:documentation>Description des variantes temporelles de la répartition du flux par type de véhicule (cette répartition est utilisée pour calculer le type de véhicule lors de sa création). Si ce noeud est absent, SymuFlow utilise une équirépartition des types de véhicules définis dans les noeuds PARAMETRAGE_TYPE_VEHICULE définis dans le noeud PARAMETRAGE_VEHICULES_GUIDES, ou à défaut le premier type de véhicule défini dans TYPES_DE_VEHICULES.</xsd:documentation>
                     </xsd:annotation>
                   </xsd:element>
                   <xsd:element minOccurs="0" name="JEUX_DE_PARAMETRES">
@@ -4689,7 +4689,7 @@ Le VGP disparaît du réseau après avoir atteint le dernier arrêt de la ligne,
     <xsd:sequence>
       <xsd:element minOccurs="0" name="REP_TYPEVEHICULES" type="typeRepTypeVehicules">
         <xsd:annotation>
-          <xsd:documentation>Description des variantes temporelles de la répartition du flux par type de véhicule (cette répartition est utilisée pour calculer le type de véhicule lors de sa création). Si ce noeud est absent, SymuVia utilise une équirépartition des types de véhicules définis dans les noeuds PARAMETRAGE_TYPE_VEHICULE définis pour la flotte correspondante, ou à défaut le premier type de véhicule défini dans TYPES_DE_VEHICULES.</xsd:documentation>
+          <xsd:documentation>Description des variantes temporelles de la répartition du flux par type de véhicule (cette répartition est utilisée pour calculer le type de véhicule lors de sa création). Si ce noeud est absent, SymuFlow utilise une équirépartition des types de véhicules définis dans les noeuds PARAMETRAGE_TYPE_VEHICULE définis pour la flotte correspondante, ou à défaut le premier type de véhicule défini dans TYPES_DE_VEHICULES.</xsd:documentation>
         </xsd:annotation>
       </xsd:element>
     </xsd:sequence>
@@ -5097,7 +5097,7 @@ Le VGP disparaît du réseau après avoir atteint le dernier arrêt de la ligne,
   </xsd:complexType>
   <xsd:element name="ROOT_SYMUBRUIT">
     <xsd:annotation>
-      <xsd:documentation>Noeud racine des données d'entrée de la plateforme SymuVia</xsd:documentation>
+      <xsd:documentation>Noeud racine des données d'entrée de la plateforme SymuFlow</xsd:documentation>
     </xsd:annotation>
     <xsd:complexType>
       <xsd:sequence>
@@ -5512,20 +5512,20 @@ Le VGP disparaît du réseau après avoir atteint le dernier arrêt de la ligne,
                                     </xsd:attribute>
                                     <xsd:attribute name="tron" type="xsd:string" use="required">
                                       <xsd:annotation>
-                                        <xsd:documentation>Tronçon sur lequel se trouve le véhicule (il peut ne pas être défini au niveau de la liste des tronçons notamment dans le cas où le véhicule est positionné sur un tronçon interne d'une brique. La vérification de l'existence du tronçon sera effectuée après l'initialisation complète du réseau par SymuVia. Si le tronçon n'existe pas, le véhicule ne sera pas créé.
+                                        <xsd:documentation>Tronçon sur lequel se trouve le véhicule (il peut ne pas être défini au niveau de la liste des tronçons notamment dans le cas où le véhicule est positionné sur un tronçon interne d'une brique. La vérification de l'existence du tronçon sera effectuée après l'initialisation complète du réseau par SymuFlow. Si le tronçon n'existe pas, le véhicule ne sera pas créé.
 								</xsd:documentation>
                                       </xsd:annotation>
                                     </xsd:attribute>
                                     <xsd:attribute default="1" name="voie"
                                       type="typeIntStrictPositif" use="optional">
                                       <xsd:annotation>
-                                        <xsd:documentation>Numéro de voie sur laquelle se trouve le véhicule (la vérification de l'existence de la voie sera effectuée après l'initialisation complète du réseau par SymuVia. Si le tronçon n'existe pas, le véhicule ne sera pas créé.
+                                        <xsd:documentation>Numéro de voie sur laquelle se trouve le véhicule (la vérification de l'existence de la voie sera effectuée après l'initialisation complète du réseau par SymuFlow. Si le tronçon n'existe pas, le véhicule ne sera pas créé.
 								</xsd:documentation>
                                       </xsd:annotation>
                                     </xsd:attribute>
                                     <xsd:attribute name="dst" type="xsd:float" use="required">
                                       <xsd:annotation>
-                                        <xsd:documentation>Position curviligne du véhicule sur le tronçon à l'instant 0 (la vérification de la valeur de la position sera effectuée après l'initialisation complète du réseau par SymuVia. Si la position est erronée, le véhicule ne sera pas créé.
+                                        <xsd:documentation>Position curviligne du véhicule sur le tronçon à l'instant 0 (la vérification de la valeur de la position sera effectuée après l'initialisation complète du réseau par SymuFlow. Si la position est erronée, le véhicule ne sera pas créé.
 								</xsd:documentation>
                                       </xsd:annotation>
                                     </xsd:attribute>

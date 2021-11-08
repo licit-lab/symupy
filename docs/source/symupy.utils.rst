@@ -1,6 +1,14 @@
 symupy.utils package
 ====================
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   symupy.utils.symuvia
+
 Submodules
 ----------
 
@@ -32,6 +40,22 @@ symupy.utils.parser module
 --------------------------
 
 .. automodule:: symupy.utils.parser
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+symupy.utils.screen module
+--------------------------
+
+.. automodule:: symupy.utils.screen
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+symupy.utils.time module
+------------------------
+
+.. automodule:: symupy.utils.time
    :members:
    :undoc-members:
    :show-inheritance:

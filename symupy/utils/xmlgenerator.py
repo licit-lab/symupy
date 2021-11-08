@@ -22,11 +22,11 @@ def create_DCT_SIMULATION_INFO(
     flow: str,
     decel: bool,
 ) -> dict:
-    """Computes dictionary DCT_SIMULATION_INFO header for XML file 
-    
+    """Computes dictionary DCT_SIMULATION_INFO header for XML file
+
     :param title: Simulation title
     :type title: str
-    :param simid: Simulation ID 
+    :param simid: Simulation ID
     :type simid: str
     :param timestep: time step (seconds)
     :type timestep: float
@@ -38,7 +38,7 @@ def create_DCT_SIMULATION_INFO(
     :type date: str
     :param seed: random seed
     :type seed: int
-    :param cfl: car following law 
+    :param cfl: car following law
     :type cfl: str
     :param flow: flow behaviour
     :type flow: str
@@ -62,8 +62,8 @@ def create_DCT_SIMULATION_INFO(
 
 
 def create_DCT_NETWORK_INFO(networkid: str) -> dict:
-    """Computes dictionary DCT_NETWORK_INFO for XML file 
-    
+    """Computes dictionary DCT_NETWORK_INFO for XML file
+
     :param networkid: network identifier
     :type networkid: str
     :return: dict
@@ -74,10 +74,13 @@ def create_DCT_NETWORK_INFO(networkid: str) -> dict:
 
 
 def create_DCT_TRAFIC_INFO(
-    trafid: str, bounded_acc: bool = True, relaxation: float = 4, ghost_lanechange: bool = False,
+    trafid: str,
+    bounded_acc: bool = True,
+    relaxation: float = 4,
+    ghost_lanechange: bool = False,
 ) -> dict:
-    """Computes dictionary DCT_TRAFIC_INFO for XML file 
-    
+    """Computes dictionary DCT_TRAFIC_INFO for XML file
+
     :param trafid: traffic identifier
     :type trafid: str
     :param bounded_acc: bounds acceleration True/False
@@ -96,9 +99,11 @@ def create_DCT_TRAFIC_INFO(
     return DCT_TRAFIC_INFO
 
 
-def create_DCT_EXPORT_INFO(trace_rout: bool = False, trajectories: bool = True, csv: bool = True) -> dict:
+def create_DCT_EXPORT_INFO(
+    trace_rout: bool = False, trajectories: bool = True, csv: bool = True
+) -> dict:
     """Computes dictionary DCT_SCENARIO_INFO for XML file
-    
+
     :param trace_rout: trace routes True/False
     :type trace_rout: bool
     :param trajectories: export trajectories True/False
@@ -115,10 +120,15 @@ def create_DCT_EXPORT_INFO(trace_rout: bool = False, trajectories: bool = True, 
 
 
 def create_DCT_SCENARIO_INFO(
-    scnid: str, dirout: str, prefout: str, dct_sim: dict, dct_traffic: dict, dct_network: dict,
+    scnid: str,
+    dirout: str,
+    prefout: str,
+    dct_sim: dict,
+    dct_traffic: dict,
+    dct_network: dict,
 ) -> dict:
     """Computes dictionary DCT_SCENARIO_INFO for XML file
-    
+
     :param scnid: Scenario identifier
     :type scnid: str
     :param dirout: Output directory
@@ -144,8 +154,8 @@ def create_DCT_SCENARIO_INFO(
 
 
 def fix_values(element: ET.ElementTree, dct_values: dict) -> ET.ElementTree:
-    """ Fix a set of values within a dictionary as attributes of an XML subelement
-    
+    """Fix a set of values within a dictionary as attributes of an XML subelement
+
     :param element: XML tree element
     :type element: ET.ElementTree
     :param dct_values: attributes to fix
@@ -159,9 +169,7 @@ def fix_values(element: ET.ElementTree, dct_values: dict) -> ET.ElementTree:
 
 
 class XMLGenerator(object):
-    """ A class to handle XML generator for SymuVia
-    
-    """
+    """A class to handle XML generator for SymuFlow"""
 
     xmlns = "http://www.w3.org/2001/XMLSchema-instance"
     namespace = "noNamespaceSchemaLocation"
@@ -170,4 +178,9 @@ class XMLGenerator(object):
     def __init__(self, path_xsd: str = ""):
         # Create a general scheme
         attr_qname = ET.QName(self.xmlns, self.namespace)
-        self.root = ET.Element("ROOT_SYMUBRUIT", {attr_qname: "reseau.xsd"}, version="2.05", nsmap=self.nsmap,)
+        self.root = ET.Element(
+            "ROOT_SYMUBRUIT",
+            {attr_qname: "reseau.xsd"},
+            version="2.05",
+            nsmap=self.nsmap,
+        )

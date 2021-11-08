@@ -1,5 +1,14 @@
 from setuptools import setup, find_packages
 
+import os
+
+if os.environ.get("READTHEDOCS"):
+    file_path = os.path.realpath(__file__)
+    checkout_name = os.path.basename(os.path.dirname(file_path))
+    symuvia_rel_path = os.path.join("..", "..", "conda", checkout_name, "lib")
+    symuvia_path = os.path.realpath(symuvia_rel_path)
+    os.environ["SYMUVIA_PATH"] = symuvia_path
+
 CLASSIFIERS = [
     "Development Status :: 2 - Pre-Alpha",
     "Intended Audience :: Developers",
@@ -10,7 +19,7 @@ CLASSIFIERS = [
     "Natural Language :: English",
     "Operating System :: Microsoft :: Windows",
     "Operating System :: MacOS :: MacOS X",
-    "Programming Language :: Python :: 3.9"    
+    "Programming Language :: Python :: 3.9",
 ]
 
 with open("README.md", "r", encoding="UTF8") as f:
@@ -22,7 +31,6 @@ with open("HISTORY.md", "r", encoding="UTF8") as history_file:
 requirements = [
     "numpy>=1.16",
     "lxml>=4.3.3",
-    "xmltodict>=0.12",
     "networkx>=2.5",
     "matplotlib>=3.0.0",
     "sqlalchemy>=1.3.5",
@@ -30,6 +38,8 @@ requirements = [
     "scipy>=1.4.1",
     "click>=7.0",
     "python-decouple>=3.3",
+    "PyQt5>=5.15.4",
+    "pyqtgraph>=0.12",
 ]
 
 test_requirements = [
@@ -52,22 +62,28 @@ dev_requirements = [
 
 setup(
     name="symupy",
-    version="0.5.1",
-    description="A module for Symuvia inside Python",
+    version="1.0.0",
+    description="A module for SymuFlow inside Python",
     long_description=LONG_DESCRIPTION + "\n\n" + HISTORY,
     long_description_content_type="text/markdown",
     author="Andres Ladino",
     author_email="aladinoster@gmail.com",
     maintainer="Andres Ladino",
     maintainer_email="aladinoster@gmail.com",
-    url="https://github.com/symuvia/symupy",
-    download_url="https://github.com/symuvia/symupy",
-    packages=find_packages(include=["symupy","symupy.*"]),
+    url="https://github.com/symuflow/symupy",
+    download_url="https://github.com/symuflow/symupy",
+    packages=find_packages(
+        include=["symupy", "symupy.*", "*.ini", "*.xml", "*.xsd"]
+    ),
     classifiers=CLASSIFIERS,
     license="MIT",
     keywords="traffic microsimulation",
     include_package_data=True,
+    package_data={
+        "": ["*.ini", "*.xml", "*.xsd"],
+    },
     install_requires=requirements,
+    entry_points={"console_scripts": ["symupy=symupy.cli:main"]},
     extra_require={"dev": dev_requirements},
     python_requires=">=3.7",
     test_suite="tests",

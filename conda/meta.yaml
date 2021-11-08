@@ -22,7 +22,6 @@ requirements:
         - python=3.9
         - numpy>=1.16
         - lxml>=4.3.3
-        - xmltodict>=0.12
         - networkx>=2.5
         - matplotlib>=3.0.0
         - sqlalchemy>=1.3.5
@@ -30,14 +29,25 @@ requirements:
         - scipy>=1.4.1
         - click>=7.0
         - python-decouple>=3.3
-        - pytest
-        - coverage
         - ipython
-        - symuvia=1.0.0
+        - symuflow=1.0.0
+        - pyqt
+        - pyqtgraph
 
 test:
+    requires:
+        - pytest
+        - coverage
     imports:
         - symupy
+    source_files:
+        - tests/abstractions/test*.py
+        - tests/parser/test*.py
+        - tests/runtime/test*.py
+        - tests/tsc/test*.py
+        - tests/utils/test*.py
+        - tests/mocks/*.xsd
+        - tests/mocks/bottlenecks/*.xml
 
 about:
     license: {{ setup_py.get('license') }}
