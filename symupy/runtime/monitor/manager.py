@@ -2,7 +2,6 @@ import sys
 import types
 
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
 import pyqtgraph as pg
 
 from symupy.postprocess.visunet.qtutils import Worker
@@ -85,9 +84,8 @@ class MonitorManager():
 
 
 class MonitorApp(QMainWindow):
-    _app = QApplication(sys.argv)
-
     def __init__(self, *args, **kwargs):
+        self._app = QApplication(sys.argv)
         super(MonitorApp, self).__init__(*args, **kwargs)
 
         self.central_widget = QWidget()

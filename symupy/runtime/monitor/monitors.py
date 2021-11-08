@@ -20,7 +20,7 @@ def launch_simuflow(file) -> tuple:
 
 class SymuFlowMonitorMFD(ScatterMonitorView):
     def __init__(self):
-        super(SymuFlowMonitorMFD, self).__init__('MFD', 'Accumulation', 'production')
+        super(SymuFlowMonitorMFD, self).__init__('MFD', 'Accumulation', 'Production')
 
     def update(self, step, instants, ind):
         nbveh = instants.nbveh
