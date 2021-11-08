@@ -120,6 +120,7 @@ def test_create_vehicle_list_1_vehicle_update(
     assert vl[0].distance == 48.00
 
 
+@pytest.mark.skip
 def test_create_vehicle_list_2_vehicles_gradual_update(
     simrequest, one_vehicle_xml, two_vehicle_xml
 ):

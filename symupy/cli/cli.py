@@ -51,7 +51,7 @@ def main(verbose: bool) -> int:
     "-s",
     "--scenario",
     default="",
-    multiple=True,
+    multiple=False,
     help="Scenario file(s) under analysis.",
 )
 def launch(scenario: str) -> None:
@@ -82,7 +82,7 @@ def visu(file) -> None:
     "-f",
     "--file",
     default="",
-    multiple=True,
+    multiple=False,
     help="Scenario file(s) under analysis.",
 )
 def analyze(scenario: str) -> None:

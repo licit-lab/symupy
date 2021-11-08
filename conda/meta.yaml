@@ -30,7 +30,7 @@ requirements:
         - click>=7.0
         - python-decouple>=3.3
         - ipython
-        - symuflow=1.0.0
+        - symuflow=1.1.0
         - pyqt
         - pyqtgraph
 
@@ -50,6 +50,6 @@ test:
         - tests/mocks/bottlenecks/*.xml
 
 about:
-    license: {{ setup_py.get('license') }}
-    license_file: LICENSE
+    license: MIT
+    license_file: LICENSE.md
     summary: {{ setup_py.get('description') }}
