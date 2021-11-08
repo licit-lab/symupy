@@ -2,15 +2,19 @@
 
 ## What is symupy?
 
-Symupy is a tool to perform simulations in the *SymuFlow* platform via python without much effort.
+`SymuPy` is a python package to perform and deploy traffic simulations within the [*SymuVia*](http://github.com/licit-lab/symuvia) ecosystem via python without much effort.
+
+![](../_static/symuflow.png)
 
 ## Why symupy?
 
-The objective of symupy is to bring traffic data into the python world so that all tools available in the ecosystem are available as well for you.
+The objective of `symupy` is to bring traffic data into the python world so that all tools available in the data science ecosystem  are available for you. Traffic flow simulators are already available in the market, the objective with this package is to be able to deploy simulations with microscopic open source solutions such as ['SymuFlow'](http://github.com/licit-lab/symuflow).
+
+![](../_static/symuflow.gif)
 
 ## How to get symupy?
 
-You may get the source code from this [repository](https://github.com/symuflow/symupy), for developing purposes. If you want to use symupy just for your regular you can get it from [here](https://pypi.org/project/symupy/) by running `pip install symupy`.
+You may get the source code from this [repository](https://github.com/licit-lab/symupy), for developing purposes. If you want to use symupy just for your regular you can get it from conda. For more details check the install procedure.
 
 ## Can I contribute to the development?
 

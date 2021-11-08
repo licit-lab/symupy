@@ -110,7 +110,7 @@ except NameError:
     DEFAULT_PATH_SYMUFLOW = ""
     SymupyWarning("No Simulator could be defined")
     print(f"Default path: {DEFAULT_PATH_SYMUFLOW}")
-    
+
 
 
 
