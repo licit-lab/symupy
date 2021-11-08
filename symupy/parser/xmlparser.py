@@ -214,7 +214,7 @@ class XMLTrajectory:
 
         abs = tuple(
             map(
-                FIELD_FORMAT["abs"],
+                lambda x: FIELD_FORMAT["abs"](x.replace(',', '.')),
                 PATTERN.get("abs").findall(self._trajs),
             )
         )
@@ -282,7 +282,7 @@ class XMLTrajectory:
         Returns:
             tuple: cached `ord` values
         """
-        ord = tuple(map(FIELD_FORMAT["ord"], PATTERN.get("ord").findall(self._trajs)))
+        ord = tuple(map(lambda x: FIELD_FORMAT["ord"](x.replace(',', '.')), PATTERN.get("ord").findall(self._trajs)))
         return dict(zip(self.id, ord))
 
     @cached_property
@@ -312,7 +312,7 @@ class XMLTrajectory:
         Returns:
             tuple: cached `vit` values
         """
-        vit = tuple(map(FIELD_FORMAT["vit"], PATTERN.get("vit").findall(self._trajs)))
+        vit = [FIELD_FORMAT["vit"](vit.replace(',', '.')) for vit in PATTERN.get("vit").findall(self._trajs)]
         return dict(zip(self.id, vit))
 
     @cached_property

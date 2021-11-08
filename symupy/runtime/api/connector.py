@@ -1,5 +1,5 @@
-""" 
-    This module details the implementation of a ``Simulator`` object in charge of handling the connection between the traffic simulator and this interface. The connection with the traffic simulator is handled by an object called ``Connector`` which establishes a messaging protocol with the traffic simulator. 
+"""
+    This module details the implementation of a ``Simulator`` object in charge of handling the connection between the traffic simulator and this interface. The connection with the traffic simulator is handled by an object called ``Connector`` which establishes a messaging protocol with the traffic simulator.
 
     Example:
         To use the ``Simulator`` declare in a string the ``path`` to the simulator ::
@@ -10,11 +10,11 @@
 
     Other parameters can also be send to the simulator in order to provide other configurations:
 
-    Example: 
+    Example:
         To send make increase the *buffer size* to a specific size:
-            
+
             >>> simulator = Simulator(bufferSize = 1000000)
-        
+
         To increase change the flag that traces the flow:
 
             >>> simulator = Simulator(trace_flow = True)
@@ -615,6 +615,7 @@ class Simulator(Configurator, RuntimeDevice):
                 -1,
                 c_double(accrate),
                 c_double(min_dst),
+                c_double(1),
                 f"{links_str}".encode("UTF8"),
             )
         # Apply set control
