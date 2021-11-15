@@ -23,7 +23,7 @@ dependencies:
   - coverage
   - ipython
   - pandoc
-  - sphinx
+  - sphinx=4.2.0
   - recommonmark
   - myst-parser
   - nbsphinx
