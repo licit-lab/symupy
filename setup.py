@@ -62,7 +62,7 @@ dev_requirements = [
 
 setup(
     name="symupy",
-    version="1.0.0",
+    version="1.0.1",
     description="A module for SymuFlow inside Python",
     long_description=LONG_DESCRIPTION + "\n\n" + HISTORY,
     long_description_content_type="text/markdown",
