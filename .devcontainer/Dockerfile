@@ -14,7 +14,7 @@ COPY docs/environment.doc.yaml requirements.dev.txt /workspaces/symupy/
 RUN if [ -f "/workspaces/symupy/environment.doc.yaml" ]; then /opt/conda/bin/conda env create -f /workspaces/symupy/environment.doc.yaml; fi
 
 # Activate + dev-tools
-RUN /bin/bash -c conda activate symupy\
+RUN /bin/bash -c conda activate symupy-doc\
     && pip install -r /workspaces/symupy/requirements.dev.txt\
     && rm -rf /workspaces/symupy/
 
