@@ -1,8 +1,10 @@
 import pytest
 from symupy.utils.screen import log_warning
 
+
 try:
     from symupy.runtime.monitor.monitors import *
+    SKIP_TESTS = False
 except ImportError:
     log_warning("QT interface unavailable. Module `monitors` not loaded")
     SKIP_TESTS = True
