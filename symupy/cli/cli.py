@@ -15,8 +15,13 @@ import click
 # INTERNAL IMPORTS
 # ============================================================================
 
-from symupy.utils.screen import log_verify
-from symupy.postprocess.visunet.main import launch_app
+from symupy.utils.screen import log_verify, log_warning
+
+try:
+    from symupy.postprocess.visunet.main import launch_app
+except ImportError:
+    log_warning("Non physical terminal, monitor interface not available")
+
 
 # ============================================================================
 # CLASS AND DEFINITIONS
@@ -55,7 +60,7 @@ def main(verbose: bool) -> int:
     help="Scenario file(s) under analysis.",
 )
 def launch(scenario: str) -> None:
-    """Launches a simulation """
+    """Launches a simulation"""
     pass
 
 
@@ -70,7 +75,7 @@ def launch(scenario: str) -> None:
     help="SymuFlow network.",
 )
 def visu(file) -> None:
-    """Launches VisuNet app """
+    """Launches VisuNet app"""
     launch_app(file)
 
 
@@ -86,7 +91,7 @@ def visu(file) -> None:
     help="Scenario file(s) under analysis.",
 )
 def analyze(scenario: str) -> None:
-    """Analyzes a specific output file """
+    """Analyzes a specific output file"""
     pass
 
 
