@@ -1,7 +1,7 @@
 """
 Main Command Line Interface
 ===========================
-This file groups all the commands contained in the cli menu for symupy
+    This file groups all the commands contained in the cli menu for symupy
 """
 
 # ============================================================================
@@ -10,12 +10,14 @@ This file groups all the commands contained in the cli menu for symupy
 
 import sys
 import click
+from click.core import Context
 
 # ============================================================================
 # INTERNAL IMPORTS
 # ============================================================================
 
 from symupy.utils.screen import log_verify, log_warning
+from symupy.cli.symumaster import SymuMasterHandler
 
 try:
     from symupy.postprocess.visunet.main import launch_app
@@ -26,6 +28,7 @@ except ImportError:
 # ============================================================================
 # CLASS AND DEFINITIONS
 # ============================================================================
+
 
 help_text = """Symupy
 
@@ -42,9 +45,11 @@ Please visit: symupy.readthedocs.io/ for more information.
 @click.group()
 @click.option("-v", "--verbose", is_flag=True, help="Increase verbosity.")
 def main(verbose: bool) -> int:
-    """SymuFlow main CLI launcher"""
+    """SymuPy main command line launcher"""
+
     if verbose:
         log_verify(help_text)
+
     return 0
 
 
@@ -52,16 +57,12 @@ def main(verbose: bool) -> int:
 
 
 @main.command()
-@click.option(
-    "-s",
-    "--scenario",
-    default="",
-    multiple=False,
-    help="Scenario file(s) under analysis.",
-)
-def launch(scenario: str) -> None:
+@click.option("-m", "--symumaster", is_flag=True, help="Runs with symumaster")
+@click.argument("SCENARIO", type=str)
+def run(scenario: str, symumaster: bool) -> None:
     """Launches a simulation"""
-    pass
+    if symumaster:
+        SymuMasterHandler(scenario).run_subprocess()
 
 
 # ------------------------------ Visunet command--------------------------------
@@ -74,7 +75,7 @@ def launch(scenario: str) -> None:
     default=None,
     help="SymuFlow network.",
 )
-def visu(file) -> None:
+def visualize(file) -> None:
     """Launches VisuNet app"""
     launch_app(file)
 
@@ -96,4 +97,7 @@ def analyze(scenario: str) -> None:
 
 
 if __name__ == "__main__":
+
+    cmd = "-m /workspaces/symupy/tests/mocks/bottlenecks/bottleneck_002.xml"
+    run(cmd.split())
     sys.exit(main())  # pragma: no cover
