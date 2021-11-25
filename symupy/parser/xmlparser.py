@@ -229,8 +229,7 @@ class XMLTrajectory:
         Returns:
             tuple: cached `acc` values
         """
-        acc =  tuple(map(FIELD_FORMAT["acc"], PATTERN.get("acc").findall(self._trajs)))
-
+        acc = tuple(map(lambda x: FIELD_FORMAT["acc"](x.replace(',', '.')), PATTERN.get("acc").findall(self._trajs)))
         return dict(zip(self.id, acc))
 
     @cached_property
@@ -240,8 +239,7 @@ class XMLTrajectory:
         Returns:
             tuple: cached `dst` values
         """
-        dst = tuple(map(FIELD_FORMAT["dst"], PATTERN.get("dst").findall(self._trajs)))
-
+        dst = tuple(map(lambda x: FIELD_FORMAT["dst"](x.replace(',', '.')), PATTERN.get("dst").findall(self._trajs)))
         return  dict(zip(self.id, dst))
 
     @cached_property
@@ -332,7 +330,7 @@ class XMLTrajectory:
         Returns:
             tuple: cached `z` values
         """
-        z = tuple(map(float, PATTERN.get("z").findall(self._trajs)))
+        z = (float(z.replace(',', '.')) for z in PATTERN.get("z").findall(self._trajs))
         return dict(zip(self.id, z))
 
     @cached_property
@@ -354,7 +352,7 @@ class XMLTrajectory:
         Returns:
             float: simulation time
         """
-        return float(PATTERN.get("inst").findall(self._xml)[0])
+        return float(PATTERN.get("inst").findall(self._xml)[0].replace(',', '.'))
 
     @cached_property
     def nbveh(self):
